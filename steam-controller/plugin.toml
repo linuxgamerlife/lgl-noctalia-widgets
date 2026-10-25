@@ -1,0 +1,69 @@
+# Steam Controller 2 battery widget for Noctalia Shell.
+#
+# A headless service runs the bundled HID reader and publishes the controller
+# state; the desktop widget renders the card. plugin_api 17 is the first level
+# where services start when a plugin is enabled (not only at shell launch).
+
+id          = "jahrek/steam-controller"
+name        = "Steam Controller Battery"
+version     = "2.0.0"
+plugin_api  = 17
+author      = "Jahrek"
+license     = "MIT"
+icon        = "device-gamepad-2"
+description = "Battery level, charging state and wireless link quality for the Steam Controller 2."
+tags        = ["gaming", "hardware", "battery", "desktop"]
+dependencies = ["python3"]
+
+# Shared by the service (notifications) and the desktop widget (low state).
+[[setting]]
+key             = "low_threshold"
+type            = "int"
+label_key       = "settings.low_threshold.label"
+description_key = "settings.low_threshold.description"
+default         = 20
+min             = 0
+max             = 100
+
+[[setting]]
+key             = "notify_low"
+type            = "bool"
+label_key       = "settings.notify_low.label"
+description_key = "settings.notify_low.description"
+default         = true
+
+# Headless HID reader. One instance per plugin, started by Noctalia.
+[[service]]
+id    = "battery"
+entry = "battery.luau"
+
+# The desktop card.
+[[desktop_widget]]
+id    = "card"
+entry = "card.luau"
+
+  [[desktop_widget.setting]]
+  key             = "illustration_color"
+  type            = "color"
+  label_key       = "settings.illustration_color.label"
+  description_key = "settings.illustration_color.description"
+  default         = "#e8ebef"
+
+  [[desktop_widget.setting]]
+  key             = "show_signal"
+  type            = "bool"
+  label_key       = "settings.show_signal.label"
+  description_key = "settings.show_signal.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "signal_style"
+  type            = "select"
+  label_key       = "settings.signal_style.label"
+  description_key = "settings.signal_style.description"
+  default         = "bars"
+  options = [
+    { value = "bars",     label_key = "settings.signal_style.option.bars" },
+    { value = "bars_dbm", label_key = "settings.signal_style.option.bars_dbm" },
+    { value = "dbm",      label_key = "settings.signal_style.option.dbm" },
+  ]

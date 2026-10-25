@@ -1,0 +1,115 @@
+local tree = nil
+local frame_tick = false
+local watch_cb = nil
+local written = nil
+local state = {
+  battery_pct = 64,
+  connected = true,
+  charging = false,
+  provisional = false,
+  docked = false,
+  internal = false,
+  connection = "receiver",
+  signal_dbm = -62,
+  ts = os.time(),
+}
+
+local config = {
+  illustration_color = "#ff8800",
+  show_signal = true,
+  signal_style = "bars_dbm",
+  low_threshold = 20,
+}
+
+local function ctor(t)
+  return function(props, children)
+    return { type = t, props = props or {}, children = children or {} }
+  end
+end
+
+ui = {
+  column = ctor("column"), row = ctor("row"), box = ctor("box"),
+  label = ctor("label"), glyph = ctor("glyph"), image = ctor("image"),
+  spacer = ctor("spacer"), separator = ctor("separator"),
+}
+
+noctalia = {
+  getConfig = function(k) return config[k] end,
+  tr = function(k) return k end,
+  state = {
+    get = function() return state end,
+    watch = function(_, cb) watch_cb = cb end,
+  },
+  pluginDataDir = function() return "/tmp/opencode/plugin-data" end,
+  readFile = function() return "<svg>{{COLOR}}</svg>" end,
+  writeFile = function(path, content) written = { path = path, content = content }; return true end,
+  setUpdateInterval = function() end,
+  log = function() end,
+}
+
+desktopWidget = {
+  setNeedsFrameTick = function(v) frame_tick = v end,
+  render = function(t) tree = t end,
+}
+
+local plugin_dir = arg[1] or "steam-controller"
+dofile(plugin_dir .. "/card.luau")
+
+local function walk(node, out)
+  out = out or {}
+  table.insert(out, node)
+  for _, child in ipairs(node.children or {}) do walk(child, out) end
+  return out
+end
+local function find_key(t, key)
+  for _, node in ipairs(walk(t)) do if node.props.key == key then return node end end
+end
+local function find_text(t, text)
+  for _, node in ipairs(walk(t)) do if node.props.text == text then return node end end
+end
+
+assert(tree and tree.type == "column", "card tree missing")
+assert(written and written.content == "<svg>#ff8800</svg>", "generated SVG wrong: " .. tostring(written and written.content))
+assert(find_key(tree, "controller-art"), "controller art missing")
+assert(find_key(tree, "battery-fill"), "battery fill missing")
+assert(find_key(tree, "signal-bar-4"), "signal bars missing")
+assert(find_key(tree, "signal-dbm"), "dBm label missing")
+assert(find_text(tree, "64"), "battery percentage missing")
+assert(find_text(tree, "status.connected"), "connected status missing")
+assert(frame_tick == false, "should not request frame ticks while idle")
+
+-- Charging: pulse frames should change the fill opacity.
+state.charging = true
+watch_cb(state)
+assert(frame_tick == true, "charging should request frame ticks")
+local before = find_key(tree, "battery-fill").props.opacity
+for _ = 1, 4 do onFrameTick(33) end
+local after = find_key(tree, "battery-fill").props.opacity
+assert(before == 1 and after < 1, ("pulse did not change opacity: %s -> %s"):format(before, after))
+
+-- Low battery: red fill, low status.
+state.charging = false
+state.battery_pct = 8
+watch_cb(state)
+assert(find_text(tree, "status.low"), "low status missing")
+assert(find_key(tree, "battery-fill").props.fill == "#ed4c4c", "low fill should be red")
+
+-- Stale state: show the waiting status and no fill.
+state.ts = os.time() - 100
+watch_cb(state)
+assert(find_text(tree, "status.waiting"), "waiting status missing")
+assert(find_key(tree, "battery-fill") == nil, "stale state should hide the fill")
+
+-- Bluetooth: blue fill and bluetooth glyph.
+state.ts = os.time()
+state.connection = "bluetooth"
+state.signal_dbm = nil
+state.battery_pct = 50
+state.charging = false
+state.connected = true
+watch_cb(state)
+assert(find_key(tree, "battery-fill").props.fill == "#3daee9", "Bluetooth fill should be blue")
+assert(find_key(tree, "status-glyph").props.name == "bluetooth", "Bluetooth glyph missing")
+assert(find_key(tree, "signal-bar-1") == nil, "Bluetooth should have no signal bars")
+
+print("CARD TEST OK")

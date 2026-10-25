@@ -1,0 +1,51 @@
+{
+  "notification": {
+    "low": {
+      "title": "Steam Controller battery low",
+      "body": "{pct}% left — plug it in"
+    },
+    "python": {
+      "title": "Steam Controller needs Python 3",
+      "body": "Install python3 so the battery daemon can read the controller."
+    }
+  },
+  "settings": {
+    "illustration_color": {
+      "description": "Line-art colour for the controller drawing. The default light grey reads on the dark controller body.",
+      "label": "Controller illustration colour"
+    },
+    "low_threshold": {
+      "description": "Show the low-battery state and send the notification at or below this percentage.",
+      "label": "Low battery threshold"
+    },
+    "notify_low": {
+      "description": "Send a desktop notification when the battery first drops to the threshold.",
+      "label": "Low battery notification"
+    },
+    "show_signal": {
+      "description": "Show the wireless link quality for a controller connected through the puck.",
+      "label": "Show signal strength"
+    },
+    "signal_style": {
+      "description": "Show bars, bars plus dBm, or the dBm value alone.",
+      "label": "Signal display",
+      "option": {
+        "bars": "Bars",
+        "bars_dbm": "Bars and dBm",
+        "dbm": "dBm only"
+      }
+    }
+  },
+  "status": {
+    "charging_cable": "Charging · cable",
+    "charging_puck": "Charging · on puck",
+    "charging_usb": "Charging · USB-C",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "low": "Low — plug in",
+    "no_python": "Python 3 not found",
+    "via_internal": "via internal puck",
+    "waiting": "Waiting for controller"
+  },
+  "title": "Steam Controller"
+}

@@ -1,0 +1,16 @@
+# Index for using this directory as a Noctalia plugin source:
+#   noctalia msg plugins source add steam-controller path /path/to/repo/noctalia
+# The per-plugin plugin.toml stays authoritative.
+
+[[plugin]]
+id           = "jahrek/steam-controller"
+name         = "Steam Controller Battery"
+version      = "2.0.0"
+author       = "Jahrek"
+license      = "MIT"
+icon         = "device-gamepad-2"
+description  = "Battery level, charging state and wireless link quality for the Steam Controller 2."
+deprecated   = false
+plugin_api   = 17
+tags         = ["gaming", "hardware", "battery", "desktop"]
+dependencies = ["python3"]
