@@ -1,0 +1,435 @@
+# Modern SysMonitor Plus for Noctalia Shell.
+#
+# A headless poller reads /proc, /sys, hwmon, AMD sysfs, nvidia-smi and `df`,
+# then publishes one plain `stats` table. The desktop card only watches that
+# table and renders the segmented-bar system monitor.
+#
+# plugin_api 22 is the first level with relative module require, which this port
+# uses for lib/. Services start when a plugin is enabled at 17; opening the
+# plugin's own settings needs 15.
+
+id          = "unsaidspeech/modern-sysmonitor-plus"
+name        = "Modern SysMonitor Plus"
+version     = "1.0.0"
+plugin_api  = 22
+author      = "UnsaidSpeech"
+license     = "GPL-2.0-or-later"
+icon        = "cpu"
+description = "CPU, GPU, RAM, VRAM, network and physical-disk monitoring with segmented bars, live network charts and theme-aware colours."
+tags        = ["system", "monitor", "hardware", "desktop"]
+
+# Shared by the service (sampling) and the card (stale-state timeout).
+[[setting]]
+key             = "update_interval"
+type            = "int"
+label_key       = "settings.update_interval.label"
+description_key = "settings.update_interval.description"
+default         = 2
+min             = 1
+max             = 60
+step            = 1
+
+# 0 = automatic (a hwmon fan label containing "cpu"). 1..16 selects fan<N> on
+# the motherboard chip with the most fan inputs.
+[[setting]]
+key             = "cpu_fan_number"
+type            = "int"
+label_key       = "settings.cpu_fan_number.label"
+description_key = "settings.cpu_fan_number.description"
+default         = 0
+min             = 0
+max             = 16
+step            = 1
+
+# Headless poller. One instance per plugin, started by Noctalia.
+[[service]]
+id    = "poller"
+entry = "service.luau"
+
+# The desktop card.
+[[desktop_widget]]
+id    = "card"
+entry = "card.luau"
+
+  [[desktop_widget.setting]]
+  key             = "title"
+  type            = "string"
+  label_key       = "settings.title.label"
+  description_key = "settings.title.description"
+  default         = "System Monitor"
+
+  [[desktop_widget.setting]]
+  key             = "show_header"
+  type            = "bool"
+  label_key       = "settings.show_header.label"
+  description_key = "settings.show_header.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_network"
+  type            = "bool"
+  label_key       = "settings.show_network.label"
+  description_key = "settings.show_network.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_cpu"
+  type            = "bool"
+  label_key       = "settings.show_cpu.label"
+  description_key = "settings.show_cpu.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_ram"
+  type            = "bool"
+  label_key       = "settings.show_ram.label"
+  description_key = "settings.show_ram.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_gpu"
+  type            = "bool"
+  label_key       = "settings.show_gpu.label"
+  description_key = "settings.show_gpu.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_vram"
+  type            = "bool"
+  label_key       = "settings.show_vram.label"
+  description_key = "settings.show_vram.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_disks"
+  type            = "bool"
+  label_key       = "settings.show_disks.label"
+  description_key = "settings.show_disks.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_cpu_fan"
+  type            = "bool"
+  label_key       = "settings.show_cpu_fan.label"
+  description_key = "settings.show_cpu_fan.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "allow_gpu_details"
+  type            = "bool"
+  label_key       = "settings.allow_gpu_details.label"
+  description_key = "settings.allow_gpu_details.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "content_width"
+  type            = "int"
+  label_key       = "settings.content_width.label"
+  description_key = "settings.content_width.description"
+  default         = 320
+  min             = 240
+  max             = 900
+  step            = 4
+
+  [[desktop_widget.setting]]
+  key             = "card_gap"
+  type            = "int"
+  label_key       = "settings.card_gap.label"
+  description_key = "settings.card_gap.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  advanced        = true
+
+  [[desktop_widget.setting]]
+  key             = "card_padding"
+  type            = "int"
+  label_key       = "settings.card_padding.label"
+  description_key = "settings.card_padding.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  advanced        = true
+
+  [[desktop_widget.setting]]
+  key             = "card_radius"
+  type            = "int"
+  label_key       = "settings.card_radius.label"
+  description_key = "settings.card_radius.description"
+  default         = 8
+  min             = 0
+  max             = 32
+  step            = 1
+  advanced        = true
+
+  [[desktop_widget.setting]]
+  key             = "card_fill_color"
+  type            = "color"
+  label_key       = "settings.card_fill_color.label"
+  description_key = "settings.card_fill_color.description"
+  default         = "surface_variant"
+
+  [[desktop_widget.setting]]
+  key             = "card_fill_opacity"
+  type            = "double"
+  label_key       = "settings.card_fill_opacity.label"
+  description_key = "settings.card_fill_opacity.description"
+  default         = 0.35
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "card_border_color"
+  type            = "color"
+  label_key       = "settings.card_border_color.label"
+  description_key = "settings.card_border_color.description"
+  default         = "outline"
+
+  [[desktop_widget.setting]]
+  key             = "card_border_width"
+  type            = "double"
+  label_key       = "settings.card_border_width.label"
+  description_key = "settings.card_border_width.description"
+  default         = 1.0
+  min             = 0.0
+  max             = 4.0
+  step            = 0.1
+  advanced        = true
+
+  [[desktop_widget.setting]]
+  key             = "accent_color"
+  type            = "color"
+  label_key       = "settings.accent_color.label"
+  description_key = "settings.accent_color.description"
+  default         = "primary"
+
+  [[desktop_widget.setting]]
+  key             = "text_color"
+  type            = "color"
+  label_key       = "settings.text_color.label"
+  description_key = "settings.text_color.description"
+  default         = "on_surface"
+
+  [[desktop_widget.setting]]
+  key             = "muted_text_color"
+  type            = "color"
+  label_key       = "settings.muted_text_color.label"
+  description_key = "settings.muted_text_color.description"
+  default         = "on_surface_variant"
+
+  [[desktop_widget.setting]]
+  key             = "track_color"
+  type            = "color"
+  label_key       = "settings.track_color.label"
+  description_key = "settings.track_color.description"
+  default         = "on_surface"
+
+  [[desktop_widget.setting]]
+  key             = "track_opacity"
+  type            = "double"
+  label_key       = "settings.track_opacity.label"
+  description_key = "settings.track_opacity.description"
+  default         = 0.14
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "bar_height"
+  type            = "double"
+  label_key       = "settings.bar_height.label"
+  description_key = "settings.bar_height.description"
+  default         = 8.0
+  min             = 4.0
+  max             = 16.0
+  step            = 0.5
+
+  [[desktop_widget.setting]]
+  key             = "segment_count"
+  type            = "int"
+  label_key       = "settings.segment_count.label"
+  description_key = "settings.segment_count.description"
+  default         = 20
+  min             = 8
+  max             = 40
+  step            = 1
+
+  [[desktop_widget.setting]]
+  key             = "segment_gap"
+  type            = "double"
+  label_key       = "settings.segment_gap.label"
+  description_key = "settings.segment_gap.description"
+  default         = 3.0
+  min             = 0.0
+  max             = 6.0
+  step            = 0.5
+  advanced        = true
+
+  [[desktop_widget.setting]]
+  key             = "temp_warm"
+  type            = "int"
+  label_key       = "settings.temp_warm.label"
+  description_key = "settings.temp_warm.description"
+  default         = 70
+  min             = 30
+  max             = 110
+  step            = 1
+
+  [[desktop_widget.setting]]
+  key             = "temp_hot"
+  type            = "int"
+  label_key       = "settings.temp_hot.label"
+  description_key = "settings.temp_hot.description"
+  default         = 85
+  min             = 40
+  max             = 120
+  step            = 1
+
+  [[desktop_widget.setting]]
+  key             = "temp_warm_color"
+  type            = "color"
+  label_key       = "settings.temp_warm_color.label"
+  description_key = "settings.temp_warm_color.description"
+  default         = "tertiary"
+
+  [[desktop_widget.setting]]
+  key             = "critical_color"
+  type            = "color"
+  label_key       = "settings.critical_color.label"
+  description_key = "settings.critical_color.description"
+  default         = "error"
+
+  [[desktop_widget.setting]]
+  key             = "disk_warning"
+  type            = "int"
+  label_key       = "settings.disk_warning.label"
+  description_key = "settings.disk_warning.description"
+  default         = 90
+  min             = 50
+  max             = 100
+  step            = 1
+
+  [[desktop_widget.setting]]
+  key             = "network_chart_height"
+  type            = "int"
+  label_key       = "settings.network_chart_height.label"
+  description_key = "settings.network_chart_height.description"
+  default         = 32
+  min             = 16
+  max             = 80
+  step            = 2
+
+  [[desktop_widget.setting]]
+  key             = "network_line_width"
+  type            = "double"
+  label_key       = "settings.network_line_width.label"
+  description_key = "settings.network_line_width.description"
+  default         = 1.5
+  min             = 0.5
+  max             = 4.0
+  step            = 0.1
+  advanced        = true
+
+  [[desktop_widget.setting]]
+  key             = "network_fill_opacity"
+  type            = "double"
+  label_key       = "settings.network_fill_opacity.label"
+  description_key = "settings.network_fill_opacity.description"
+  default         = 0.15
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "network_scale_kbps"
+  type            = "int"
+  label_key       = "settings.network_scale_kbps.label"
+  description_key = "settings.network_scale_kbps.description"
+  default         = 10
+  min             = 1
+  max             = 1024
+  step            = 1
+  advanced        = true
+
+  [[desktop_widget.setting]]
+  key             = "divider_width"
+  type            = "double"
+  label_key       = "settings.divider_width.label"
+  description_key = "settings.divider_width.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 4.0
+  step            = 0.1
+  advanced        = true
+
+  [[desktop_widget.setting]]
+  key             = "divider_color"
+  type            = "color"
+  label_key       = "settings.divider_color.label"
+  description_key = "settings.divider_color.description"
+  default         = "outline"
+
+  [[desktop_widget.setting]]
+  key             = "history_points"
+  type            = "int"
+  label_key       = "settings.history_points.label"
+  description_key = "settings.history_points.description"
+  default         = 30
+  min             = 10
+  max             = 120
+  step            = 1
+  advanced        = true
+
+  # Host panel surface. DesktopWidget consumes these keys; the card reads them
+  # only to keep lint's declared-key contract and to add an inset when the panel
+  # is off. The card never draws a second outer surface.
+  [[desktop_widget.setting]]
+  key             = "background"
+  type            = "bool"
+  label_key       = "settings.background.label"
+  description_key = "settings.background.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "background_color"
+  type            = "color"
+  label_key       = "settings.background_color.label"
+  description_key = "settings.background_color.description"
+  default         = "surface"
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_opacity"
+  type            = "double"
+  label_key       = "settings.background_opacity.label"
+  description_key = "settings.background_opacity.description"
+  default         = 0.8
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_radius"
+  type            = "int"
+  label_key       = "settings.background_radius.label"
+  description_key = "settings.background_radius.description"
+  default         = 14
+  min             = 0
+  max             = 48
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_padding"
+  type            = "int"
+  label_key       = "settings.background_padding.label"
+  description_key = "settings.background_padding.description"
+  default         = 14
+  min             = 0
+  max             = 32
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
