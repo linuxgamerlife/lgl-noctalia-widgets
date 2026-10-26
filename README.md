@@ -8,9 +8,31 @@ This is the standalone Noctalia repository, split out of the
 [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget).
 The Plasma widget lives in that repository; this one contains the Noctalia port.
 
+| Field | Value |
+| --- | --- |
+| Plugin ID | `jahrek/steam-controller` |
+| Version | `2.3.0` |
+| Entries | Service `battery`, desktop widget `card` |
+| Plugin API | 17 |
+
 Tested live on KineticWE's `noctalia-kwe` v5.3.0. Upstream Noctalia uses the
 same v5 plugin API and is supported by the install scripts, but has not been
 tested on the author's machine.
+
+## Configuration
+
+The desktop widget exposes:
+
+- controller line colour, body colour and outline thickness
+- battery fill mode: connection LED colours or a custom colour
+- battery fill opacity (`0–1`) and a separate low-battery colour
+- primary and secondary text colours
+- signal display mode, low-battery threshold and notification toggle
+
+Colour settings accept hex values or palette role tokens. Role tokens follow the
+live Noctalia theme; the controller art regenerates when the resolved palette
+colour changes. See the
+[full settings table](steam-controller/README.md#settings).
 
 ## Layout
 

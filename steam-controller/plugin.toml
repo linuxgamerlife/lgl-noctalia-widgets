@@ -11,7 +11,7 @@ plugin_api  = 17
 author      = "Jahrek"
 license     = "MIT"
 icon        = "device-gamepad-2"
-description = "Battery level, charging state and wireless link quality for the Steam Controller 2."
+description = "Battery level, charging state and link quality for the Steam Controller 2, with configurable colours, outline and battery fill opacity."
 tags        = ["gaming", "hardware", "battery", "desktop"]
 dependencies = ["python3"]
 

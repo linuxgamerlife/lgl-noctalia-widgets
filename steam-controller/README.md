@@ -6,13 +6,18 @@ a port of the
 [KDE Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget),
 using the same reverse-engineered HID protocol.
 
-The card mirrors the controller's LED: **colour = how it is connected** (white =
-puck, blue = Bluetooth, green = USB-C), **pulsing = charging**, orange = switched
-off on the puck's dock, red = low battery.
+The controller line/body, outline thickness, battery fill, fill opacity and
+primary/secondary text colours are configurable.
+
+By default the card mirrors the controller's LED: **colour = how it is
+connected** (white = puck, blue = Bluetooth, green = USB-C), **pulsing =
+charging**, orange = switched off on the puck's dock, red = low battery. The
+battery fill can instead use a custom colour with adjustable opacity.
 
 | Field | Value |
 | --- | --- |
 | ID | `jahrek/steam-controller` |
+| Version | `2.3.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 
@@ -233,9 +238,9 @@ Use `noctalia msg ...` instead of `noctalia-kwe msg ...` on upstream Noctalia.
   `~/.local/share/noctalia/plugins`. Run `./install-kwe.sh` for KWE
   (or `./install.sh` for upstream), then
   `noctalia-kwe msg config-reload`.
-- **Plugin appears but the widget does not:** the `illustration_color` setting
-  must be a valid hex or palette role. This port defaults to `#e8ebef`; do not
-  set it to an empty string in `settings.toml`.
+- **Plugin appears but the widget does not:** colour settings must be valid hex
+  values or palette role tokens; Noctalia rejects empty colour strings. Battery
+  fill opacity must be `0–1` and controller stroke width `0.5–8`.
 - **"Waiting for controller" forever:** check the plugin log and `python3
   --version`. Also verify the daemon can open the hidraw node:
   `python3 steam-controller/code/sc_battery_daemon.py --stream`.
