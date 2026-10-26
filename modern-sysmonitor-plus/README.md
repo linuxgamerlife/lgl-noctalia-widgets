@@ -103,13 +103,15 @@ the editor.
 
 ### Charts
 
-CPU and GPU usage are area charts like the network charts and auto-scale to
-their largest visible sample, with a configurable minimum top of the scale. RAM,
-VRAM and disks use solid bars like the temperature bar. All charts and percentage values use the
-accent colour; disk warnings use the critical colour.
+CPU and GPU usage are area charts like the network charts. By default they
+auto-fit the largest visible sample; switch **Chart scale mode** to **Fixed** and
+lower the per-chart scale to exaggerate small changes (large samples clip at the
+top). RAM, VRAM and disks use solid bars like the temperature bar. All charts and
+percentage values use the accent colour; disk warnings use the critical colour.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
+| Chart scale mode | Auto | `Auto` fits the largest visible sample. `Fixed` keeps the scale setting as the top and clips larger samples, which makes small changes look more zig-zaggy. |
 | CPU chart height | 20 px | CPU usage chart height (12–48). |
 | CPU chart scale | 10% | Minimum top of the CPU usage scale; a larger sample raises it automatically. Set 100 for an absolute 0–100% scale. |
 | GPU chart height | 20 px | GPU usage chart height (12–48). |

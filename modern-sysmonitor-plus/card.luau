@@ -98,6 +98,7 @@ local settings = {
   critical_color = cfg_text("critical_color", "error"),
   disk_warning = cfg_number("disk_warning", 90, 50, 100),
 
+  chart_scale_mode = cfg_text("chart_scale_mode", "auto"),
   cpu_chart_height = math.floor(cfg_number("cpu_chart_height", 20, 12, 48) + 0.5),
   cpu_chart_scale = math.floor(cfg_number("cpu_chart_scale", 10, 1, 100) + 0.5),
   gpu_chart_height = math.floor(cfg_number("gpu_chart_height", 20, 12, 48) + 0.5),
@@ -111,6 +112,10 @@ local settings = {
   divider_color = cfg_text("divider_color", "outline"),
   history_points = math.floor(cfg_number("history_points", 30, 10, 120) + 0.5),
 }
+
+if settings.chart_scale_mode ~= "fixed" then
+  settings.chart_scale_mode = "auto"
+end
 
 if settings.temp_hot <= settings.temp_warm then
   settings.temp_hot = settings.temp_warm + 1
@@ -221,9 +226,11 @@ end
 
 local function normalize_history(series)
   local max_value = settings.network_scale_kbps * 1024
-  for _, value in ipairs(series) do
-    if value > max_value then
-      max_value = value
+  if settings.chart_scale_mode == "auto" then
+    for _, value in ipairs(series) do
+      if value > max_value then
+        max_value = value
+      end
     end
   end
 
@@ -236,9 +243,11 @@ end
 
 local function normalize_usage_history(series, scale_percent)
   local max_value = (tonumber(scale_percent) or 10) / 100
-  for _, value in ipairs(series) do
-    if value > max_value then
-      max_value = value
+  if settings.chart_scale_mode == "auto" then
+    for _, value in ipairs(series) do
+      if value > max_value then
+        max_value = value
+      end
     end
   end
 

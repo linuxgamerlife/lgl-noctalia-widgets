@@ -67,6 +67,7 @@ local function base_config()
     temp_warm_color = "#ffaa00",
     critical_color = "#ff0000",
     disk_warning = 90,
+    chart_scale_mode = "auto",
     cpu_chart_height = 24,
     cpu_chart_scale = 10,
     gpu_chart_height = 26,

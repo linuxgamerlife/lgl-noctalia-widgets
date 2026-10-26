@@ -245,6 +245,14 @@
     "gpu_chart_scale": {
       "label": "GPU chart scale",
       "description": "Minimum top of the GPU usage scale in percent; a larger sample raises it automatically. Set 100 for an absolute 0–100% scale."
+    },
+    "chart_scale_mode": {
+      "label": "Chart scale mode",
+      "description": "Auto fits the largest visible sample. Fixed keeps the scale setting as the top and clips larger samples, which makes small changes look more zig-zaggy.",
+      "option": {
+        "auto": "Auto — fit largest sample",
+        "fixed": "Fixed — use scale setting"
+      }
     }
   }
 }

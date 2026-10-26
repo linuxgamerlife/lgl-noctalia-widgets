@@ -146,8 +146,9 @@ The card:
 - appends one history point per distinct `ts:seq` for the network, CPU usage
   and GPU usage charts (so a plain `update()` never duplicates a point);
 - normalises network charts against `network_scale_kbps`, and CPU/GPU usage
-  against `cpu_chart_scale` / `gpu_chart_scale`, each with the largest sample
-  as the automatic top; the scale values set the minimum top;
+  against `cpu_chart_scale` / `gpu_chart_scale`; in `Auto` mode the largest
+  visible sample raises the top, in `Fixed` mode the scale setting is the
+  fixed top and larger samples clip (useful for a more zig-zaggy line);
 - treats a state older than `max(3, update_interval * 3)` seconds as stale;
 - blanks values with `—`, keeps the history, dims the content and shows
   **Waiting for system data** when stale;

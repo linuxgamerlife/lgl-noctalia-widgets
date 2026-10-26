@@ -394,6 +394,18 @@ entry = "card.luau"
   visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
+  key             = "chart_scale_mode"
+  type            = "select"
+  label_key       = "settings.chart_scale_mode.label"
+  description_key = "settings.chart_scale_mode.description"
+  default         = "auto"
+  visible_when    = { key = "show_styling", values = ["true"] }
+  options = [
+    { value = "auto",  label_key = "settings.chart_scale_mode.option.auto" },
+    { value = "fixed", label_key = "settings.chart_scale_mode.option.fixed" },
+  ]
+
+  [[desktop_widget.setting]]
   key             = "cpu_chart_height"
   type            = "int"
   label_key       = "settings.cpu_chart_height.label"
