@@ -114,6 +114,7 @@ assert(accounts.withAccountMoved(list, "a1", -1)[1].id == "a1", "move out of ran
 
 -- Values --------------------------------------------------------------------
 assert(values.parseIsoTime("2026-10-26T10:00:00Z") == 1793008800000, "iso Z")
+assert(values.parseIsoTime("2026-10-26T10:00:00.000Z") == 1793008800000, "iso fractional Z")
 assert(values.parseIsoTime("2026-10-26T12:00:00+02:00") == 1793008800000, "iso offset")
 assert(values.toFiniteNumber("12.5") == 12.5, "finite number")
 assert(values.toFiniteNumber("nope") == nil, "bad number")

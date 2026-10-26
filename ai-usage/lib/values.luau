@@ -45,31 +45,25 @@ function M.parseIsoTime(value)
   end
   local second = 0
   local zone = nil
+
+  -- Strip ":SS" and an optional fractional part. OpenCode and OpenCode Zen
+  -- return "2026-10-26T20:02:24.000Z", while other providers use a plain "Z"
+  -- or a numeric offset.
+  local secondsPart, afterSeconds = rest:match("^:(%d%d)(.*)$")
+  if secondsPart ~= nil then
+    second = tonumber(secondsPart)
+    rest = afterSeconds
+    local fractionRest = rest:match("^%.%d+(.*)$")
+    if fractionRest ~= nil then
+      rest = fractionRest
+    end
+  end
+
   local zoneSign, zoneHour, zoneMinute = rest:match("^([%+%-])(%d%d):(%d%d)$")
   if zoneSign ~= nil then
     zone = (zoneSign == "-" and -1 or 1) * (tonumber(zoneHour) * 3600 + tonumber(zoneMinute) * 60)
   elseif rest == "Z" then
     zone = 0
-  else
-    local seconds = rest:match("^:(%d%d)Z$")
-    if seconds ~= nil then
-      second = tonumber(seconds)
-      zone = 0
-    else
-      local seconds2, sign, zh, zm = rest:match("^:(%d%d)([%+%-])(%d%d):(%d%d)$")
-      if seconds2 == nil then
-        local fraction, zsign, zhh, zmm = rest:match("^:(%d%d)%.%d+([%+%-])(%d%d):(%d%d)$")
-        if fraction == nil then
-          -- ISO allows "HH:MMZ", handled above; everything else is invalid.
-          return nil
-        end
-        second = tonumber(fraction)
-        zone = (zsign == "-" and -1 or 1) * (tonumber(zhh) * 3600 + tonumber(zmm) * 60)
-      else
-        second = tonumber(seconds2)
-        zone = (sign == "-" and -1 or 1) * (tonumber(zh) * 3600 + tonumber(zm) * 60)
-      end
-    end
   end
   if zone == nil then
     return nil
