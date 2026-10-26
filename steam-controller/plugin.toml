@@ -6,7 +6,7 @@
 
 id          = "jahrek/steam-controller"
 name        = "Steam Controller Battery"
-version     = "2.0.0"
+version     = "2.1.0"
 plugin_api  = 17
 author      = "Jahrek"
 license     = "MIT"
@@ -48,6 +48,39 @@ entry = "card.luau"
   label_key       = "settings.illustration_color.label"
   description_key = "settings.illustration_color.description"
   default         = "#e8ebef"
+
+  [[desktop_widget.setting]]
+  key             = "controller_body_color"
+  type            = "color"
+  label_key       = "settings.controller_body_color.label"
+  description_key = "settings.controller_body_color.description"
+  default         = "#2c3035"
+
+  [[desktop_widget.setting]]
+  key             = "battery_color_mode"
+  type            = "select"
+  label_key       = "settings.battery_color_mode.label"
+  description_key = "settings.battery_color_mode.description"
+  default         = "connection"
+  options = [
+    { value = "connection", label_key = "settings.battery_color_mode.option.connection" },
+    { value = "custom",     label_key = "settings.battery_color_mode.option.custom" },
+  ]
+
+  [[desktop_widget.setting]]
+  key             = "battery_fill_color"
+  type            = "color"
+  label_key       = "settings.battery_fill_color.label"
+  description_key = "settings.battery_fill_color.description"
+  default         = "#fcfcfc"
+  visible_when    = { key = "battery_color_mode", values = ["custom"] }
+
+  [[desktop_widget.setting]]
+  key             = "battery_low_color"
+  type            = "color"
+  label_key       = "settings.battery_low_color.label"
+  description_key = "settings.battery_low_color.description"
+  default         = "#ed4c4c"
 
   [[desktop_widget.setting]]
   key             = "show_signal"

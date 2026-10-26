@@ -10,9 +10,29 @@
     }
   },
   "settings": {
+    "battery_color_mode": {
+      "description": "Use the controller's connection colours, or a custom fill colour.",
+      "label": "Battery fill colour",
+      "option": {
+        "connection": "Connection colours",
+        "custom": "Custom colour"
+      }
+    },
+    "battery_fill_color": {
+      "description": "Battery fill colour when 'Custom colour' is selected. Low battery still uses the low-battery colour.",
+      "label": "Custom fill colour"
+    },
+    "battery_low_color": {
+      "description": "Battery fill, percentage, signal meter and warning marker colour when the battery is low.",
+      "label": "Low battery colour"
+    },
+    "controller_body_color": {
+      "description": "Fill colour of the controller drawing's body.",
+      "label": "Controller body colour"
+    },
     "illustration_color": {
-      "description": "Line-art colour for the controller drawing. The default light grey reads on the dark controller body.",
-      "label": "Controller illustration colour"
+      "description": "Line-art colour for the controller drawing.",
+      "label": "Controller line colour"
     },
     "low_threshold": {
       "description": "Show the low-battery state and send the notification at or below this percentage.",

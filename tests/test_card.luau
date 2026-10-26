@@ -16,6 +16,10 @@ local state = {
 
 local config = {
   illustration_color = "#ff8800",
+  controller_body_color = "#112233",
+  battery_color_mode = "connection",
+  battery_fill_color = "#33cc99",
+  battery_low_color = "#ed4c4c",
   show_signal = true,
   signal_style = "bars_dbm",
   low_threshold = 20,
@@ -41,7 +45,7 @@ noctalia = {
     watch = function(_, cb) watch_cb = cb end,
   },
   pluginDataDir = function() return "/tmp/opencode/plugin-data" end,
-  readFile = function() return "<svg>{{COLOR}}</svg>" end,
+  readFile = function() return "<svg>{{BODY}}|{{COLOR}}</svg>" end,
   writeFile = function(path, content) written = { path = path, content = content }; return true end,
   setUpdateInterval = function() end,
   log = function() end,
@@ -69,7 +73,7 @@ local function find_text(t, text)
 end
 
 assert(tree and tree.type == "column", "card tree missing")
-assert(written and written.content == "<svg>#ff8800</svg>", "generated SVG wrong: " .. tostring(written and written.content))
+assert(written and written.content == "<svg>#112233|#ff8800</svg>", "generated SVG wrong: " .. tostring(written and written.content))
 assert(find_key(tree, "controller-art"), "controller art missing")
 assert(find_key(tree, "battery-fill"), "battery fill missing")
 assert(find_key(tree, "signal-bar-4"), "signal bars missing")
@@ -111,5 +115,14 @@ watch_cb(state)
 assert(find_key(tree, "battery-fill").props.fill == "#3daee9", "Bluetooth fill should be blue")
 assert(find_key(tree, "status-glyph").props.name == "bluetooth", "Bluetooth glyph missing")
 assert(find_key(tree, "signal-bar-1") == nil, "Bluetooth should have no signal bars")
+
+-- Custom fill mode: the fill uses battery_fill_color, while low keeps the low colour.
+config.battery_color_mode = "custom"
+dofile(plugin_dir .. "/card.luau")
+assert(find_key(tree, "battery-fill").props.fill == "#33cc99", "custom fill should be used")
+state.battery_pct = 8
+watch_cb(state)
+assert(find_key(tree, "battery-fill").props.fill == "#ed4c4c", "low should override custom fill")
+assert(find_text(tree, "status.low"), "low status missing with custom fill")
 
 print("CARD TEST OK")

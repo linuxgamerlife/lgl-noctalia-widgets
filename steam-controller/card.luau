@@ -1,18 +1,32 @@
 --!nonstrict
 -- Declarative desktop card for the Steam Controller 2.
 --
--- The card mirrors the controller's LED: the battery fill is white through the
--- puck, blue over Bluetooth, green on USB-C, orange while charging off-dock,
--- red when low. Charging pulses. The battery service publishes the live state;
--- this entry only renders it.
+-- By default the card mirrors the controller's LED: the battery fill is white
+-- through the puck, blue over Bluetooth, green on USB-C, orange while charging
+-- off-dock, red when low. The controller line/body and the battery fill (or a
+-- custom fill) are configurable. Charging pulses. The battery service publishes
+-- the live state; this entry only renders it.
 
 local STALE_AFTER = 20 -- seconds without a daemon heartbeat
 
 local settings = {
-  illustration_color = noctalia.getConfig("illustration_color") or "",
+  illustration_color = noctalia.getConfig("illustration_color") or "#e8ebef",
+  controller_body_color = noctalia.getConfig("controller_body_color") or "#2c3035",
+  battery_color_mode = noctalia.getConfig("battery_color_mode") or "connection",
+  battery_fill_color = noctalia.getConfig("battery_fill_color") or "#fcfcfc",
+  battery_low_color = noctalia.getConfig("battery_low_color") or "#ed4c4c",
   show_signal = noctalia.getConfig("show_signal"),
   signal_style = noctalia.getConfig("signal_style") or "bars",
 }
+if settings.battery_color_mode ~= "custom" then
+  settings.battery_color_mode = "connection"
+end
+if settings.battery_fill_color == "" then
+  settings.battery_fill_color = "#fcfcfc"
+end
+if settings.battery_low_color == "" then
+  settings.battery_low_color = "#ed4c4c"
+end
 if settings.show_signal == nil then
   settings.show_signal = true
 end
@@ -30,7 +44,6 @@ local LED = {
   bluetooth = "#3daee9",
   cable = "#3ec47a",
   docked = "#ff9a3c",
-  low = "#ed4c4c",
 }
 
 local BODY_W = 58
@@ -55,17 +68,28 @@ local function resolve_color(value, fallback)
   return fallback
 end
 
--- Draw the controller line art in the configured colour. A generated SVG is
--- used because ui.image cannot tint; fall back to the bundled neutral one.
-local function controller_art()
-  local fallback = "assets/controller.svg"
-  local color = resolve_color(settings.illustration_color, "#e8ebef")
-  local valid = string.match(color, "^#%x%x%x$")
+local function valid_hex(color)
+  return string.match(color, "^#%x%x%x$")
     or string.match(color, "^#%x%x%x%x$")
     or string.match(color, "^#%x%x%x%x%x%x$")
     or string.match(color, "^#%x%x%x%x%x%x%x%x$")
-  if not valid then
-    color = "#e8ebef"
+end
+
+local function color_key(color)
+  return string.gsub(tostring(color), "[^%w]", "")
+end
+
+-- Draw the controller line art and body in the configured colours. A generated
+-- SVG is used because ui.image cannot tint; fall back to the bundled one.
+local function controller_art()
+  local fallback = "assets/controller.svg"
+  local line = resolve_color(settings.illustration_color, "#e8ebef")
+  local body = resolve_color(settings.controller_body_color, "#2c3035")
+  if not valid_hex(line) then
+    line = "#e8ebef"
+  end
+  if not valid_hex(body) then
+    body = "#2c3035"
   end
 
   local dir = noctalia.pluginDataDir()
@@ -77,8 +101,10 @@ local function controller_art()
     return fallback
   end
 
-  local path = dir .. "/controller-v1-" .. string.gsub(color, "#", "") .. ".svg"
-  local written = noctalia.writeFile(path, string.gsub(template, "{{COLOR}}", color))
+  local path = dir .. "/controller-v2-" .. color_key(line) .. "-" .. color_key(body) .. ".svg"
+  local svg = string.gsub(template, "{{BODY}}", body)
+  svg = string.gsub(svg, "{{COLOR}}", line)
+  local written = noctalia.writeFile(path, svg)
   if not written then
     return fallback
   end
@@ -122,10 +148,13 @@ end
 
 local function state_color(mode, connected, s)
   if mode == "low" then
-    return LED.low
+    return settings.battery_low_color
   end
   if mode == "disconnected" then
     return "on_surface_variant/0.55"
+  end
+  if settings.battery_color_mode == "custom" then
+    return settings.battery_fill_color
   end
   if mode == "charging" and not connected then
     return LED.docked
@@ -187,7 +216,7 @@ end
 
 local function marker_color(mode, connected, s)
   if mode == "low" then
-    return LED.low
+    return settings.battery_low_color
   end
   if mode == "charging" then
     if s.connection == "usb" then
@@ -240,7 +269,7 @@ local function pct_row(pct, known, shown, provisional, mode)
       text = tostring(math.floor(pct + 0.5)),
       fontSize = 30,
       fontWeight = "semibold",
-      color = mode == "low" and LED.low or "on_surface",
+      color = mode == "low" and settings.battery_low_color or "on_surface",
       opacity = opacity,
     }))
     table.insert(children, ui.label({
@@ -248,7 +277,7 @@ local function pct_row(pct, known, shown, provisional, mode)
       text = "%",
       fontSize = 16,
       fontWeight = "medium",
-      color = mode == "low" and LED.low or "on_surface_variant",
+      color = mode == "low" and settings.battery_low_color or "on_surface_variant",
       opacity = opacity,
     }))
     if provisional then
@@ -286,7 +315,7 @@ local function status_row(mode, connected, charging, s, is_fresh)
     }))
   end
 
-  local text_color = mode == "low" and LED.low
+  local text_color = mode == "low" and settings.battery_low_color
     or (is_fresh and "on_surface" or "on_surface_variant")
 
   table.insert(children, ui.label({
@@ -316,7 +345,7 @@ local function signal_node(level, dbm)
         width = 3,
         height = heights[i],
         radius = 1.5,
-        fill = active and (level == 1 and LED.low or "on_surface") or "on_surface_variant/0.35",
+        fill = active and (level == 1 and settings.battery_low_color or "on_surface") or "on_surface_variant/0.35",
       }))
     end
   end
@@ -326,7 +355,7 @@ local function signal_node(level, dbm)
       key = "signal-dbm",
       text = tostring(dbm) .. " dBm",
       fontSize = 11,
-      color = style == "dbm" and (level == 1 and LED.low or "on_surface") or "on_surface_variant",
+      color = style == "dbm" and (level == 1 and settings.battery_low_color or "on_surface") or "on_surface_variant",
     }))
   end
 
