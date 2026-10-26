@@ -54,7 +54,7 @@
       "description": "For OpenCode Go, read the local OpenCode database with `opencode stats --json --models` and show the top models on this machine. This is local data, not official Go quota."
     },
     "background": {
-      "label": "Host panel background",
+      "label": "Show host panel",
       "description": "Let Noctalia draw its surface behind the card. Turn off to place the content directly on the desktop wallpaper."
     },
     "title": {
@@ -164,6 +164,18 @@
     "model_stats_limit": {
       "label": "Local models shown",
       "description": "How many local OpenCode Go models to show (1–20)."
+    },
+    "show_layout_settings": {
+      "label": "Show layout settings",
+      "description": "Reveal content width, progress bar height, reset/service toggles and divider controls."
+    },
+    "show_colour_settings": {
+      "label": "Show colour settings",
+      "description": "Reveal header, limit, track and text colours."
+    },
+    "show_section_settings": {
+      "label": "Show account section settings",
+      "description": "Reveal the optional account-section fill, radius and border."
     }
   },
   "status": {

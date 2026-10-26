@@ -62,13 +62,7 @@ entry = "service.luau"
 id    = "card"
 entry = "card.luau"
 
-  [[desktop_widget.setting]]
-  key             = "title"
-  type            = "string"
-  label_key       = "settings.title.label"
-  description_key = "settings.title.description"
-  default         = "AI Usage"
-
+  # ── Behaviour and display ────────────────────────────────────────────────
   [[desktop_widget.setting]]
   key             = "show_header"
   type            = "bool"
@@ -77,18 +71,57 @@ entry = "card.luau"
   default         = true
 
   [[desktop_widget.setting]]
+  key             = "title"
+  type            = "string"
+  label_key       = "settings.title.label"
+  description_key = "settings.title.description"
+  default         = "AI Usage"
+  visible_when    = { key = "show_header", values = ["true"] }
+
+  [[desktop_widget.setting]]
   key             = "show_details"
   type            = "bool"
   label_key       = "settings.show_details.label"
   description_key = "settings.show_details.description"
   default         = true
 
+  # ── Group toggles ────────────────────────────────────────────────────────
+  [[desktop_widget.setting]]
+  key             = "show_layout_settings"
+  type            = "bool"
+  label_key       = "settings.show_layout_settings.label"
+  description_key = "settings.show_layout_settings.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_colour_settings"
+  type            = "bool"
+  label_key       = "settings.show_colour_settings.label"
+  description_key = "settings.show_colour_settings.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_section_settings"
+  type            = "bool"
+  label_key       = "settings.show_section_settings.label"
+  description_key = "settings.show_section_settings.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "background"
+  type            = "bool"
+  label_key       = "settings.background.label"
+  description_key = "settings.background.description"
+  default         = true
+
+  # ── Header / layout ──────────────────────────────────────────────────────
   [[desktop_widget.setting]]
   key             = "show_reset_times"
   type            = "bool"
   label_key       = "settings.show_reset_times.label"
   description_key = "settings.show_reset_times.description"
   default         = true
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_service_icon"
@@ -96,6 +129,7 @@ entry = "card.luau"
   label_key       = "settings.show_service_icon.label"
   description_key = "settings.show_service_icon.description"
   default         = true
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "content_width"
@@ -106,6 +140,7 @@ entry = "card.luau"
   min             = 240
   max             = 900
   step            = 4
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "bar_height"
@@ -116,6 +151,7 @@ entry = "card.luau"
   min             = 2.0
   max             = 14.0
   step            = 0.5
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_width"
@@ -126,6 +162,7 @@ entry = "card.luau"
   min             = 0.5
   max             = 4.0
   step            = 0.1
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_color"
@@ -133,6 +170,7 @@ entry = "card.luau"
   label_key       = "settings.divider_color.label"
   description_key = "settings.divider_color.description"
   default         = "outline"
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_opacity"
@@ -143,13 +181,16 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
+  # ── Colours ──────────────────────────────────────────────────────────────
   [[desktop_widget.setting]]
   key             = "header_color"
   type            = "color"
   label_key       = "settings.header_color.label"
   description_key = "settings.header_color.description"
   default         = "primary"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "header_glyph"
@@ -157,6 +198,7 @@ entry = "card.luau"
   label_key       = "settings.header_glyph.label"
   description_key = "settings.header_glyph.description"
   default         = "chart-bar"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "normal_color"
@@ -164,6 +206,7 @@ entry = "card.luau"
   label_key       = "settings.normal_color.label"
   description_key = "settings.normal_color.description"
   default         = "primary"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "warning_color"
@@ -171,6 +214,7 @@ entry = "card.luau"
   label_key       = "settings.warning_color.label"
   description_key = "settings.warning_color.description"
   default         = "tertiary"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "critical_color"
@@ -178,6 +222,7 @@ entry = "card.luau"
   label_key       = "settings.critical_color.label"
   description_key = "settings.critical_color.description"
   default         = "error"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "unknown_color"
@@ -185,6 +230,7 @@ entry = "card.luau"
   label_key       = "settings.unknown_color.label"
   description_key = "settings.unknown_color.description"
   default         = "on_surface_variant"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "track_color"
@@ -192,6 +238,7 @@ entry = "card.luau"
   label_key       = "settings.track_color.label"
   description_key = "settings.track_color.description"
   default         = "on_surface"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "track_opacity"
@@ -202,6 +249,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "text_color"
@@ -209,6 +257,7 @@ entry = "card.luau"
   label_key       = "settings.text_color.label"
   description_key = "settings.text_color.description"
   default         = "on_surface"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "muted_text_color"
@@ -216,15 +265,16 @@ entry = "card.luau"
   label_key       = "settings.muted_text_color.label"
   description_key = "settings.muted_text_color.description"
   default         = "on_surface_variant"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
-  # Optional grouping surface for account sections. Default 0 keeps the card
-  # HUD-like: no inner panels, only dividers.
+  # ── Optional account section surface ─────────────────────────────────────
   [[desktop_widget.setting]]
   key             = "card_color"
   type            = "color"
   label_key       = "settings.card_color.label"
   description_key = "settings.card_color.description"
   default         = "surface_variant"
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_opacity"
@@ -235,6 +285,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.01
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_radius"
@@ -245,6 +296,7 @@ entry = "card.luau"
   min             = 0
   max             = 32
   step            = 1
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_border_color"
@@ -252,6 +304,7 @@ entry = "card.luau"
   label_key       = "settings.card_border_color.label"
   description_key = "settings.card_border_color.description"
   default         = "outline"
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_border_opacity"
@@ -262,6 +315,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_border_width"
@@ -272,16 +326,9 @@ entry = "card.luau"
   min             = 0.5
   max             = 4.0
   step            = 0.1
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
-  # Host panel surface. These keys are consumed by DesktopWidget::applyCommonSettings
-  # and applySetting, not by this script.
-  [[desktop_widget.setting]]
-  key             = "background"
-  type            = "bool"
-  label_key       = "settings.background.label"
-  description_key = "settings.background.description"
-  default         = true
-
+  # ── Host panel surface ───────────────────────────────────────────────────
   [[desktop_widget.setting]]
   key             = "background_color"
   type            = "color"

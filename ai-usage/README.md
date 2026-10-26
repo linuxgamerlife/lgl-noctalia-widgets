@@ -82,6 +82,9 @@ then waits for an explicit refresh. Automatic local model-stat reads also stop.
 | Card title | AI Usage | Header heading. |
 | Show header | on | Header badge, title, refresh and settings buttons. |
 | Show details | on | Extra rows (tokens, plan, billing mode, top-up, member budgets) and local model stats. |
+| Show layout settings | on | Reveal content width, bar height, reset/service toggles and divider controls. |
+| Show colour settings | off | Reveal header, limit, track and text colours. |
+| Show account section settings | off | Reveal the optional account-section fill, radius and border. |
 | Show reset times | on | Reset line under each limit bar. |
 | Show service icons | on | Provider glyph in each account section header. |
 | Content width | 432 px | Width of the card content (240–900). Match the editor tile width. |
@@ -128,7 +131,7 @@ the surface the user sees. These keys are handled by the host, not this script:
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| Host panel background | on | Let Noctalia draw its surface behind the card. Turn off to place content directly on the wallpaper. |
+| Show host panel | on | Let Noctalia draw its surface behind the card. Turn off to place content directly on the wallpaper. |
 | Panel colour | `surface` | Host panel fill. |
 | Panel opacity | 0.8 | Applied live by the host without recreating the widget. |
 | Panel corner radius | 12 px | Host panel radius. |

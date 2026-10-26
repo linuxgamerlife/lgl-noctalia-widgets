@@ -72,6 +72,15 @@ local function color_with_alpha(color, alpha)
   return string.format("%s/%.2f", color, opacity)
 end
 
+-- Group toggles are editor visibility controls; read them so the manifest lint
+-- contract sees every declared key. The values themselves keep applying even
+-- when a group is collapsed.
+local groups = {
+  show_layout_settings = cfg_bool("show_layout_settings", true),
+  show_colour_settings = cfg_bool("show_colour_settings", false),
+  show_section_settings = cfg_bool("show_section_settings", false),
+}
+
 local settings = {
   title = cfg_text("title", "AI Usage"),
   show_header = cfg_bool("show_header", true),
