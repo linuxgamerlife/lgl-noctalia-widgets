@@ -204,8 +204,22 @@ must live in the running shell's app dir:
 - KWE: `~/.local/share/noctalia-kwe/plugins/ai-usage`
 
 Then run `noctalia msg config-reload` (or `noctalia-kwe msg config-reload`) and
-enable it in **Settings → Plugins**. If a manifest setting was just added,
-disable and re-enable the plugin once and reopen the desktop-widget editor.
+enable it in **Settings → Plugins**.
+
+If a manifest setting was just added and is missing from the widget editor, the
+running entry still has the old settings snapshot. **`config-reload` alone does
+not reseed an already-enabled entry.** Disable and re-enable the plugin once,
+then reopen the desktop-widget editor:
+
+```bash
+noctalia-kwe msg config-reload
+noctalia-kwe msg plugins disable lukk17/ai-usage
+noctalia-kwe msg plugins enable lukk17/ai-usage
+```
+
+Existing widget instances are kept. The old `card_width` and `dense` keys are
+ignored by the new card; set **Content width** to the tile width. A card wider
+than its tile is clipped.
 
 **The card is clipped or has empty space.** Set **Content width** to match the
 tile width minus twice the panel padding.

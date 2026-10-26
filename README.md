@@ -76,6 +76,22 @@ Widgets** (bar capsule).
 `~/.local/share/noctalia/plugins`. Both honour `NOCTALIA_DATA_HOME` and
 `XDG_DATA_HOME`.
 
+### Updating an already-enabled install
+
+A manifest with new settings needs a fresh entry-settings snapshot. Updating an
+already-enabled plugin with only `config-reload` leaves the old snapshot in
+place, so new controls appear missing. Run:
+
+```bash
+noctalia-kwe msg config-reload
+noctalia-kwe msg plugins disable lukk17/ai-usage
+noctalia-kwe msg plugins enable lukk17/ai-usage
+```
+
+Then close and reopen the desktop-widget editor. Existing widget instances are
+kept; obsolete settings such as the old `card_width`/`dense` keys are ignored.
+Set **Content width** to fit the tile after the reload.
+
 Open the panel directly:
 
 ```bash
