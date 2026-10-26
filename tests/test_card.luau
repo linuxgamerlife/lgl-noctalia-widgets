@@ -125,4 +125,20 @@ watch_cb(state)
 assert(find_key(tree, "battery-fill").props.fill == "#ed4c4c", "low should override custom fill")
 assert(find_text(tree, "status.low"), "low status missing with custom fill")
 
+-- Theme role: update() re-resolves the controller art when the palette changes.
+local theme_color = "#010203"
+noctalia.getColor = function(role)
+  if role == "primary" then return theme_color end
+  return nil
+end
+config.illustration_color = "primary"
+config.controller_body_color = "primary"
+dofile(plugin_dir .. "/card.luau")
+assert(written.content:find("#010203", 1, true), "theme colour not baked into SVG")
+local old_art = find_key(tree, "controller-art").props.path
+theme_color = "#040506"
+update()
+assert(written.content:find("#040506", 1, true), "theme change did not regenerate SVG")
+assert(find_key(tree, "controller-art").props.path ~= old_art, "theme change did not swap art path")
+
 print("CARD TEST OK")

@@ -81,6 +81,9 @@ end
 
 -- Draw the controller line art and body in the configured colours. A generated
 -- SVG is used because ui.image cannot tint; fall back to the bundled one.
+-- Re-resolve role tokens on update() so the art follows a live palette change.
+local art_path = nil
+
 local function controller_art()
   local fallback = "assets/controller.svg"
   local line = resolve_color(settings.illustration_color, "#e8ebef")
@@ -96,12 +99,15 @@ local function controller_art()
   if not dir then
     return fallback
   end
+  local path = dir .. "/controller-v2-" .. color_key(line) .. "-" .. color_key(body) .. ".svg"
+  if path == art_path then
+    return path
+  end
   local template = noctalia.readFile("assets/controller-template.svg")
   if not template then
     return fallback
   end
 
-  local path = dir .. "/controller-v2-" .. color_key(line) .. "-" .. color_key(body) .. ".svg"
   local svg = string.gsub(template, "{{BODY}}", body)
   svg = string.gsub(svg, "{{COLOR}}", line)
   local written = noctalia.writeFile(path, svg)
@@ -111,7 +117,7 @@ local function controller_art()
   return path
 end
 
-local art_path = controller_art()
+art_path = controller_art()
 
 local function fresh()
   if type(current_state) ~= "table" then
@@ -480,6 +486,7 @@ function onFrameTick(delta_ms)
 end
 
 function update()
+  art_path = controller_art()
   render()
 end
 

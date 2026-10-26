@@ -161,10 +161,18 @@ The desktop widget also gets Noctalia's standard background settings
 - `battery_low_color` always takes precedence when the battery is low. It also
   colours the percentage, the weak-signal meter and the low-battery marker.
 
-The battery colour settings accept hex values or palette role tokens. The
-controller colours must resolve to a hex value for the generated SVG; palette
-roles are resolved when the running Noctalia version supports
-`noctalia.getColor()`.
+The battery colour settings accept hex values or palette role tokens.
+
+For the controller colours, palette roles are resolved with
+`noctalia.getColor()` and re-resolved on every update (about once a second), so
+a role like `primary`, `on_surface` or `surface_variant` follows a live theme
+change. Hex values stay fixed. On a Noctalia version without `getColor()`, the
+controller falls back to the default light line and dark body.
+
+The connection-mode battery fill uses fixed LED colours by design. Select
+**Custom colour** and set a role token if you want the battery fill itself to
+follow the theme; `battery_low_color` also accepts a role token such as
+`error`.
 
 ## How it works
 
