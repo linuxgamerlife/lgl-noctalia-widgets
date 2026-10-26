@@ -127,12 +127,19 @@ whatever the cards need.
 Noctalia v5.3.0 renders plugin widget settings in a single column and has no
 manifest field for columns, groups or sections. To keep that column usable, the
 host panel **background toggle, colour, opacity, radius and padding are the
-first rows** of the Widget section, followed by **Show styling controls** and
-**Show section toggles** (both default off). The first reveals the colour, bar,
-chart and divider controls; the second reveals the Show header/network/CPU/RAM/
-GPU/VRAM/disks/fan/details toggles. All stored values stay active while hidden.
-Noctalia also renders its own Background section at the bottom of the inspector;
-it edits the same host-panel keys as the first rows.
+first rows** of the Widget section, followed by three collapsed groups, all
+default off:
+
+- **Show card settings** — card title, content width, gap, padding, radius, fill
+  and border.
+- **Show styling controls** — colours, bars, temperature thresholds, charts and
+  dividers.
+- **Show section toggles** — Show header/network/CPU/RAM/GPU/VRAM/disks/fan/
+  details.
+
+All stored values stay active while hidden. Noctalia also renders its own
+Background section at the bottom of the inspector; it edits the same host-panel
+keys as the first rows.
 
 If you need a different layout, that is a shell-side change to the widget
 inspector, not something a plugin manifest can request.

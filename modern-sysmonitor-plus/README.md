@@ -68,8 +68,15 @@ shared by the service and the card.
 
 ### Card sections
 
+The inspector starts with the host background controls and three collapsed
+groups: **Show card settings**, **Show styling controls** and **Show section
+toggles**. Hidden values stay active; the toggles only control visibility in
+the editor.
+
 | Setting | Default | What it does |
 | --- | --- | --- |
+| Show card settings | off | Reveal the card title, content width, gap, padding, radius, fill and border controls. Their values stay active while hidden. |
+| Show styling controls | off | Reveal the colour, bar, temperature, chart and divider controls. Their values stay active while hidden. |
 | Show section toggles | off | Reveal the nine section visibility controls below. Their values stay active while hidden. |
 | Card title | System Monitor | Header heading. |
 | Show header | on | Title and settings button. |
@@ -81,7 +88,6 @@ shared by the service and the card.
 | Show disks | on | One block per physical disk. Hides when no disks are found. |
 | Show CPU fan | on | Show the CPU fan row when a fan is found. |
 | Allow GPU details | on | Show the GPU More/Less button. |
-| Show styling controls | off | Reveal the colour, bar, chart and divider controls. Values stay active while hidden; Noctalia renders plugin widget settings in one column, so this keeps the default panel short. |
 
 ### Layout
 

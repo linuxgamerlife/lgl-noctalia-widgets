@@ -64,6 +64,7 @@ local settings = {
   show_header = cfg_bool("show_header", true),
   -- Settings-editor hint only: the card always renders with the stored styling.
   show_styling = cfg_bool("show_styling", false),
+  show_card_settings = cfg_bool("show_card_settings", false),
   show_sections = cfg_bool("show_sections", false),
   show_network = cfg_bool("show_network", true),
   show_cpu = cfg_bool("show_cpu", true),

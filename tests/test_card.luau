@@ -38,6 +38,7 @@ local function base_config()
     title = "Lab Rig",
     show_header = true,
     show_styling = false,
+    show_card_settings = false,
     show_sections = false,
     show_network = true,
     show_cpu = true,
@@ -224,7 +225,7 @@ assert(find("disk-2-divider"), "disks should be separated")
 -- Host-handled keys are read (lint contract) and the card adds no surface.
 for _, key in ipairs({
   "background", "background_color", "background_opacity", "background_radius", "background_padding",
-  "show_styling", "show_sections",
+  "show_styling", "show_card_settings", "show_sections",
 }) do
   assert(ctx.requested[key], "setting " .. key .. " was not read")
 end

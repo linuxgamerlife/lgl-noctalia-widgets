@@ -140,14 +140,25 @@ expected_prefix = [
     "background_opacity",
     "background_radius",
     "background_padding",
+    "show_card_settings",
     "show_styling",
     "show_sections",
 ]
 if desktop_keys[: len(expected_prefix)] != expected_prefix:
     fail("desktop widget settings must start with the host background controls and show_styling")
+card_keys = {
+    "title", "content_width", "card_gap", "card_padding", "card_radius",
+    "card_fill_color", "card_fill_opacity", "card_border_color", "card_border_width",
+}
+for setting in desktop_settings:
+    key = setting.get("key")
+    if key in card_keys:
+        visible = setting.get("visible_when", {})
+        if visible.get("key") != "show_card_settings" or visible.get("values") != ["true"]:
+            fail(f"card setting {key!r} must be gated by show_card_settings")
+
 styling_keys = {
-    "card_gap", "card_padding", "card_radius", "card_fill_color", "card_fill_opacity",
-    "card_border_color", "card_border_width", "accent_color", "text_color", "muted_text_color",
+    "accent_color", "text_color", "muted_text_color",
     "track_color", "track_opacity", "bar_height", "segment_count", "segment_gap",
     "temp_warm", "temp_hot", "temp_warm_color", "critical_color", "disk_warning",
     "network_chart_height", "network_line_width", "network_fill_opacity", "network_scale_kbps",
