@@ -3,7 +3,8 @@
 Noctalia v5 plugin with a headless sampler (`poller` service) and a desktop
 card (`card` widget entry). The service reads the sources the KDE widget used,
 publishes one plain `stats` table, and the card watches it, keeps the network
-history and renders a `ui.*` tree. There is no QML and no external daemon.
+and CPU/GPU usage history, and renders a `ui.*` tree. There is no QML and no
+external daemon. The card order is **CPU, GPU, VRAM, RAM, disks, network**.
 
 ## How the data is collected
 
@@ -44,9 +45,9 @@ The service publishes `stats` through `noctalia.state`:
 }
 ```
 
-The card appends one network history point per distinct `ts:seq`, so a stalled
-service does not duplicate points and the chart cadence follows **Update
-every**. A state older than three update intervals is stale: the card dims the
+The card appends one history point per distinct `ts:seq` for the network, CPU
+usage and GPU usage charts, so a stalled service does not duplicate points and
+the chart cadence follows **Update every**. A state older than three update intervals is stale: the card dims the
 content, blanks the values, keeps the history and shows **Waiting for system
 data**.
 
@@ -102,15 +103,19 @@ the editor.
 | Segment gap | 3 px | Gap between segments (0–6). |
 | Divider thickness | 1 px | Header, GPU-details and disk dividers (0.5–4). |
 
-### Network charts
+### Charts
+
+CPU and GPU usage are area charts like the network charts; RAM, VRAM and disks
+keep segmented bars. All charts use the accent colour.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
+| Usage chart height | 20 px | CPU and GPU usage chart height (12–48). |
 | Network chart height | 32 px | Download chart height (16–80); the upload chart is 65% of it. |
-| Network line width | 1.5 | Chart line thickness (0.5–4). |
-| Network fill opacity | 0.15 | Area fill under each chart line (0–1). |
-| Network chart scale | 10 KB/s | Minimum top of the chart scale; a larger sample raises it automatically (1–1024 KB/s). |
-| Network history | 30 | Samples kept for both charts (10–120). |
+| Chart line width | 1.5 | Network and CPU/GPU usage chart line thickness (0.5–4). |
+| Chart fill opacity | 0.15 | Area fill under every chart line (0–1). |
+| Network chart scale | 10 KB/s | Minimum top of the network scale; a larger sample raises it automatically (1–1024 KB/s). CPU/GPU usage uses the fixed 0–100% scale. |
+| Chart history | 30 | Samples kept for the network and CPU/GPU usage charts (10–120). |
 
 ### Colours
 

@@ -161,8 +161,8 @@ styling_keys = {
     "accent_color", "text_color", "muted_text_color",
     "track_color", "track_opacity", "bar_height", "segment_count", "segment_gap",
     "temp_warm", "temp_hot", "temp_warm_color", "critical_color", "disk_warning",
-    "network_chart_height", "network_line_width", "network_fill_opacity", "network_scale_kbps",
-    "divider_width", "divider_color", "history_points",
+    "usage_chart_height", "network_chart_height", "network_line_width", "network_fill_opacity",
+    "network_scale_kbps", "divider_width", "divider_color", "history_points",
 }
 for setting in desktop_settings:
     key = setting.get("key")

@@ -69,6 +69,7 @@ local function base_config()
     temp_warm_color = "#ffaa00",
     critical_color = "#ff0000",
     disk_warning = 90,
+    usage_chart_height = 24,
     network_chart_height = 40,
     network_line_width = 2,
     network_fill_opacity = 0.4,
@@ -178,8 +179,11 @@ assert_eq(find("network-down-graph").props.color, "#ff8800", "chart accent colou
 -- CPU: 42.5% of ten segments rounds to four active segments.
 assert_eq(find("cpu-usage-value").props.text, "43%", "CPU value")
 assert_eq(find("cpu-usage-value").props.color, "#abcdef", "CPU text colour")
-assert_eq(find("cpu-usage-bar-4").props.fill, "#ff8800", "active CPU segment")
-assert_eq(find("cpu-usage-bar-5").props.fill, "#00ff0080", "inactive CPU track with alpha")
+assert_eq(find("cpu-usage-graph").props.height, 24, "CPU usage chart height")
+assert_eq(find("cpu-usage-graph").props.lineWidth, 2, "CPU usage chart line width")
+assert_eq(find("cpu-usage-graph").props.fillOpacity, 0.4, "CPU usage chart fill opacity")
+assert_eq(find("cpu-usage-graph").props.color, "#ff8800", "CPU usage chart colour")
+assert_close(find("cpu-usage-graph").props.values[1], 0.425, 1e-9, "CPU usage history")
 assert_eq(find("cpu-fan-value").props.text, "1500 RPM", "CPU fan")
 assert_eq(find("cpu-temp-value").props.text, "90 °C", "CPU temperature")
 assert_eq(find("cpu-temp-value").props.color, "#ff0000", "critical CPU temperature colour")
@@ -195,6 +199,8 @@ assert_eq(find("ram-bar-4").props.fill, "#00ff0080", "inactive RAM track")
 
 -- GPU and VRAM.
 assert_eq(find("gpu-usage-value").props.text, "37%", "GPU usage")
+assert_eq(find("gpu-usage-graph").props.height, 24, "GPU usage chart height")
+assert_close(find("gpu-usage-graph").props.values[1], 0.374, 1e-9, "GPU usage history")
 assert_eq(find("gpu-temp-value").props.text, "61 °C", "GPU temperature")
 assert_eq(find("gpu-temp-value").props.color, "#ff8800", "normal GPU temperature colour")
 assert_eq(find("gpu-details-toggle").props.text, "More", "GPU details button")
@@ -251,10 +257,22 @@ assert(mock.find(tree, "gpu-details-1") == nil, "GPU details did not collapse")
 -- A second sample appends one history point and re-scales the chart.
 state.seq = 2
 state.ts = os.time()
+state.cpu.usage = 80
+state.gpu.usage = 50
 state.net.down_bps = 20480
 state.net.up_bps = 10240
 watch(state)
 tree = ctx.desktop_tree
+assert_eq(mock.find(tree, "cpu-usage-value").props.text, "80%", "second CPU sample")
+assert_eq(mock.find(tree, "gpu-usage-value").props.text, "50%", "second GPU sample")
+local cpu_values = mock.find(tree, "cpu-usage-graph").props.values
+assert_eq(#cpu_values, 2, "CPU usage history length")
+assert_close(cpu_values[1], 0.425, 1e-9, "first CPU usage point")
+assert_close(cpu_values[2], 0.8, 1e-9, "second CPU usage point")
+local gpu_values = mock.find(tree, "gpu-usage-graph").props.values
+assert_eq(#gpu_values, 2, "GPU usage history length")
+assert_close(gpu_values[1], 0.374, 1e-9, "first GPU usage point")
+assert_close(gpu_values[2], 0.5, 1e-9, "second GPU usage point")
 local down_values = mock.find(tree, "network-down-graph").props.values
 assert_eq(#down_values, 2, "network history length")
 assert_close(down_values[1], 0.1, 1e-9, "first download point after rescale")
@@ -273,6 +291,7 @@ assert_eq(mock.find(tree, "cpu-usage-value").props.text, "—", "stale CPU value
 assert_eq(mock.find(tree, "gpu-usage-value").props.text, "—", "stale GPU value")
 assert_eq(mock.find(tree, "content").props.opacity, 0.7, "stale content opacity")
 assert_eq(mock.findText(tree, "Waiting for system data") ~= nil, true, "waiting status")
+assert_eq(#mock.find(tree, "cpu-usage-graph").props.values, 2, "stale state keeps CPU history")
 assert_eq(#mock.find(tree, "network-down-graph").props.values, 2, "stale state keeps history")
 
 -- No GPU probe: explicit message instead of misleading zeros.
@@ -284,6 +303,7 @@ tree = ctx.desktop_tree
 assert_eq(mock.find(tree, "gpu-unavailable").props.text, "No GPU detected", "GPU unavailable message")
 assert_eq(mock.find(tree, "vram-unavailable").props.text, "No GPU detected", "VRAM unavailable message")
 assert(mock.find(tree, "gpu-usage-value") == nil, "no GPU usage row without a probe")
+assert(mock.find(tree, "gpu-usage-graph") == nil, "no GPU usage chart without a probe")
 assert(mock.find(tree, "gpu-details-toggle") == nil, "no details button without a probe")
 
 -- Defaults are palette roles, not fixed hex.
@@ -293,7 +313,8 @@ local role_tree = role_ctx.desktop_tree
 assert_eq(mock.find(role_tree, "card").props.width, 320, "default content width")
 assert_eq(mock.find(role_tree, "network-card").props.fill, "surface_variant/0.35", "default card fill role")
 assert_eq(mock.find(role_tree, "network-header-glyph").props.color, "primary", "default accent role")
-assert_eq(mock.find(role_tree, "cpu-usage-bar-20").props.fill, "on_surface/0.14", "default track role")
+assert_eq(mock.find(role_tree, "ram-bar-20").props.fill, "on_surface/0.14", "default track role")
+assert_eq(mock.find(role_tree, "cpu-usage-graph").props.height, 20, "default usage chart height")
 assert_eq(mock.find(role_tree, "network-down-graph").props.color, "primary", "default chart role")
 assert_eq(mock.find(role_tree, "header-divider").props.color, "outline", "default divider role")
 

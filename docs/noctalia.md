@@ -30,7 +30,7 @@ handles cross the boundary.
 | File | Responsibility |
 | --- | --- |
 | `service.luau` | Composition entry: settings, timers, async GPU/disk caches, publishing |
-| `card.luau` | Declarative card, network history, formatting, GPU details toggle |
+| `card.luau` | Declarative card, network and CPU/GPU usage history, formatting, GPU details toggle |
 | `lib/format.luau` | Pure clamp/round/trim, speed and size formatters |
 | `lib/hwmon.luau` | sysfs reads, hwmon discovery, CPU temperature, CPU fan, disk temperature |
 | `lib/gpu.luau` | AMD sysfs reader, Nvidia CSV parser and command, host-probe fallback |
@@ -143,9 +143,10 @@ The service publishes `stats` once per update interval:
 
 The card:
 
-- appends one network history point per distinct `ts:seq` (so a plain
-  `update()` never duplicates a point);
-- normalises each chart against `network_scale_kbps` and the largest sample;
+- appends one history point per distinct `ts:seq` for the network, CPU usage
+  and GPU usage charts (so a plain `update()` never duplicates a point);
+- normalises network charts against `network_scale_kbps` and the largest
+  sample; CPU/GPU usage uses the fixed 0–100% scale;
 - treats a state older than `max(3, update_interval * 3)` seconds as stale;
 - blanks values with `—`, keeps the history, dims the content and shows
   **Waiting for system data** when stale;
@@ -211,11 +212,11 @@ The mock covers:
   AMD GPU fields, Nvidia full/short query fallback, host GPU fallback, disk
   grouping (including LVM and duplicate mounts), missing sensors, malformed
   `/proc/stat`, disk refresh cadence and config changes.
-- `test_card.luau` — every section, segmented-bar fills, GPU details, stale
-  state, no-GPU state, hidden sections, host-panel inset, role tokens vs. hex,
-  opacity/stroke/width settings and the settings callback.
+- `test_card.luau` — every section, CPU/GPU usage charts, segmented-bar fills,
+  GPU details, stale state, no-GPU state, hidden sections, host-panel inset,
+  role tokens vs. hex, opacity/stroke/width settings and the settings callback.
 - `test_integration.luau` — real service + real card, initial waiting state,
-  live values, network history cadence, stale handling and recovery.
+  live values, network and usage history cadence, stale handling and recovery.
 
 ## Related
 

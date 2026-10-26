@@ -195,12 +195,12 @@
       "description": "Height of the download chart in logical px. The upload chart is 65% of this height."
     },
     "network_line_width": {
-      "label": "Network line width",
-      "description": "Thickness of the network chart lines."
+      "label": "Chart line width",
+      "description": "Thickness of the network and CPU/GPU usage chart lines."
     },
     "network_fill_opacity": {
-      "label": "Network fill opacity",
-      "description": "Opacity of the area fill under each network chart line, from 0 (line only) to 1 (solid)."
+      "label": "Chart fill opacity",
+      "description": "Opacity of the area fill under the network and CPU/GPU usage chart lines."
     },
     "network_scale_kbps": {
       "label": "Network chart scale",
@@ -215,8 +215,8 @@
       "description": "Colour of the header, GPU details and disk dividers. Accepts a hex colour or palette role."
     },
     "history_points": {
-      "label": "Network history",
-      "description": "Number of samples kept for the download and upload charts (10–120)."
+      "label": "Chart history",
+      "description": "Number of samples kept for the network and CPU/GPU usage charts (10–120)."
     },
     "background": {
       "label": "Host panel background",
@@ -237,6 +237,10 @@
     "background_padding": {
       "label": "Panel padding",
       "description": "Space between the host panel edge and the card content in logical px."
+    },
+    "usage_chart_height": {
+      "label": "Usage chart height",
+      "description": "Height of the CPU and GPU usage charts in logical px. They share the chart line and fill settings."
     }
   }
 }

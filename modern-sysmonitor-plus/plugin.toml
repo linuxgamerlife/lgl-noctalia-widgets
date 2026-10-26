@@ -417,6 +417,17 @@ entry = "card.luau"
   visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
+  key             = "usage_chart_height"
+  type            = "int"
+  label_key       = "settings.usage_chart_height.label"
+  description_key = "settings.usage_chart_height.description"
+  default         = 20
+  min             = 12
+  max             = 48
+  step            = 2
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
   key             = "network_chart_height"
   type            = "int"
   label_key       = "settings.network_chart_height.label"

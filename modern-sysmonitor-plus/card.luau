@@ -100,6 +100,7 @@ local settings = {
   critical_color = cfg_text("critical_color", "error"),
   disk_warning = cfg_number("disk_warning", 90, 50, 100),
 
+  usage_chart_height = math.floor(cfg_number("usage_chart_height", 20, 12, 48) + 0.5),
   network_chart_height = math.floor(cfg_number("network_chart_height", 32, 16, 80) + 0.5),
   network_line_width = cfg_number("network_line_width", 1.5, 0.5, 4),
   network_fill_opacity = cfg_number("network_fill_opacity", 0.15, 0, 1),
@@ -151,6 +152,8 @@ local card_fill = color_with_alpha(settings.card_fill_color, settings.card_fill_
 local current = nil
 local last_token = nil
 local gpu_expanded = false
+local cpu_history = {}
+local gpu_history = {}
 local down_history = {}
 local up_history = {}
 
@@ -172,6 +175,14 @@ local function push(series, value)
   end
 end
 
+local function copy(series)
+  local values = {}
+  for index = 1, #series do
+    values[index] = series[index]
+  end
+  return values
+end
+
 local function ingest(value)
   current = value
   if type(value) ~= "table" or not fresh() then
@@ -188,6 +199,22 @@ local function ingest(value)
   if type(net) == "table" then
     push(down_history, tonumber(net.down_bps))
     push(up_history, tonumber(net.up_bps))
+  end
+
+  local cpu = value.cpu
+  if type(cpu) == "table" then
+    local usage = tonumber(cpu.usage)
+    if usage ~= nil then
+      push(cpu_history, format.clamp(usage, 0, 100) / 100)
+    end
+  end
+
+  local gpu = value.gpu
+  if type(gpu) == "table" then
+    local usage = tonumber(gpu.usage)
+    if usage ~= nil then
+      push(gpu_history, format.clamp(usage, 0, 100) / 100)
+    end
   end
 end
 
@@ -351,7 +378,7 @@ local function progress_bar(key, percent, fill, known)
   })
 end
 
-local function usage_row(key, percent, color, known)
+local function usage_row(key, percent, history, known)
   return ui.row({ key = key, gap = 8, align = "center" }, {
     ui.label({
       key = key .. "-label",
@@ -361,7 +388,15 @@ local function usage_row(key, percent, color, known)
       color = settings.muted_text_color,
       maxLines = 1,
     }),
-    segmented(key .. "-bar", percent, color, known),
+    ui.graph({
+      key = key .. "-graph",
+      values = copy(history),
+      color = settings.accent_color,
+      lineWidth = settings.network_line_width,
+      fillOpacity = settings.network_fill_opacity,
+      height = settings.usage_chart_height,
+      flexGrow = 1,
+    }),
     ui.label({
       key = key .. "-value",
       text = known and format.pct(percent) or DASH,
@@ -553,7 +588,7 @@ local function cpu_card(stats)
 
   local children = {
     section_header("cpu-header", "cpu", noctalia.tr("labels.cpu")),
-    usage_row("cpu-usage", usage, settings.accent_color, usage ~= nil),
+    usage_row("cpu-usage", usage, cpu_history, usage ~= nil),
     temp_row("cpu-temp", temp, temp ~= nil),
   }
 
@@ -713,7 +748,7 @@ local function gpu_card(stats)
   local temp = tonumber(gpu.temp_c)
   local children = {
     section_header("gpu-header", "device-desktop", noctalia.tr("labels.gpu"), details_button()),
-    usage_row("gpu-usage", usage, settings.accent_color, usage ~= nil),
+    usage_row("gpu-usage", usage, gpu_history, usage ~= nil),
     temp_row("gpu-temp", temp, temp ~= nil),
   }
 
@@ -889,7 +924,7 @@ local function render()
   end
 
   local cards = {}
-  for _, build in ipairs({ network_card, cpu_card, ram_card, gpu_card, vram_card, disks_card }) do
+  for _, build in ipairs({ cpu_card, gpu_card, vram_card, ram_card, disks_card, network_card }) do
     local card = build(stats)
     if card then
       table.insert(cards, card)

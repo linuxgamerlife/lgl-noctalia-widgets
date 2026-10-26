@@ -32,6 +32,7 @@ app directories.
 | CPU fan (`--cpu-fan N`, 0 = automatic) | `poller`: hwmon `fan<N>_input`, automatic label containing “cpu”; card shows the row when found |
 | `/proc/meminfo` RAM used/total | `poller`: `MemTotal` − `MemAvailable`, with the free+buffers+cached fallback |
 | `/proc/net/dev` download/upload | `poller`: non-`lo` byte deltas; the card keeps the 30-point history |
+| CPU/GPU usage segmented bars | CPU/GPU usage area charts (`ui.graph`), fixed 0–100% scale; RAM/VRAM/disks keep segmented bars |
 | AMD GPU `/sys/class/drm` | `poller`: largest-VRAM AMD card (`gpu_busy_percent`, `mem_info_vram_*`, hwmon) |
 | Nvidia `nvidia-smi` | `poller`: full query, then a short query if the driver rejects extra fields |
 | (no Intel path) | Host `noctalia.systemStats()` GPU probe as a final fallback |
@@ -44,8 +45,9 @@ app directories.
 | Scroll when the tile is short | Not reproduced; resize the desktop-widget tile instead (see Limitations) |
 | Show-card checkboxes, update interval, CPU fan number | Plugin and card settings, see [`modern-sysmonitor-plus/README.md`](modern-sysmonitor-plus/README.md#settings) |
 
-The KDE widget only had a full desktop representation, so the port has one
-`[[desktop_widget]]` entry and no bar widget or panel.
+The card order is CPU, GPU, VRAM, RAM, disks, network — the network card sits
+at the bottom. The KDE widget only had a full desktop representation, so the
+port has one `[[desktop_widget]]` entry and no bar widget or panel.
 
 ## Theming map
 
