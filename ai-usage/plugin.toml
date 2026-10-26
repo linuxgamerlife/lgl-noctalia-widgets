@@ -82,6 +82,7 @@ entry = "card.luau"
   default         = 0.85
   min             = 0.0
   max             = 1.0
+  step            = 0.01
 
   [[desktop_widget.setting]]
   key             = "card_opacity"
@@ -91,6 +92,7 @@ entry = "card.luau"
   default         = 0.42
   min             = 0.0
   max             = 1.0
+  step            = 0.01
 
   [[desktop_widget.setting]]
   key             = "dense"
