@@ -15,6 +15,7 @@ local settings = {
   controller_stroke_width = tonumber(noctalia.getConfig("controller_stroke_width")) or 3.4,
   battery_color_mode = noctalia.getConfig("battery_color_mode") or "connection",
   battery_fill_color = noctalia.getConfig("battery_fill_color") or "#fcfcfc",
+  battery_fill_opacity = tonumber(noctalia.getConfig("battery_fill_opacity")) or 1.0,
   battery_low_color = noctalia.getConfig("battery_low_color") or "#ed4c4c",
   text_color = noctalia.getConfig("text_color") or "on_surface",
   muted_text_color = noctalia.getConfig("muted_text_color") or "on_surface_variant",
@@ -29,6 +30,11 @@ if settings.battery_fill_color == "" then
 end
 if settings.battery_low_color == "" then
   settings.battery_low_color = "#ed4c4c"
+end
+if settings.battery_fill_opacity < 0 then
+  settings.battery_fill_opacity = 0
+elseif settings.battery_fill_opacity > 1 then
+  settings.battery_fill_opacity = 1
 end
 if settings.text_color == "" then
   settings.text_color = "on_surface"
@@ -449,7 +455,7 @@ local function render()
       height = fill_height,
       radius = 7,
       fill = color,
-      opacity = charging and pulse or 1,
+      opacity = (charging and pulse or 1) * settings.battery_fill_opacity,
     }))
   end
 

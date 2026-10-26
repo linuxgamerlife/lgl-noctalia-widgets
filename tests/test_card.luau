@@ -20,6 +20,7 @@ local config = {
   controller_stroke_width = 5.5,
   battery_color_mode = "connection",
   battery_fill_color = "#33cc99",
+  battery_fill_opacity = 0.5,
   battery_low_color = "#ed4c4c",
   text_color = "#abcdef",
   muted_text_color = "#123456",
@@ -88,6 +89,7 @@ assert(find_text(tree, "%").props.color == "#123456", "secondary text colour not
 assert(find_text(tree, "status.connected").props.color == "#abcdef", "status text colour not applied")
 assert(find_text(tree, "-62 dBm").props.color == "#123456", "dBm text colour not applied")
 assert(find_key(tree, "status-glyph").props.color == "#abcdef", "marker text colour not applied")
+assert(find_key(tree, "battery-fill").props.opacity == 0.5, "fill opacity setting not applied")
 assert(frame_tick == false, "should not request frame ticks while idle")
 
 -- Charging: pulse frames should change the fill opacity.
@@ -97,7 +99,7 @@ assert(frame_tick == true, "charging should request frame ticks")
 local before = find_key(tree, "battery-fill").props.opacity
 for _ = 1, 4 do onFrameTick(33) end
 local after = find_key(tree, "battery-fill").props.opacity
-assert(before == 1 and after < 1, ("pulse did not change opacity: %s -> %s"):format(before, after))
+assert(before == 0.5 and after < before, ("pulse did not change opacity: %s -> %s"):format(before, after))
 
 -- Low battery: red fill, low status.
 state.charging = false

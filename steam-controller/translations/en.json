@@ -22,6 +22,10 @@
       "description": "Battery fill colour when 'Custom colour' is selected. Low battery still uses the low-battery colour.",
       "label": "Custom fill colour"
     },
+    "battery_fill_opacity": {
+      "description": "Battery fill opacity, from 0 (transparent) to 1 (solid). Applies in both connection and custom colour modes.",
+      "label": "Battery fill opacity"
+    },
     "battery_low_color": {
       "description": "Battery fill, percentage, signal meter and warning marker colour when the battery is low.",
       "label": "Low battery colour"

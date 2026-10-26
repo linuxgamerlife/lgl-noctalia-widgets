@@ -117,7 +117,8 @@ illustration_color      = "#e8ebef"
 controller_body_color   = "#2c3035"
 controller_stroke_width = 3.4
 battery_color_mode      = "connection"   # connection | custom
-battery_fill_color    = "#fcfcfc"      # used when mode = custom
+battery_fill_color      = "#fcfcfc"      # used when mode = custom
+battery_fill_opacity    = 1.0            # 0 = transparent, 1 = solid
 battery_low_color       = "#ed4c4c"
 text_color              = "on_surface"
 muted_text_color        = "on_surface_variant"
@@ -143,6 +144,7 @@ entries are per-widget presentation settings.
 | `controller_stroke_width` | desktop widget | `3.4` | Controller outline and trackpad edge thickness (`0.5`–`8`). |
 | `battery_color_mode` | desktop widget | `connection` | `connection` uses the LED colours; `custom` uses `battery_fill_color`. |
 | `battery_fill_color` | desktop widget | `#fcfcfc` | Custom battery fill colour, used when `battery_color_mode = "custom"`. |
+| `battery_fill_opacity` | desktop widget | `1.0` | Battery fill opacity (`0` = transparent, `1` = solid). Applies in both colour modes. |
 | `battery_low_color` | desktop widget | `#ed4c4c` | Low-battery fill, percentage, weak-signal meter and marker colour. Always wins when low. |
 | `text_color` | desktop widget | `on_surface` | Percentage, status text, marker and active signal bars. |
 | `muted_text_color` | desktop widget | `on_surface_variant` | Percentage sign, `via` line, dBm label and inactive signal bars. |
@@ -165,6 +167,8 @@ The desktop widget also gets Noctalia's standard background settings
   colours: white on the puck, blue over Bluetooth, green on USB-C, orange while
   charging off-dock.
 - `battery_color_mode = "custom"` uses `battery_fill_color` for the battery fill.
+- `battery_fill_opacity` sets how transparent the fill is (`0`–`1`); it applies
+  in both connection and custom modes.
 - `battery_low_color` always takes precedence when the battery is low. It also
   colours the percentage, the weak-signal meter and the low-battery marker.
 - `text_color` and `muted_text_color` control the percentage/status/marker and
