@@ -92,6 +92,7 @@ function M.usageWindow(period, name, usedPercent, resetsAt, options)
     validUntil = settings.validUntil,
     estimated = settings.estimated == true,
     canBeMain = settings.canBeMain ~= false,
+    status = settings.status,
   }
 end
 

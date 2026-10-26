@@ -34,7 +34,7 @@ local function readWindow(value)
   if resetsAt == nil then
     return nil
   end
-  return { percent = value.percent, resetsAt = resetsAt }
+  return { percent = value.percent, resetsAt = resetsAt, status = value.status }
 end
 
 local function interpret(results)
@@ -50,7 +50,13 @@ local function interpret(results)
       if item == nil then
         return usage.unexpected(http.REASON.SHAPE_CHANGED)
       end
-      table.insert(windows, usage.usageWindow(spec.period, "", item.percent, item.resetsAt))
+      local percent = item.percent
+      if item.status == "rate-limited" then
+        -- The API floors the percentage and says rate-limited at the cap; a
+        -- floored 99 still means spent.
+        percent = 100
+      end
+      table.insert(windows, usage.usageWindow(spec.period, "", percent, item.resetsAt, { status = item.status }))
     end
   end
   if #windows == 0 then

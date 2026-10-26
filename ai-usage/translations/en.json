@@ -12,8 +12,8 @@
   "settings.show_header.description": "Show the title, refresh button and settings button above the cards.",
   "settings.show_details.label": "Show details",
   "settings.show_details.description": "Show the extra rows: tokens, plan, billing mode, top-up and member budgets.",
-  "settings.background_opacity.label": "Background opacity",
-  "settings.background_opacity.description": "Opacity of the card surface behind the desktop widget. Set it to 0 for no background.",
+  "settings.background_opacity.label": "Outer background opacity",
+  "settings.background_opacity.description": "Opacity of the outer panel. Set it to 0 for no outer fill or border.",
   "settings.dense.label": "Compact cards",
   "settings.dense.description": "Use smaller text, gaps and bars.",
   "settings.show_percent.label": "Show percentage",
@@ -177,5 +177,11 @@
   "provider.huggingFace.key_help": "Fine-grained access token with billing read permission, from Hugging Face settings.",
   "provider.jetbrains.key_help": "No key needed. The widget reads the JetBrains IDE log.",
   "form.name_keep": "Leave empty to keep the current label",
-  "form.current_label": "Current label: {name}"
+  "form.current_label": "Current label: {name}",
+  "settings.card_width.label": "Widget width",
+  "settings.card_width.description": "Content width in logical pixels. Account cards, rows and bars grow with it. The desktop tile itself is sized in the widget editor.",
+  "settings.card_opacity.label": "Account card opacity",
+  "settings.card_opacity.description": "Opacity of the account cards inside the widget. Set it to 0 to blend the cards into the wallpaper.",
+  "status.window.rate_limited": "Rate limited",
+  "status.window.exhausted": "Exhausted"
 }

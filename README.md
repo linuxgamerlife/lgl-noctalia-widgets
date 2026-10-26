@@ -96,6 +96,41 @@ backoff up to one hour, `Retry-After`, the “connection lost retries without
 doubling” rule, the clock-moved-back rule, multiple accounts per service,
 per-account error states, the 1 MiB answer cap and the read-only local sources.
 
+### Background and width
+
+The desktop widget has two independent opacity sliders:
+
+- **Outer background opacity** is the panel behind the header and cards. At `0`
+  the outer fill and border are removed.
+- **Account card opacity** is the surface of each account card. At `0` the cards
+  have no fill or border, so only text and bars remain over the wallpaper.
+
+Set both to `0` for a completely transparent widget. The selection handles and
+the white rectangle in the widget editor are the editor’s own chrome, not part
+of the widget, and disappear when you leave the editor.
+
+**Widget width** sets the content width in logical pixels. Rows, progress bars
+and separators stretch to that width. The desktop tile itself is sized by the
+widget editor; Noctalia’s plugin desktop-widget API does not expose the tile
+width to the script in v5.3.0, so the content is centered inside the tile. To
+get a tight fit, set the tile width in the editor and `card_width` here to the
+same value.
+
+### OpenCode Go fields
+
+`GET /zen/go/v1/usage` exposes only three windows (`rolling`, `weekly`,
+`monthly`), and each window has only:
+
+- `percent` — used percentage, floored by the API
+- `resetsAt` — ISO reset timestamp
+- `status` — `ok` or `rate-limited`
+
+There is no plan name, dollar amount, credit balance, token count, model
+breakdown or history in this endpoint. The plugin shows percent and reset for
+each window, and shows **Rate limited** (and treats the window as 100%) when the
+status is `rate-limited`. Dollar figures would require the OpenCode console
+session, not an API key, so they are intentionally not used.
+
 ## How it gets data, and is it secure?
 
 ### Remote providers
@@ -210,7 +245,9 @@ Desktop card:
 | --- | --- | --- | --- |
 | `show_header` | bool | `true` | Title, refresh and settings buttons |
 | `show_details` | bool | `true` | Tokens, plan, billing mode, top-up, member budgets |
-| `background_opacity` | double | `0.85` | Card surface opacity; `0` hides the background |
+| `card_width` | int | `360` | Content width in logical px; cards, rows and bars grow with it |
+| `background_opacity` | double | `0.85` | Outer panel opacity; `0` removes the outer fill and border |
+| `card_opacity` | double | `0.42` | Account card opacity; `0` blends the cards into the wallpaper |
 | `dense` | bool | `false` | Smaller text, gaps and bars |
 
 Bar widget:

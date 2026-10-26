@@ -59,11 +59,29 @@ entry = "card.luau"
   default         = true
 
   [[desktop_widget.setting]]
+  key             = "card_width"
+  type            = "int"
+  label_key       = "settings.card_width.label"
+  description_key = "settings.card_width.description"
+  default         = 360
+  min             = 220
+  max             = 900
+
+  [[desktop_widget.setting]]
   key             = "background_opacity"
   type            = "double"
   label_key       = "settings.background_opacity.label"
   description_key = "settings.background_opacity.description"
   default         = 0.85
+  min             = 0.0
+  max             = 1.0
+
+  [[desktop_widget.setting]]
+  key             = "card_opacity"
+  type            = "double"
+  label_key       = "settings.card_opacity.label"
+  description_key = "settings.card_opacity.description"
+  default         = 0.42
   min             = 0.0
   max             = 1.0
 

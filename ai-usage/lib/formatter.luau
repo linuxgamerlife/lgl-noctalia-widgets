@@ -303,6 +303,14 @@ local function resetText(item, now, isExpired)
   })
 end
 
+local function statusText(item)
+  if item.status == nil or item.status == "" or item.status == "ok" then
+    return ""
+  end
+  local key = "status.window." .. tostring(item.status):gsub("%-", "_")
+  return translated(key, tostring(item.status))
+end
+
 local function windowView(item, now)
   local isExpired = not M.isWindowActive(item, now)
   return {
@@ -311,6 +319,7 @@ local function windowView(item, now)
     fraction = math.max(0, math.min(item.usedPercent / units.PERCENT, 1)),
     severity = isExpired and M.SEVERITY.UNKNOWN or M.severityFor(item.usedPercent),
     resetText = resetText(item, now, isExpired),
+    statusText = statusText(item),
     isExpired = isExpired,
   }
 end

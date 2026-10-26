@@ -114,6 +114,15 @@ function M.bar(item, opts, key)
       maxLines = 2,
     }))
   end
+  if item.statusText ~= nil and item.statusText ~= "" then
+    table.insert(children, ui.label({
+      key = key .. "-status",
+      text = item.statusText,
+      fontSize = 10,
+      color = "error",
+      maxLines = 1,
+    }))
+  end
   return ui.column({ key = key, gap = 2 }, children)
 end
 
@@ -197,18 +206,25 @@ function M.card(section, opts)
     end
   end
 
-  return ui.column({
+  local cardOpacity = opts and opts.card_opacity
+  if cardOpacity == nil then
+    cardOpacity = 0.42
+  end
+  local container = {
     key = "card-" .. section.key,
     gap = gap,
     padding = padding,
-    fill = "surface_variant/0.42",
     radius = 12,
-    border = "outline/0.22",
-    borderWidth = 1,
-  }, children)
+  }
+  if cardOpacity > 0 then
+    container.fill = string.format("surface_variant/%.2f", cardOpacity)
+    container.border = "outline/0.22"
+    container.borderWidth = 1
+  end
+  return ui.column(container, children)
 end
 
-function M.emptyCard(onAdd)
+function M.emptyCard(onAdd, opts)
   local children = {
     ui.glyph({ key = "empty-glyph", name = "sparkles", size = 28, color = "primary" }),
     ui.label({
@@ -236,19 +252,26 @@ function M.emptyCard(onAdd)
       onClick = onAdd,
     }))
   end
-  return ui.column({
+  local opacity = opts and opts.card_opacity
+  if opacity == nil then
+    opacity = 0.35
+  end
+  local container = {
     key = "empty-card",
     gap = 10,
     padding = 18,
     align = "center",
-    fill = "surface_variant/0.35",
     radius = 14,
-    border = "outline/0.2",
-    borderWidth = 1,
-  }, children)
+  }
+  if opacity > 0 then
+    container.fill = string.format("surface_variant/%.2f", opacity)
+    container.border = "outline/0.2"
+    container.borderWidth = 1
+  end
+  return ui.column(container, children)
 end
 
-function M.waitingCard(onRefresh)
+function M.waitingCard(onRefresh, opts)
   local children = {
     ui.glyph({ key = "waiting-glyph", name = "clock-hour-4", size = 24, color = "on_surface_variant" }),
     ui.label({
@@ -277,16 +300,23 @@ function M.waitingCard(onRefresh)
       onClick = onRefresh,
     }))
   end
-  return ui.column({
+  local opacity = opts and opts.card_opacity
+  if opacity == nil then
+    opacity = 0.35
+  end
+  local container = {
     key = "waiting-card",
     gap = 8,
     padding = 18,
     align = "center",
-    fill = "surface_variant/0.35",
     radius = 14,
-    border = "outline/0.2",
-    borderWidth = 1,
-  }, children)
+  }
+  if opacity > 0 then
+    container.fill = string.format("surface_variant/%.2f", opacity)
+    container.border = "outline/0.2"
+    container.borderWidth = 1
+  end
+  return ui.column(container, children)
 end
 
 return M

@@ -20,6 +20,16 @@ if backgroundOpacity == nil then
   backgroundOpacity = 0.85
 end
 backgroundOpacity = math.max(0, math.min(1, backgroundOpacity))
+local cardOpacity = tonumber(noctalia.getConfig("card_opacity"))
+if cardOpacity == nil then
+  cardOpacity = 0.42
+end
+cardOpacity = math.max(0, math.min(1, cardOpacity))
+local cardWidth = tonumber(noctalia.getConfig("card_width"))
+if cardWidth == nil then
+  cardWidth = 360
+end
+cardWidth = math.max(220, math.min(900, cardWidth))
 local refreshSeconds = accounts.refreshSeconds(noctalia.getConfig("refresh_seconds"))
 
 local current = noctalia.state.get("ai_usage")
@@ -104,16 +114,17 @@ local function render()
   end
 
   if isStale() then
-    table.insert(children, view.waitingCard("onRefresh"))
+    table.insert(children, view.waitingCard("onRefresh", { card_opacity = cardOpacity }))
   else
     local model = formatter.buildViewModel(current.accounts or {}, now)
     if not model.hasAccounts then
-      table.insert(children, view.emptyCard("onAddAccount"))
+      table.insert(children, view.emptyCard("onAddAccount", { card_opacity = cardOpacity }))
     else
       for _, section in ipairs(model.sections) do
         table.insert(children, view.card(section, {
           dense = dense,
           show_details = showDetails,
+          card_opacity = cardOpacity,
         }))
       end
       if model.walletLocked then
@@ -133,14 +144,15 @@ local function render()
 
   local container = {
     key = "ai-usage",
+    width = cardWidth,
     gap = dense and 6 or 10,
     padding = dense and 8 or 14,
     radius = dense and 10 or 16,
-    border = "outline/0.22",
-    borderWidth = 1,
   }
   if backgroundOpacity > 0 then
     container.fill = string.format("surface/%.2f", backgroundOpacity)
+    container.border = "outline/0.22"
+    container.borderWidth = 1
   end
   desktopWidget.render(ui.column(container, children))
 end
