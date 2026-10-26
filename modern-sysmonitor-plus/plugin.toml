@@ -417,14 +417,47 @@ entry = "card.luau"
   visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
-  key             = "usage_chart_height"
+  key             = "cpu_chart_height"
   type            = "int"
-  label_key       = "settings.usage_chart_height.label"
-  description_key = "settings.usage_chart_height.description"
+  label_key       = "settings.cpu_chart_height.label"
+  description_key = "settings.cpu_chart_height.description"
   default         = 20
   min             = 12
   max             = 48
   step            = 2
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "cpu_chart_scale"
+  type            = "int"
+  label_key       = "settings.cpu_chart_scale.label"
+  description_key = "settings.cpu_chart_scale.description"
+  default         = 10
+  min             = 1
+  max             = 100
+  step            = 1
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "gpu_chart_height"
+  type            = "int"
+  label_key       = "settings.gpu_chart_height.label"
+  description_key = "settings.gpu_chart_height.description"
+  default         = 20
+  min             = 12
+  max             = 48
+  step            = 2
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "gpu_chart_scale"
+  type            = "int"
+  label_key       = "settings.gpu_chart_scale.label"
+  description_key = "settings.gpu_chart_scale.description"
+  default         = 10
+  min             = 1
+  max             = 100
+  step            = 1
   visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
@@ -436,6 +469,18 @@ entry = "card.luau"
   min             = 16
   max             = 80
   step            = 2
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "network_scale_kbps"
+  type            = "int"
+  label_key       = "settings.network_scale_kbps.label"
+  description_key = "settings.network_scale_kbps.description"
+  default         = 10
+  min             = 1
+  max             = 1024
+  step            = 1
+  advanced        = true
   visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
@@ -459,18 +504,6 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
-  visible_when    = { key = "show_styling", values = ["true"] }
-
-  [[desktop_widget.setting]]
-  key             = "network_scale_kbps"
-  type            = "int"
-  label_key       = "settings.network_scale_kbps.label"
-  description_key = "settings.network_scale_kbps.description"
-  default         = 10
-  min             = 1
-  max             = 1024
-  step            = 1
-  advanced        = true
   visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]

@@ -100,7 +100,10 @@ local settings = {
   critical_color = cfg_text("critical_color", "error"),
   disk_warning = cfg_number("disk_warning", 90, 50, 100),
 
-  usage_chart_height = math.floor(cfg_number("usage_chart_height", 20, 12, 48) + 0.5),
+  cpu_chart_height = math.floor(cfg_number("cpu_chart_height", 20, 12, 48) + 0.5),
+  cpu_chart_scale = math.floor(cfg_number("cpu_chart_scale", 10, 1, 100) + 0.5),
+  gpu_chart_height = math.floor(cfg_number("gpu_chart_height", 20, 12, 48) + 0.5),
+  gpu_chart_scale = math.floor(cfg_number("gpu_chart_scale", 10, 1, 100) + 0.5),
   network_chart_height = math.floor(cfg_number("network_chart_height", 32, 16, 80) + 0.5),
   network_line_width = cfg_number("network_line_width", 1.5, 0.5, 4),
   network_fill_opacity = cfg_number("network_fill_opacity", 0.15, 0, 1),
@@ -220,6 +223,21 @@ end
 
 local function normalize_history(series)
   local max_value = settings.network_scale_kbps * 1024
+  for _, value in ipairs(series) do
+    if value > max_value then
+      max_value = value
+    end
+  end
+
+  local values = {}
+  for _, value in ipairs(series) do
+    values[#values + 1] = format.clamp(value / max_value, 0, 1)
+  end
+  return values
+end
+
+local function normalize_usage_history(series, scale_percent)
+  local max_value = (tonumber(scale_percent) or 10) / 100
   for _, value in ipairs(series) do
     if value > max_value then
       max_value = value
@@ -378,7 +396,7 @@ local function progress_bar(key, percent, fill, known)
   })
 end
 
-local function usage_row(key, percent, history, known)
+local function usage_row(key, percent, history, known, chart_height, chart_scale)
   return ui.row({ key = key, gap = 8, align = "center" }, {
     ui.label({
       key = key .. "-label",
@@ -390,11 +408,11 @@ local function usage_row(key, percent, history, known)
     }),
     ui.graph({
       key = key .. "-graph",
-      values = copy(history),
+      values = normalize_usage_history(history, chart_scale),
       color = settings.accent_color,
       lineWidth = settings.network_line_width,
       fillOpacity = settings.network_fill_opacity,
-      height = settings.usage_chart_height,
+      height = chart_height,
       flexGrow = 1,
     }),
     ui.label({
@@ -588,7 +606,7 @@ local function cpu_card(stats)
 
   local children = {
     section_header("cpu-header", "cpu", noctalia.tr("labels.cpu")),
-    usage_row("cpu-usage", usage, cpu_history, usage ~= nil),
+    usage_row("cpu-usage", usage, cpu_history, usage ~= nil, settings.cpu_chart_height, settings.cpu_chart_scale),
     temp_row("cpu-temp", temp, temp ~= nil),
   }
 
@@ -642,7 +660,7 @@ local function ram_card(stats)
         textAlign = "end",
         fontSize = 11,
         fontWeight = "bold",
-        color = value_color(percent ~= nil),
+        color = percent ~= nil and settings.accent_color or settings.muted_text_color,
         maxLines = 1,
       }),
     }),
@@ -748,7 +766,7 @@ local function gpu_card(stats)
   local temp = tonumber(gpu.temp_c)
   local children = {
     section_header("gpu-header", "device-desktop", noctalia.tr("labels.gpu"), details_button()),
-    usage_row("gpu-usage", usage, gpu_history, usage ~= nil),
+    usage_row("gpu-usage", usage, gpu_history, usage ~= nil, settings.gpu_chart_height, settings.gpu_chart_scale),
     temp_row("gpu-temp", temp, temp ~= nil),
   }
 
@@ -813,7 +831,7 @@ local function vram_card(stats)
         textAlign = "end",
         fontSize = 11,
         fontWeight = "bold",
-        color = value_color(percent ~= nil),
+        color = percent ~= nil and settings.accent_color or settings.muted_text_color,
         maxLines = 1,
       }),
     }),
@@ -879,7 +897,8 @@ local function disks_card(stats)
       textAlign = "end",
       fontSize = 11,
       fontWeight = "bold",
-      color = warning and settings.critical_color or value_color(percent ~= nil),
+      color = warning and settings.critical_color
+        or (percent ~= nil and settings.accent_color or settings.muted_text_color),
       maxLines = 1,
     }))
 

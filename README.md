@@ -32,7 +32,7 @@ app directories.
 | CPU fan (`--cpu-fan N`, 0 = automatic) | `poller`: hwmon `fan<N>_input`, automatic label containing “cpu”; card shows the row when found |
 | `/proc/meminfo` RAM used/total | `poller`: `MemTotal` − `MemAvailable`, with the free+buffers+cached fallback |
 | `/proc/net/dev` download/upload | `poller`: non-`lo` byte deltas; the card keeps the 30-point history |
-| CPU/GPU usage segmented bars | CPU/GPU usage area charts (`ui.graph`), fixed 0–100% scale; RAM/VRAM/disks keep segmented bars |
+| CPU/GPU usage segmented bars | CPU/GPU usage area charts (`ui.graph`), auto-scaled like the network chart with separate height/scale settings; RAM/VRAM/disks keep segmented bars |
 | AMD GPU `/sys/class/drm` | `poller`: largest-VRAM AMD card (`gpu_busy_percent`, `mem_info_vram_*`, hwmon) |
 | Nvidia `nvidia-smi` | `poller`: full query, then a short query if the driver rejects extra fields |
 | (no Intel path) | Host `noctalia.systemStats()` GPU probe as a final fallback |

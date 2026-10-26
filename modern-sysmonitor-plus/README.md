@@ -105,16 +105,21 @@ the editor.
 
 ### Charts
 
-CPU and GPU usage are area charts like the network charts; RAM, VRAM and disks
-keep segmented bars. All charts use the accent colour.
+CPU and GPU usage are area charts like the network charts and auto-scale to
+their largest visible sample, with a configurable minimum top of the scale. RAM,
+VRAM and disks keep segmented bars. All charts and percentage values use the
+accent colour; disk warnings use the critical colour.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
-| Usage chart height | 20 px | CPU and GPU usage chart height (12–48). |
+| CPU chart height | 20 px | CPU usage chart height (12–48). |
+| CPU chart scale | 10% | Minimum top of the CPU usage scale; a larger sample raises it automatically. Set 100 for an absolute 0–100% scale. |
+| GPU chart height | 20 px | GPU usage chart height (12–48). |
+| GPU chart scale | 10% | Minimum top of the GPU usage scale; a larger sample raises it automatically. Set 100 for an absolute 0–100% scale. |
 | Network chart height | 32 px | Download chart height (16–80); the upload chart is 65% of it. |
+| Network chart scale | 10 KB/s | Minimum top of the network scale; a larger sample raises it automatically (1–1024 KB/s). |
 | Chart line width | 1.5 | Network and CPU/GPU usage chart line thickness (0.5–4). |
 | Chart fill opacity | 0.15 | Area fill under every chart line (0–1). |
-| Network chart scale | 10 KB/s | Minimum top of the network scale; a larger sample raises it automatically (1–1024 KB/s). CPU/GPU usage uses the fixed 0–100% scale. |
 | Chart history | 30 | Samples kept for the network and CPU/GPU usage charts (10–120). |
 
 ### Colours

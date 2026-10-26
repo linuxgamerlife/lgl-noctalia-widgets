@@ -69,7 +69,10 @@ local function base_config()
     temp_warm_color = "#ffaa00",
     critical_color = "#ff0000",
     disk_warning = 90,
-    usage_chart_height = 24,
+    cpu_chart_height = 24,
+    cpu_chart_scale = 10,
+    gpu_chart_height = 26,
+    gpu_chart_scale = 10,
     network_chart_height = 40,
     network_line_width = 2,
     network_fill_opacity = 0.4,
@@ -183,7 +186,7 @@ assert_eq(find("cpu-usage-graph").props.height, 24, "CPU usage chart height")
 assert_eq(find("cpu-usage-graph").props.lineWidth, 2, "CPU usage chart line width")
 assert_eq(find("cpu-usage-graph").props.fillOpacity, 0.4, "CPU usage chart fill opacity")
 assert_eq(find("cpu-usage-graph").props.color, "#ff8800", "CPU usage chart colour")
-assert_close(find("cpu-usage-graph").props.values[1], 0.425, 1e-9, "CPU usage history")
+assert_close(find("cpu-usage-graph").props.values[1], 1.0, 1e-9, "CPU usage history normalised")
 assert_eq(find("cpu-fan-value").props.text, "1500 RPM", "CPU fan")
 assert_eq(find("cpu-temp-value").props.text, "90 °C", "CPU temperature")
 assert_eq(find("cpu-temp-value").props.color, "#ff0000", "critical CPU temperature colour")
@@ -194,18 +197,20 @@ local ram_text = find("ram-summary-label").props.text
 assert(ram_text:find("8.5", 1, true), "RAM used value missing: " .. ram_text)
 assert(ram_text:find("32", 1, true), "RAM total value missing: " .. ram_text)
 assert_eq(find("ram-pct").props.text, "27%", "RAM percent")
+assert_eq(find("ram-pct").props.color, "#ff8800", "RAM percentage matches the bar accent")
 assert_eq(find("ram-bar-3").props.fill, "#ff8800", "active RAM segment")
 assert_eq(find("ram-bar-4").props.fill, "#00ff0080", "inactive RAM track")
 
 -- GPU and VRAM.
 assert_eq(find("gpu-usage-value").props.text, "37%", "GPU usage")
-assert_eq(find("gpu-usage-graph").props.height, 24, "GPU usage chart height")
-assert_close(find("gpu-usage-graph").props.values[1], 0.374, 1e-9, "GPU usage history")
+assert_eq(find("gpu-usage-graph").props.height, 26, "GPU usage chart height")
+assert_close(find("gpu-usage-graph").props.values[1], 1.0, 1e-9, "GPU usage history normalised")
 assert_eq(find("gpu-temp-value").props.text, "61 °C", "GPU temperature")
 assert_eq(find("gpu-temp-value").props.color, "#ff8800", "normal GPU temperature colour")
 assert_eq(find("gpu-details-toggle").props.text, "More", "GPU details button")
 assert_eq(find("gpu-details-toggle").props.onClick, "toggleGpuDetails", "GPU details callback")
 assert_eq(find("vram-pct").props.text, "25%", "VRAM percent")
+assert_eq(find("vram-pct").props.color, "#ff8800", "VRAM percentage matches the bar accent")
 local vram_text = find("vram-summary-label").props.text
 assert(vram_text:find("2.0", 1, true), "VRAM used missing: " .. vram_text)
 assert(vram_text:find("8", 1, true), "VRAM total missing: " .. vram_text)
@@ -220,6 +225,7 @@ assert_eq(find("network-card").props.radius, 8, "card radius")
 assert_eq(find("disk-1-name").props.text, "Samsung SSD", "first disk name")
 assert_eq(find("disk-1-size").props.text, "100 GB / 500 GB · 35 °C", "first disk sizes")
 assert_eq(find("disk-1-pct").props.text, "20%", "first disk percent")
+assert_eq(find("disk-1-pct").props.color, "#ff8800", "first disk percentage matches the bar accent")
 assert_eq(find("disk-1-bar-2").props.fill, "#ff8800", "first disk active segment")
 assert_eq(find("disk-2-name").props.text, "NVMe Drive", "second disk name")
 assert_eq(find("disk-2-pct").props.text, "92%", "second disk percent")
@@ -267,12 +273,12 @@ assert_eq(mock.find(tree, "cpu-usage-value").props.text, "80%", "second CPU samp
 assert_eq(mock.find(tree, "gpu-usage-value").props.text, "50%", "second GPU sample")
 local cpu_values = mock.find(tree, "cpu-usage-graph").props.values
 assert_eq(#cpu_values, 2, "CPU usage history length")
-assert_close(cpu_values[1], 0.425, 1e-9, "first CPU usage point")
-assert_close(cpu_values[2], 0.8, 1e-9, "second CPU usage point")
+assert_close(cpu_values[1], 0.425 / 0.8, 1e-9, "first CPU usage point")
+assert_close(cpu_values[2], 1.0, 1e-9, "second CPU usage point")
 local gpu_values = mock.find(tree, "gpu-usage-graph").props.values
 assert_eq(#gpu_values, 2, "GPU usage history length")
-assert_close(gpu_values[1], 0.374, 1e-9, "first GPU usage point")
-assert_close(gpu_values[2], 0.5, 1e-9, "second GPU usage point")
+assert_close(gpu_values[1], 0.374 / 0.5, 1e-9, "first GPU usage point")
+assert_close(gpu_values[2], 1.0, 1e-9, "second GPU usage point")
 local down_values = mock.find(tree, "network-down-graph").props.values
 assert_eq(#down_values, 2, "network history length")
 assert_close(down_values[1], 0.1, 1e-9, "first download point after rescale")
@@ -314,7 +320,9 @@ assert_eq(mock.find(role_tree, "card").props.width, 320, "default content width"
 assert_eq(mock.find(role_tree, "network-card").props.fill, "surface_variant/0.35", "default card fill role")
 assert_eq(mock.find(role_tree, "network-header-glyph").props.color, "primary", "default accent role")
 assert_eq(mock.find(role_tree, "ram-bar-20").props.fill, "on_surface/0.14", "default track role")
-assert_eq(mock.find(role_tree, "cpu-usage-graph").props.height, 20, "default usage chart height")
+assert_eq(mock.find(role_tree, "ram-pct").props.color, "primary", "default RAM percentage role")
+assert_eq(mock.find(role_tree, "vram-pct").props.color, "primary", "default VRAM percentage role")
+assert_eq(mock.find(role_tree, "cpu-usage-graph").props.height, 20, "default CPU chart height")
 assert_eq(mock.find(role_tree, "network-down-graph").props.color, "primary", "default chart role")
 assert_eq(mock.find(role_tree, "header-divider").props.color, "outline", "default divider role")
 

@@ -105,9 +105,10 @@ The card settings are grouped in the plugin README:
 - sections: `title`, `show_card_settings`, `show_styling`, `show_sections`, `show_header`, `show_network`, `show_cpu`, `show_ram`,
   `show_gpu`, `show_vram`, `show_disks`, `show_cpu_fan`, `allow_gpu_details`
 - layout: `content_width`, `card_gap`, `card_padding`, `card_radius`,
-  `bar_height`, `segment_count`, `segment_gap`, `network_chart_height`,
-  `network_line_width`, `network_fill_opacity`, `network_scale_kbps`,
-  `divider_width`, `history_points`
+  `bar_height`, `segment_count`, `segment_gap`,
+  `cpu_chart_height`, `cpu_chart_scale`, `gpu_chart_height`, `gpu_chart_scale`,
+  `network_chart_height`, `network_line_width`, `network_fill_opacity`,
+  `network_scale_kbps`, `divider_width`, `history_points`
 - colours: `accent_color`, `text_color`, `muted_text_color`,
   `card_fill_color`, `card_fill_opacity`, `card_border_color`,
   `card_border_width`, `track_color`, `track_opacity`, `temp_warm_color`,
@@ -145,8 +146,9 @@ The card:
 
 - appends one history point per distinct `ts:seq` for the network, CPU usage
   and GPU usage charts (so a plain `update()` never duplicates a point);
-- normalises network charts against `network_scale_kbps` and the largest
-  sample; CPU/GPU usage uses the fixed 0–100% scale;
+- normalises network charts against `network_scale_kbps`, and CPU/GPU usage
+  against `cpu_chart_scale` / `gpu_chart_scale`, each with the largest sample
+  as the automatic top; the scale values set the minimum top;
 - treats a state older than `max(3, update_interval * 3)` seconds as stale;
 - blanks values with `—`, keeps the history, dims the content and shows
   **Waiting for system data** when stale;

@@ -192,7 +192,7 @@
     },
     "network_chart_height": {
       "label": "Network chart height",
-      "description": "Height of the download chart in logical px. The upload chart is 65% of this height."
+      "description": "Download chart height in logical px (16–80); the upload chart is 65% of it."
     },
     "network_line_width": {
       "label": "Chart line width",
@@ -204,7 +204,7 @@
     },
     "network_scale_kbps": {
       "label": "Network chart scale",
-      "description": "Minimum top of the network chart scale in KB/s. A larger sample raises the scale automatically."
+      "description": "Minimum top of the network scale in KB/s; a larger sample raises it automatically (1–1024)."
     },
     "divider_width": {
       "label": "Divider thickness",
@@ -238,9 +238,21 @@
       "label": "Panel padding",
       "description": "Space between the host panel edge and the card content in logical px."
     },
-    "usage_chart_height": {
-      "label": "Usage chart height",
-      "description": "Height of the CPU and GPU usage charts in logical px. They share the chart line and fill settings."
+    "cpu_chart_height": {
+      "label": "CPU chart height",
+      "description": "Height of the CPU usage chart in logical px (12–48)."
+    },
+    "cpu_chart_scale": {
+      "label": "CPU chart scale",
+      "description": "Minimum top of the CPU usage scale in percent; a larger sample raises it automatically. Set 100 for an absolute 0–100% scale."
+    },
+    "gpu_chart_height": {
+      "label": "GPU chart height",
+      "description": "Height of the GPU usage chart in logical px (12–48)."
+    },
+    "gpu_chart_scale": {
+      "label": "GPU chart scale",
+      "description": "Minimum top of the GPU usage scale in percent; a larger sample raises it automatically. Set 100 for an absolute 0–100% scale."
     }
   }
 }
