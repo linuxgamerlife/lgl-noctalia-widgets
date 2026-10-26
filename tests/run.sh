@@ -131,6 +131,34 @@ for setting in root_settings + desktop_settings:
     if setting.get("type") == "color" and not setting.get("default"):
         fail(f"color setting {key!r} has an empty default")
 
+# The desktop-widget inspector is single-column; keep the host background
+# controls first and the long styling list behind show_styling.
+desktop_keys = [setting.get("key") for setting in desktop_settings]
+expected_prefix = [
+    "background",
+    "background_color",
+    "background_opacity",
+    "background_radius",
+    "background_padding",
+    "show_styling",
+]
+if desktop_keys[: len(expected_prefix)] != expected_prefix:
+    fail("desktop widget settings must start with the host background controls and show_styling")
+styling_keys = {
+    "card_gap", "card_padding", "card_radius", "card_fill_color", "card_fill_opacity",
+    "card_border_color", "card_border_width", "accent_color", "text_color", "muted_text_color",
+    "track_color", "track_opacity", "bar_height", "segment_count", "segment_gap",
+    "temp_warm", "temp_hot", "temp_warm_color", "critical_color", "disk_warning",
+    "network_chart_height", "network_line_width", "network_fill_opacity", "network_scale_kbps",
+    "divider_width", "divider_color", "history_points",
+}
+for setting in desktop_settings:
+    key = setting.get("key")
+    if key in styling_keys:
+        visible = setting.get("visible_when", {})
+        if visible.get("key") != "show_styling" or visible.get("values") != ["true"]:
+            fail(f"styling setting {key!r} must be gated by show_styling")
+
     for field in ("label", "description"):
         translation_key = setting.get(f"{field}_key")
         if translation_key:
