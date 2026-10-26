@@ -58,8 +58,11 @@ noctalia-kwe msg panel-toggle lukk17/ai-usage:panel   # or: noctalia msg ...
 2. Pick a service, type a name or email, paste the key (Claude, ChatGPT and
    JetBrains AI need no key). For Claude the panel lists the organizations in
    the Claude desktop app file; type a name for each one you want.
-3. **Manage accounts** edits names and fields, moves accounts up and down, and
-   deletes an account together with its stored key.
+3. **Manage accounts** edits labels and fields, moves accounts up and down, and
+   deletes an account together with its stored key. An account label that looks
+   like an email address is shown as `j***` on the card, in the account list and
+   in status messages. The raw label stays only in the local accounts file; the
+   edit form never pre-fills it, so leaving the label field empty keeps it.
 4. **Open plugin settings** edits the refresh interval. The panel is deliberately
    not a second settings editor: Noctalia owns plugin settings, and a plugin
    cannot write them.
@@ -118,12 +121,26 @@ short shell and `curl` for the duration of one check. Only constant URLs,
 headers, provider ids and validated account ids reach the command; the account
 name is never used in a URL or a command.
 
+### Account labels and email privacy
+
+An account label is only a display label; providers never receive it. Before an
+entry is published to the widget state, the service replaces an email-style
+label with a masked form such as `j***`. The card, panel list and success/delete
+messages use that masked value, and the formatter masks again as a second line
+of defence. The raw label is kept only in
+`pluginDataDir()/accounts.json`, because it is what the edit form works with.
+That directory is set to mode `700` and the file to `600`. The edit form starts
+empty and shows `Current label: j***`, so leaving the field empty keeps the
+existing label without displaying the address.
+
 ### Where keys live
 
 Keys live **only in the Secret Service** (KWallet, gnome-keyring, KeePassXC,
 etc.) under `server=ai-usage`, `user=<service>.<account-id>`,
 `type=plaintext`. The accounts file contains only service id, generated account
-id, display name and the provider fields (`org` for Claude, `teamId` for xAI).
+id, display label and the provider fields (`org` for Claude, `teamId` for xAI);
+an email-style display label is stored there but masked before it is published
+or rendered.
 
 Noctalia does not expose a Secret Service API to plugins, so saving a key is the
 one place this port differs from KDE: the panel runs

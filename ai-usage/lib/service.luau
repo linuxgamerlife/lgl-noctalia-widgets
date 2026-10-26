@@ -5,6 +5,7 @@ local accountsModule = require("./accounts.luau")
 local check = require("./check.luau")
 local curl = require("./curlcommand.luau")
 local monitorModule = require("./monitor.luau")
+local privacy = require("./privacy.luau")
 local registry = require("../providers/init.luau")
 local store = require("./store.luau")
 local units = require("./units.luau")
@@ -50,8 +51,35 @@ local tools = {
   runCommand = runCommand,
 }
 
+-- The widget VMs never need the raw label, and an email-style label should not
+-- cross the state channel. Publish only id, service and the masked display name.
+local function publicEntry(entry)
+  return {
+    key = entry.key,
+    providerId = entry.providerId,
+    title = entry.title,
+    account = {
+      id = entry.account.id,
+      service = entry.account.service,
+      name = privacy.displayName(entry.account.name),
+    },
+    usage = entry.usage,
+    error = entry.error,
+    lastSuccessAt = entry.lastSuccessAt,
+    lastAttemptAt = entry.lastAttemptAt,
+    nextAttemptAt = entry.nextAttemptAt,
+    consecutiveFailures = entry.consecutiveFailures,
+    isLoading = entry.isLoading,
+    intervalMs = entry.intervalMs,
+  }
+end
+
 local function snapshotState()
-  local entries = monitor and monitor.snapshot() or {}
+  local rawEntries = monitor and monitor.snapshot() or {}
+  local entries = {}
+  for _, entry in ipairs(rawEntries) do
+    table.insert(entries, publicEntry(entry))
+  end
   local hasAccounts = #entries > 0
   local walletLocked = false
   local toolsMissing = false

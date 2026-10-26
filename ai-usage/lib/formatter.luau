@@ -5,6 +5,7 @@ local http = require("./http.luau")
 local units = require("./units.luau")
 local usage = require("./usage.luau")
 local curl = require("./curlcommand.luau")
+local privacy = require("./privacy.luau")
 
 local M = {}
 
@@ -463,7 +464,7 @@ local function sectionView(entry, now)
     key = entry.key,
     service = entry.providerId,
     title = title,
-    account = entry.account and entry.account.name or "",
+    account = privacy.displayName(entry.account and entry.account.name or ""),
     windows = windows,
     mainRows = mainRows,
     rows = extraRows(usageValue, split.extra),

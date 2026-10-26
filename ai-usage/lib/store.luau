@@ -9,12 +9,36 @@ local M = {}
 M.VERSION = 1
 M.FILE_NAME = "accounts.json"
 
+local dirHardened = false
+
+local function hardenDir(path)
+  if dirHardened then
+    return
+  end
+  dirHardened = true
+  if not noctalia.commandExists("chmod") then
+    return
+  end
+  local dir = path:match("^(.*)/[^/]+$")
+  if dir then
+    noctalia.runAsync({ "chmod", "700", dir }, function() end)
+  end
+end
+
+local function hardenFile(path)
+  if noctalia.commandExists("chmod") then
+    noctalia.runAsync({ "chmod", "600", path }, function() end)
+  end
+end
+
 function M.path()
   local dir, err = noctalia.pluginDataDir()
   if not dir then
     return nil, err or "plugin data directory is unavailable"
   end
-  return dir .. "/" .. M.FILE_NAME
+  local path = dir .. "/" .. M.FILE_NAME
+  hardenDir(path)
+  return path
 end
 
 function M.load(findProvider)
@@ -27,6 +51,7 @@ function M.load(findProvider)
     noctalia.log("[ai-usage] could not read accounts: " .. tostring(err))
     return {}
   end
+  hardenFile(path)
   local decoded = noctalia.json.decode(text)
   if type(decoded) ~= "table" then
     noctalia.log("[ai-usage] accounts.json is not valid JSON; using no accounts")
@@ -64,6 +89,7 @@ function M.save(list)
     noctalia.removeFile(temporary)
     return false, renameError or "could not replace accounts"
   end
+  hardenFile(path)
   return true
 end
 

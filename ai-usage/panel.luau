@@ -6,6 +6,7 @@ local accountsModule = require("./lib/accounts.luau")
 local check = require("./lib/check.luau")
 local curl = require("./lib/curlcommand.luau")
 local formatter = require("./lib/formatter.luau")
+local privacy = require("./lib/privacy.luau")
 local registry = require("./providers/init.luau")
 local secrets = require("./lib/secrets.luau")
 local store = require("./lib/store.luau")
@@ -23,6 +24,7 @@ local discoveries = nil
 local form = {
   service = "claude",
   name = "",
+  originalName = "",
   key = "",
   fields = {},
   orgNames = {},
@@ -121,6 +123,7 @@ local function resetForm(serviceId)
   form = {
     service = serviceId or "claude",
     name = "",
+    originalName = "",
     key = "",
     fields = {},
     orgNames = {},
@@ -250,8 +253,14 @@ function onSave()
     render()
     return
   end
-  if not accountsModule.isValidName(form.name) then
-    showMessage(tr("form.error.name", "Type a name or email of 1 to 100 characters"), "error")
+  local typedName = accountsModule.cleanName(form.name)
+  local name = typedName
+  if name == "" and editingId ~= nil then
+    -- The edit form never pre-fills the raw label; an empty field keeps it.
+    name = form.originalName
+  end
+  if not accountsModule.isValidName(name) then
+    showMessage(tr("form.error.name", "Type a name of 1 to 100 characters"), "error")
     render()
     return
   end
@@ -274,7 +283,7 @@ function onSave()
     end
     id = accountsModule.newAccountId(ids)
   end
-  local account = accountsModule.makeAccount(provider, id, form.name, fields)
+  local account = accountsModule.makeAccount(provider, id, name, fields)
   if account == nil then
     showMessage(tr("form.error.account", "This account is not valid"), "error")
     render()
@@ -296,7 +305,7 @@ function onSave()
     busy = false
     local action = editingId == nil and "message.added" or "message.saved"
     local fallback = editingId == nil and "Added {name}" or "Saved {name}"
-    showMessage(tr(action, fallback, { name = account.name }), "ok")
+    showMessage(tr(action, fallback, { name = privacy.displayName(account.name) }), "ok")
     modal = #accounts > 0 and "settings" or "cards"
     editingId = nil
     render()
@@ -341,7 +350,7 @@ function deleteAccount(id)
         bumpAccounts()
         busy = false
         pendingDelete = nil
-        showMessage(tr("message.deleted", "Deleted {name}", { name = account.name }), "ok")
+        showMessage(tr("message.deleted", "Deleted {name}", { name = privacy.displayName(account.name) }), "ok")
         modal = #accounts > 0 and "settings" or "cards"
         render()
       end
@@ -390,7 +399,8 @@ function startEdit(id)
     return
   end
   resetForm(provider.id)
-  form.name = account.name
+  form.name = ""
+  form.originalName = account.name
   for _, field in ipairs(provider.fields) do
     form.fields[field.id] = account[field.id]
   end
@@ -598,7 +608,7 @@ local function renderSettings()
           }),
           ui.label({
             key = "account-name-" .. account.id,
-            text = account.name,
+            text = privacy.displayName(account.name),
             fontSize = 11,
             color = "on_surface_variant",
             maxLines = 1,
@@ -728,7 +738,7 @@ function discoveryRows(provider)
       ui.input({
         key = "discovery-name-" .. org,
         value = form.orgNames[org] or "",
-        placeholder = tr("form.name_placeholder", "Name or email"),
+        placeholder = tr("form.name_placeholder", "Name (email addresses are masked)"),
         controlSize = "sm",
         onChange = function(value)
           form.orgNames[org] = value or ""
@@ -786,16 +796,33 @@ local function renderForm()
     }))
   end
 
-  table.insert(body, ui.column({ key = "form-name-group", gap = 4 }, {
-    ui.label({ key = "form-name-label", text = tr("form.name", "Name or email"), fontSize = 11, color = "on_surface_variant" }),
-    ui.input({
-      key = "form-name-" .. form.service .. "-" .. tostring(editingId),
-      value = form.name,
-      placeholder = tr("form.name_placeholder", "Name or email"),
-      onChange = "onNameChange",
-      onSubmit = "onSave",
+  local nameChildren = {
+    ui.label({
+      key = "form-name-label",
+      text = tr("form.name", "Account label"),
+      fontSize = 11,
+      color = "on_surface_variant",
     }),
+  }
+  if modal == "edit" and form.originalName ~= "" then
+    table.insert(nameChildren, ui.label({
+      key = "form-current-name",
+      text = tr("form.current_label", "Current label: {name}", { name = privacy.displayName(form.originalName) }),
+      fontSize = 10,
+      color = "on_surface_variant",
+      maxLines = 2,
+    }))
+  end
+  table.insert(nameChildren, ui.input({
+    key = "form-name-" .. form.service .. "-" .. tostring(editingId),
+    value = form.name,
+    placeholder = modal == "edit"
+      and tr("form.name_keep", "Leave empty to keep the current label")
+      or tr("form.name_placeholder", "Name (email addresses are masked)"),
+    onChange = "onNameChange",
+    onSubmit = "onSave",
   }))
+  table.insert(body, ui.column({ key = "form-name-group", gap = 4 }, nameChildren))
 
   if provider.needsKey then
     table.insert(body, ui.column({ key = "form-key-group", gap = 4 }, {

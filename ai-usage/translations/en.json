@@ -63,12 +63,12 @@
   "add.title": "Add account",
   "edit.title": "Edit account",
   "form.service": "Service",
-  "form.name": "Name or email",
-  "form.name_placeholder": "Name or email",
+  "form.name": "Account label",
+  "form.name_placeholder": "Name (email addresses are masked)",
   "form.key": "Key",
   "form.key_paste": "Paste the key",
   "form.key_keep": "Leave empty to keep the saved key",
-  "form.error.name": "Type a name or email of 1 to 100 characters",
+  "form.error.name": "Type a name of 1 to 100 characters",
   "form.error.field": "{label}: use letters, digits and - only, at most 64",
   "form.error.key": "Paste the key",
   "form.error.service": "Pick a service",
@@ -175,5 +175,7 @@
   "provider.minimax.key_help": "Token Plan key, from the MiniMax Platform.",
   "provider.requesty.key_help": "API key with manage permission, from the Requesty dashboard.",
   "provider.huggingFace.key_help": "Fine-grained access token with billing read permission, from Hugging Face settings.",
-  "provider.jetbrains.key_help": "No key needed. The widget reads the JetBrains IDE log."
+  "provider.jetbrains.key_help": "No key needed. The widget reads the JetBrains IDE log.",
+  "form.name_keep": "Leave empty to keep the current label",
+  "form.current_label": "Current label: {name}"
 }
