@@ -141,6 +141,7 @@ expected_prefix = [
     "background_radius",
     "background_padding",
     "show_styling",
+    "show_sections",
 ]
 if desktop_keys[: len(expected_prefix)] != expected_prefix:
     fail("desktop widget settings must start with the host background controls and show_styling")
@@ -158,6 +159,17 @@ for setting in desktop_settings:
         visible = setting.get("visible_when", {})
         if visible.get("key") != "show_styling" or visible.get("values") != ["true"]:
             fail(f"styling setting {key!r} must be gated by show_styling")
+
+section_keys = {
+    "show_header", "show_network", "show_cpu", "show_ram", "show_gpu",
+    "show_vram", "show_disks", "show_cpu_fan", "allow_gpu_details",
+}
+for setting in desktop_settings:
+    key = setting.get("key")
+    if key in section_keys:
+        visible = setting.get("visible_when", {})
+        if visible.get("key") != "show_sections" or visible.get("values") != ["true"]:
+            fail(f"section setting {key!r} must be gated by show_sections")
 
     for field in ("label", "description"):
         translation_key = setting.get(f"{field}_key")

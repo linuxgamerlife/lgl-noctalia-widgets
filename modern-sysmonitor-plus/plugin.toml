@@ -111,6 +111,13 @@ entry = "card.luau"
   default         = false
 
   [[desktop_widget.setting]]
+  key             = "show_sections"
+  type            = "bool"
+  label_key       = "settings.show_sections.label"
+  description_key = "settings.show_sections.description"
+  default         = false
+
+  [[desktop_widget.setting]]
   key             = "title"
   type            = "string"
   label_key       = "settings.title.label"
@@ -123,6 +130,7 @@ entry = "card.luau"
   label_key       = "settings.show_header.label"
   description_key = "settings.show_header.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_network"
@@ -130,6 +138,7 @@ entry = "card.luau"
   label_key       = "settings.show_network.label"
   description_key = "settings.show_network.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_cpu"
@@ -137,6 +146,7 @@ entry = "card.luau"
   label_key       = "settings.show_cpu.label"
   description_key = "settings.show_cpu.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_ram"
@@ -144,6 +154,7 @@ entry = "card.luau"
   label_key       = "settings.show_ram.label"
   description_key = "settings.show_ram.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_gpu"
@@ -151,6 +162,7 @@ entry = "card.luau"
   label_key       = "settings.show_gpu.label"
   description_key = "settings.show_gpu.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_vram"
@@ -158,6 +170,7 @@ entry = "card.luau"
   label_key       = "settings.show_vram.label"
   description_key = "settings.show_vram.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_disks"
@@ -165,6 +178,7 @@ entry = "card.luau"
   label_key       = "settings.show_disks.label"
   description_key = "settings.show_disks.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_cpu_fan"
@@ -172,6 +186,7 @@ entry = "card.luau"
   label_key       = "settings.show_cpu_fan.label"
   description_key = "settings.show_cpu_fan.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "allow_gpu_details"
@@ -179,6 +194,7 @@ entry = "card.luau"
   label_key       = "settings.allow_gpu_details.label"
   description_key = "settings.allow_gpu_details.description"
   default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "content_width"

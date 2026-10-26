@@ -70,6 +70,7 @@ shared by the service and the card.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
+| Show section toggles | off | Reveal the nine section visibility controls below. Their values stay active while hidden. |
 | Card title | System Monitor | Header heading. |
 | Show header | on | Title and settings button. |
 | Show network | on | Download/upload values and charts. |
