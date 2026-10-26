@@ -1,8 +1,8 @@
 # Modern SysMonitor Plus — Noctalia plugin
 
 A Noctalia v5 desktop widget and headless poller that shows CPU, GPU, RAM,
-VRAM, network and physical-disk activity in the segmented-bar style of the
-Modern SysMonitor Plus Plasma widget.
+VRAM, network and physical-disk activity in the solid-bar and live-chart style
+of the Modern SysMonitor Plus Plasma widget.
 
 This is the standalone Noctalia port of
 [Modern SysMonitor Plus](https://github.com/UnsaidSpeech/modern-sysmonitor-plus),
@@ -32,7 +32,7 @@ app directories.
 | CPU fan (`--cpu-fan N`, 0 = automatic) | `poller`: hwmon `fan<N>_input`, automatic label containing “cpu”; card shows the row when found |
 | `/proc/meminfo` RAM used/total | `poller`: `MemTotal` − `MemAvailable`, with the free+buffers+cached fallback |
 | `/proc/net/dev` download/upload | `poller`: non-`lo` byte deltas; the card keeps the 30-point history |
-| CPU/GPU usage segmented bars | CPU/GPU usage area charts (`ui.graph`), auto-scaled like the network chart with separate height/scale settings; RAM/VRAM/disks keep segmented bars |
+| CPU/GPU usage segmented bars | CPU/GPU usage area charts (`ui.graph`), auto-scaled like the network chart with separate height/scale settings; RAM/VRAM/disks use solid bars |
 | AMD GPU `/sys/class/drm` | `poller`: largest-VRAM AMD card (`gpu_busy_percent`, `mem_info_vram_*`, hwmon) |
 | Nvidia `nvidia-smi` | `poller`: full query, then a short query if the driver rejects extra fields |
 | (no Intel path) | Host `noctalia.systemStats()` GPU probe as a final fallback |
@@ -166,7 +166,7 @@ directory. Use `--yes` for non-interactive removal.
 Requires LuaJIT and Python 3.11+ (for `tomllib`). The tests mock
 `noctalia.*`, `ui.*` and `desktopWidget.*`, so no Noctalia session is needed.
 They cover the formatters, the sampler (CPU/RAM/network deltas, AMD/Nvidia/host
-GPU, fans, disk grouping), the card (every section, segmented bars, GPU details,
+GPU, fans, disk grouping), the card (every section, solid bars, usage charts, GPU details,
 stale state, no-GPU state, role tokens vs. hex, host-panel padding) and a
 service→card integration pass. Python then validates the manifest, catalog,
 translations, entries and repository layout.
@@ -203,8 +203,8 @@ translations, entries and repository layout.
 - The KDE temperature bar was a cyan→orange→red gradient. The port uses a
   severity-coloured bar with explicit warm/critical thresholds, which keeps the
   same meaning while respecting the user's palette.
-- RAM uses the shared **Segment count** (default 20) rather than the original
-  26 segments, so every bar has one consistent control.
+- RAM, VRAM and disk usage use solid bars matching the temperature bar, so
+  they no longer have the original 26-segment RAM look.
 - A GPU with no probe is shown as **No GPU detected** instead of zeros, so an
   unknown GPU is never mistaken for an idle one.
 

@@ -98,16 +98,14 @@ the editor.
 | Card gap | 10 px | Space between header/cards and between cards. |
 | Card padding | 10 px | Inner padding of each card. |
 | Card corner radius | 8 px | Inner-card radius. |
-| Bar height | 8 px | Segmented-bar and temperature-bar height (4–16). |
-| Segment count | 20 | Segments in the CPU, RAM, GPU and VRAM bars (8–40). |
-| Segment gap | 3 px | Gap between segments (0–6). |
+| Bar height | 8 px | Solid bar height (4–16). |
 | Divider thickness | 1 px | Header, GPU-details and disk dividers (0.5–4). |
 
 ### Charts
 
 CPU and GPU usage are area charts like the network charts and auto-scale to
 their largest visible sample, with a configurable minimum top of the scale. RAM,
-VRAM and disks keep segmented bars. All charts and percentage values use the
+VRAM and disks use solid bars like the temperature bar. All charts and percentage values use the
 accent colour; disk warnings use the critical colour.
 
 | Setting | Default | What it does |
@@ -139,7 +137,7 @@ in a setting, so translucency has separate opacity controls.
 | Card fill opacity | 0.35 | Inner-card fill opacity (0–1). |
 | Card border colour | `outline` | Inner-card border. |
 | Card border width | 1 px | Inner-card border (0–4). |
-| Bar track colour | `on_surface` | Unfilled segmented bar and temperature track. |
+| Bar track colour | `on_surface` | Unfilled bar and temperature track. |
 | Bar track opacity | 0.14 | Track opacity (0–1). |
 | Warm temperature colour | `tertiary` | Temperature between the warm and critical thresholds. |
 | Critical colour | `error` | Hot temperature, disk warning, alert glyphs. |

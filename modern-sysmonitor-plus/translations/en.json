@@ -160,15 +160,7 @@
     },
     "bar_height": {
       "label": "Bar height",
-      "description": "Height of the segmented bars and the temperature progress bar in logical px."
-    },
-    "segment_count": {
-      "label": "Segment count",
-      "description": "Number of segments in the CPU, RAM, GPU and VRAM bars."
-    },
-    "segment_gap": {
-      "label": "Segment gap",
-      "description": "Space between segments in logical px."
+      "description": "Height of the solid usage, memory and temperature bars in logical px (4–16)."
     },
     "temp_warm": {
       "label": "Warm temperature",

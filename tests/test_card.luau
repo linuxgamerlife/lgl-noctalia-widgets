@@ -62,8 +62,6 @@ local function base_config()
     track_color = "#00ff00",
     track_opacity = 0.5,
     bar_height = 8,
-    segment_count = 10,
-    segment_gap = 2,
     temp_warm = 70,
     temp_hot = 85,
     temp_warm_color = "#ffaa00",
@@ -179,7 +177,7 @@ assert_eq(find("network-down-graph").props.height, 40, "download chart height")
 assert_eq(find("network-up-graph").props.height, 26, "upload chart height")
 assert_eq(find("network-down-graph").props.color, "#ff8800", "chart accent colour")
 
--- CPU: 42.5% of ten segments rounds to four active segments.
+-- CPU: 42.5% is rendered as a usage chart.
 assert_eq(find("cpu-usage-value").props.text, "43%", "CPU value")
 assert_eq(find("cpu-usage-value").props.color, "#abcdef", "CPU text colour")
 assert_eq(find("cpu-usage-graph").props.height, 24, "CPU usage chart height")
@@ -198,8 +196,10 @@ assert(ram_text:find("8.5", 1, true), "RAM used value missing: " .. ram_text)
 assert(ram_text:find("32", 1, true), "RAM total value missing: " .. ram_text)
 assert_eq(find("ram-pct").props.text, "27%", "RAM percent")
 assert_eq(find("ram-pct").props.color, "#ff8800", "RAM percentage matches the bar accent")
-assert_eq(find("ram-bar-3").props.fill, "#ff8800", "active RAM segment")
-assert_eq(find("ram-bar-4").props.fill, "#00ff0080", "inactive RAM track")
+assert_close(find("ram-bar").props.progress, 0.265, 1e-9, "RAM solid bar progress")
+assert_eq(find("ram-bar").props.fill, "#ff8800", "RAM solid bar fill")
+assert_eq(find("ram-bar").props.track, "#00ff0080", "RAM solid bar track")
+assert_eq(find("ram-bar").props.height, 8, "RAM solid bar height")
 
 -- GPU and VRAM.
 assert_eq(find("gpu-usage-value").props.text, "37%", "GPU usage")
@@ -211,6 +211,8 @@ assert_eq(find("gpu-details-toggle").props.text, "More", "GPU details button")
 assert_eq(find("gpu-details-toggle").props.onClick, "toggleGpuDetails", "GPU details callback")
 assert_eq(find("vram-pct").props.text, "25%", "VRAM percent")
 assert_eq(find("vram-pct").props.color, "#ff8800", "VRAM percentage matches the bar accent")
+assert_close(find("vram-bar").props.progress, 0.25, 1e-9, "VRAM solid bar progress")
+assert_eq(find("vram-bar").props.fill, "#ff8800", "VRAM solid bar fill")
 local vram_text = find("vram-summary-label").props.text
 assert(vram_text:find("2.0", 1, true), "VRAM used missing: " .. vram_text)
 assert(vram_text:find("8", 1, true), "VRAM total missing: " .. vram_text)
@@ -226,11 +228,13 @@ assert_eq(find("disk-1-name").props.text, "Samsung SSD", "first disk name")
 assert_eq(find("disk-1-size").props.text, "100 GB / 500 GB · 35 °C", "first disk sizes")
 assert_eq(find("disk-1-pct").props.text, "20%", "first disk percent")
 assert_eq(find("disk-1-pct").props.color, "#ff8800", "first disk percentage matches the bar accent")
-assert_eq(find("disk-1-bar-2").props.fill, "#ff8800", "first disk active segment")
+assert_close(find("disk-1-bar").props.progress, 0.2, 1e-9, "first disk solid bar progress")
+assert_eq(find("disk-1-bar").props.fill, "#ff8800", "first disk solid bar fill")
 assert_eq(find("disk-2-name").props.text, "NVMe Drive", "second disk name")
 assert_eq(find("disk-2-pct").props.text, "92%", "second disk percent")
 assert_eq(find("disk-2-pct").props.color, "#ff0000", "disk warning colour")
-assert_eq(find("disk-2-bar-9").props.fill, "#ff0000", "disk warning bar")
+assert_close(find("disk-2-bar").props.progress, 0.92, 1e-9, "warning disk solid bar progress")
+assert_eq(find("disk-2-bar").props.fill, "#ff0000", "disk warning solid bar fill")
 assert(find("disk-2-alert"), "disk warning needs a glyph")
 assert(find("disk-2-divider"), "disks should be separated")
 
@@ -319,7 +323,7 @@ local role_tree = role_ctx.desktop_tree
 assert_eq(mock.find(role_tree, "card").props.width, 320, "default content width")
 assert_eq(mock.find(role_tree, "network-card").props.fill, "surface_variant/0.35", "default card fill role")
 assert_eq(mock.find(role_tree, "network-header-glyph").props.color, "primary", "default accent role")
-assert_eq(mock.find(role_tree, "ram-bar-20").props.fill, "on_surface/0.14", "default track role")
+assert_eq(mock.find(role_tree, "ram-bar").props.track, "on_surface/0.14", "default track role")
 assert_eq(mock.find(role_tree, "ram-pct").props.color, "primary", "default RAM percentage role")
 assert_eq(mock.find(role_tree, "vram-pct").props.color, "primary", "default VRAM percentage role")
 assert_eq(mock.find(role_tree, "cpu-usage-graph").props.height, 20, "default CPU chart height")

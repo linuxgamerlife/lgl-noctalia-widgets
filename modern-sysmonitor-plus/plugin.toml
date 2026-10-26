@@ -2,7 +2,7 @@
 #
 # A headless poller reads /proc, /sys, hwmon, AMD sysfs, nvidia-smi and `df`,
 # then publishes one plain `stats` table. The desktop card only watches that
-# table and renders the segmented-bar system monitor.
+# table and renders the solid-bar and live-chart system monitor.
 #
 # plugin_api 22 is the first level with relative module require, which this port
 # uses for lib/. Services start when a plugin is enabled at 17; opening the
@@ -15,7 +15,7 @@ plugin_api  = 22
 author      = "UnsaidSpeech"
 license     = "GPL-2.0-or-later"
 icon        = "cpu"
-description = "CPU, GPU, RAM, VRAM, network and physical-disk monitoring with segmented bars, live network charts and theme-aware colours."
+description = "CPU, GPU, RAM, VRAM, network and physical-disk monitoring with solid bars, live usage/network charts and theme-aware colours."
 tags        = ["system", "monitor", "hardware", "desktop"]
 
 # Shared by the service (sampling) and the card (stale-state timeout).
@@ -342,29 +342,6 @@ entry = "card.luau"
   min             = 4.0
   max             = 16.0
   step            = 0.5
-  visible_when    = { key = "show_styling", values = ["true"] }
-
-  [[desktop_widget.setting]]
-  key             = "segment_count"
-  type            = "int"
-  label_key       = "settings.segment_count.label"
-  description_key = "settings.segment_count.description"
-  default         = 20
-  min             = 8
-  max             = 40
-  step            = 1
-  visible_when    = { key = "show_styling", values = ["true"] }
-
-  [[desktop_widget.setting]]
-  key             = "segment_gap"
-  type            = "double"
-  label_key       = "settings.segment_gap.label"
-  description_key = "settings.segment_gap.description"
-  default         = 3.0
-  min             = 0.0
-  max             = 6.0
-  step            = 0.5
-  advanced        = true
   visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]

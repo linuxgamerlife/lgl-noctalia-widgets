@@ -11,7 +11,7 @@ performance notes and debugging commands.
 | Entry | Kind | File | Role |
 | --- | --- | --- | --- |
 | `poller` | `[[service]]` | `service.luau` | Samples /proc, /sys, hwmon, AMD sysfs, nvidia-smi and `df`; publishes `stats` |
-| `card` | `[[desktop_widget]]` | `card.luau` | Renders the segmented-bar desktop card |
+| `card` | `[[desktop_widget]]` | `card.luau` | Renders the solid-bar and chart desktop card |
 
 API levels used:
 
@@ -105,8 +105,7 @@ The card settings are grouped in the plugin README:
 - sections: `title`, `show_card_settings`, `show_styling`, `show_sections`, `show_header`, `show_network`, `show_cpu`, `show_ram`,
   `show_gpu`, `show_vram`, `show_disks`, `show_cpu_fan`, `allow_gpu_details`
 - layout: `content_width`, `card_gap`, `card_padding`, `card_radius`,
-  `bar_height`, `segment_count`, `segment_gap`,
-  `cpu_chart_height`, `cpu_chart_scale`, `gpu_chart_height`, `gpu_chart_scale`,
+  `bar_height`, `cpu_chart_height`, `cpu_chart_scale`, `gpu_chart_height`, `gpu_chart_scale`,
   `network_chart_height`, `network_line_width`, `network_fill_opacity`,
   `network_scale_kbps`, `divider_width`, `history_points`
 - colours: `accent_color`, `text_color`, `muted_text_color`,
@@ -171,10 +170,8 @@ No notifications are sent; the KDE widget had none.
   60 s and fall back to the host probe.
 - AMD GPU data comes from `/sys/class/drm` and its hwmon; it is read every
   sample and does not spawn a process.
-- The segmented bars are individual `ui.box` nodes (20 per bar by default), so
-  the card's tree is larger than a `ui.progress`-only design. This preserves the
-  KDE widget's signature look; lower **Segment count** if you need a lighter
-  tree.
+- RAM, VRAM and disk bars are `ui.progress` nodes; the CPU, GPU and network
+  charts are `ui.graph` nodes. There are no per-segment boxes to keep in sync.
 - The card renders on state changes, once per second for the stale check, and
   on the GPU More/Less toggle. It does not request frame ticks.
 
@@ -214,7 +211,7 @@ The mock covers:
   AMD GPU fields, Nvidia full/short query fallback, host GPU fallback, disk
   grouping (including LVM and duplicate mounts), missing sensors, malformed
   `/proc/stat`, disk refresh cadence and config changes.
-- `test_card.luau` — every section, CPU/GPU usage charts, segmented-bar fills,
+- `test_card.luau` — every section, CPU/GPU usage charts, solid bar fills,
   GPU details, stale state, no-GPU state, hidden sections, host-panel inset,
   role tokens vs. hex, opacity/stroke/width settings and the settings callback.
 - `test_integration.luau` — real service + real card, initial waiting state,

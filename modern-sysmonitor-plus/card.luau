@@ -91,8 +91,6 @@ local settings = {
   track_opacity = cfg_number("track_opacity", 0.14, 0, 1),
 
   bar_height = cfg_number("bar_height", 8, 4, 16),
-  segment_count = math.floor(cfg_number("segment_count", 20, 8, 40) + 0.5),
-  segment_gap = cfg_number("segment_gap", 3, 0, 6),
 
   temp_warm = math.floor(cfg_number("temp_warm", 70, 30, 110) + 0.5),
   temp_hot = math.floor(cfg_number("temp_hot", 85, 40, 120) + 0.5),
@@ -359,25 +357,6 @@ local function section_header(key, glyph, label, extra)
     table.insert(children, extra)
   end
   return ui.row({ key = key, gap = 6, align = "center" }, children)
-end
-
-local function segmented(key, percent, fill, known)
-  local active = 0
-  if known and percent ~= nil then
-    active = math.floor(format.clamp(percent, 0, 100) / 100 * settings.segment_count + 0.5)
-  end
-
-  local children = {}
-  for index = 1, settings.segment_count do
-    table.insert(children, ui.box({
-      key = key .. "-" .. index,
-      height = settings.bar_height,
-      flexGrow = 1,
-      radius = math.min(settings.bar_height / 2, 3),
-      fill = index <= active and fill or track_color,
-    }))
-  end
-  return ui.row({ key = key, gap = settings.segment_gap, align = "center", flexGrow = 1 }, children)
 end
 
 local function progress_bar(key, percent, fill, known)
@@ -664,7 +643,7 @@ local function ram_card(stats)
         maxLines = 1,
       }),
     }),
-    segmented("ram-bar", percent, settings.accent_color, percent ~= nil),
+    progress_bar("ram-bar", percent, settings.accent_color, percent ~= nil),
   })
 end
 
@@ -835,7 +814,7 @@ local function vram_card(stats)
         maxLines = 1,
       }),
     }),
-    segmented("vram-bar", percent, settings.accent_color, percent ~= nil),
+    progress_bar("vram-bar", percent, settings.accent_color, percent ~= nil),
   })
 end
 
@@ -880,7 +859,7 @@ local function disks_card(stats)
     end
 
     local usage_children = {
-      segmented(key .. "-bar", percent, warning and settings.critical_color or settings.accent_color, percent ~= nil),
+      progress_bar(key .. "-bar", percent, warning and settings.critical_color or settings.accent_color, percent ~= nil),
     }
     if warning then
       table.insert(usage_children, ui.glyph({
