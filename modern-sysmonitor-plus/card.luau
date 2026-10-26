@@ -62,6 +62,8 @@ end
 local settings = {
   title = cfg_text("title", noctalia.tr("meta.name")),
   show_header = cfg_bool("show_header", true),
+  -- Settings-editor hint only: the card always renders with the stored styling.
+  show_styling = cfg_bool("show_styling", false),
   show_network = cfg_bool("show_network", true),
   show_cpu = cfg_bool("show_cpu", true),
   show_ram = cfg_bool("show_ram", true),

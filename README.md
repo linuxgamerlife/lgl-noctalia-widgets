@@ -119,8 +119,22 @@ installer did not, and add it from **Settings → Desktop → Toggle Editor**.
 
 The desktop card is content-sized with no scrollbar. In the widget editor, set
 the tile to roughly **Content width + 2 × Panel padding**; with the defaults
-(320 px content, 14 px padding) that is about **348 px** wide. The height can be
+(320 px content, 10 px padding) that is about **340 px** wide. The height can be
 whatever the cards need.
+
+### Settings layout
+
+Noctalia v5.3.0 renders plugin widget settings in a single column and has no
+manifest field for columns, groups or sections. To keep that column usable, the
+host panel **background toggle, colour, opacity, radius and padding are the
+first rows** of the Widget section, followed by a **Show styling controls**
+toggle (default off). Turning it on reveals the colour, bar, chart and divider
+controls; the stored values stay active while hidden. Noctalia also renders its
+own Background section at the bottom of the inspector; it edits the same
+host-panel keys as the first rows.
+
+If you need a different layout, that is a shell-side change to the widget
+inspector, not something a plugin manifest can request.
 
 ## Remove
 

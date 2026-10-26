@@ -80,6 +80,7 @@ shared by the service and the card.
 | Show disks | on | One block per physical disk. Hides when no disks are found. |
 | Show CPU fan | on | Show the CPU fan row when a fan is found. |
 | Allow GPU details | on | Show the GPU More/Less button. |
+| Show styling controls | off | Reveal the colour, bar, chart and divider controls. Values stay active while hidden; Noctalia renders plugin widget settings in one column, so this keeps the default panel short. |
 
 ### Layout
 
@@ -147,11 +148,15 @@ script:
 | Host panel background | on | Let Noctalia draw its surface behind the card. Turn off to place content directly on the wallpaper. |
 | Panel colour | `surface` | Host panel fill. |
 | Panel opacity | 0.8 | Applied live by the host without recreating the widget. |
-| Panel corner radius | 14 px | Host panel radius. |
-| Panel padding | 14 px | Space between the panel edge and the card content. |
+| Panel corner radius | 12 px | Host panel radius. |
+| Panel padding | 10 px | Space between the panel edge and the card content. |
+
+These five controls appear first in the editor's **Widget** section so the
+transparency is easy to reach. Noctalia also renders its own **Background**
+section at the bottom of the inspector; both edit the same host-panel keys.
 
 With the panel on, size the editor tile to **Content width + 2 × Panel padding**
-(348 px wide with the defaults) for a tight fit. With the panel off the card
+(340 px wide with the defaults) for a tight fit. With the panel off the card
 adds a 6 px content inset.
 
 For the original glass look, use **Panel opacity 0.22**, **Accent colour

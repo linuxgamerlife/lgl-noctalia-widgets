@@ -51,6 +51,65 @@ entry = "service.luau"
 id    = "card"
 entry = "card.luau"
 
+  # Host panel surface. Noctalia also renders a Background section for every
+  # desktop widget; keeping these declarations here puts the panel toggle and
+  # opacity at the top of the Widget section as well.
+
+  [[desktop_widget.setting]]
+  key             = "background"
+  type            = "bool"
+  label_key       = "settings.background.label"
+  description_key = "settings.background.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "background_color"
+  type            = "color"
+  label_key       = "settings.background_color.label"
+  description_key = "settings.background_color.description"
+  default         = "surface"
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_opacity"
+  type            = "double"
+  label_key       = "settings.background_opacity.label"
+  description_key = "settings.background_opacity.description"
+  default         = 0.8
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_radius"
+  type            = "int"
+  label_key       = "settings.background_radius.label"
+  description_key = "settings.background_radius.description"
+  default         = 12
+  min             = 0
+  max             = 48
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_padding"
+  type            = "int"
+  label_key       = "settings.background_padding.label"
+  description_key = "settings.background_padding.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_styling"
+  type            = "bool"
+  label_key       = "settings.show_styling.label"
+  description_key = "settings.show_styling.description"
+  default         = false
+
   [[desktop_widget.setting]]
   key             = "title"
   type            = "string"
@@ -141,6 +200,7 @@ entry = "card.luau"
   max             = 32
   step            = 1
   advanced        = true
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_padding"
@@ -152,6 +212,7 @@ entry = "card.luau"
   max             = 32
   step            = 1
   advanced        = true
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_radius"
@@ -163,6 +224,7 @@ entry = "card.luau"
   max             = 32
   step            = 1
   advanced        = true
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_fill_color"
@@ -170,6 +232,7 @@ entry = "card.luau"
   label_key       = "settings.card_fill_color.label"
   description_key = "settings.card_fill_color.description"
   default         = "surface_variant"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_fill_opacity"
@@ -180,6 +243,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_border_color"
@@ -187,6 +251,7 @@ entry = "card.luau"
   label_key       = "settings.card_border_color.label"
   description_key = "settings.card_border_color.description"
   default         = "outline"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_border_width"
@@ -198,6 +263,7 @@ entry = "card.luau"
   max             = 4.0
   step            = 0.1
   advanced        = true
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "accent_color"
@@ -205,6 +271,7 @@ entry = "card.luau"
   label_key       = "settings.accent_color.label"
   description_key = "settings.accent_color.description"
   default         = "primary"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "text_color"
@@ -212,6 +279,7 @@ entry = "card.luau"
   label_key       = "settings.text_color.label"
   description_key = "settings.text_color.description"
   default         = "on_surface"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "muted_text_color"
@@ -219,6 +287,7 @@ entry = "card.luau"
   label_key       = "settings.muted_text_color.label"
   description_key = "settings.muted_text_color.description"
   default         = "on_surface_variant"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "track_color"
@@ -226,6 +295,7 @@ entry = "card.luau"
   label_key       = "settings.track_color.label"
   description_key = "settings.track_color.description"
   default         = "on_surface"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "track_opacity"
@@ -236,6 +306,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "bar_height"
@@ -246,6 +317,7 @@ entry = "card.luau"
   min             = 4.0
   max             = 16.0
   step            = 0.5
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "segment_count"
@@ -256,6 +328,7 @@ entry = "card.luau"
   min             = 8
   max             = 40
   step            = 1
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "segment_gap"
@@ -267,6 +340,7 @@ entry = "card.luau"
   max             = 6.0
   step            = 0.5
   advanced        = true
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "temp_warm"
@@ -277,6 +351,7 @@ entry = "card.luau"
   min             = 30
   max             = 110
   step            = 1
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "temp_hot"
@@ -287,6 +362,7 @@ entry = "card.luau"
   min             = 40
   max             = 120
   step            = 1
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "temp_warm_color"
@@ -294,6 +370,7 @@ entry = "card.luau"
   label_key       = "settings.temp_warm_color.label"
   description_key = "settings.temp_warm_color.description"
   default         = "tertiary"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "critical_color"
@@ -301,6 +378,7 @@ entry = "card.luau"
   label_key       = "settings.critical_color.label"
   description_key = "settings.critical_color.description"
   default         = "error"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "disk_warning"
@@ -311,6 +389,7 @@ entry = "card.luau"
   min             = 50
   max             = 100
   step            = 1
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "network_chart_height"
@@ -321,6 +400,7 @@ entry = "card.luau"
   min             = 16
   max             = 80
   step            = 2
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "network_line_width"
@@ -332,6 +412,7 @@ entry = "card.luau"
   max             = 4.0
   step            = 0.1
   advanced        = true
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "network_fill_opacity"
@@ -342,6 +423,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "network_scale_kbps"
@@ -353,6 +435,7 @@ entry = "card.luau"
   max             = 1024
   step            = 1
   advanced        = true
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_width"
@@ -364,6 +447,7 @@ entry = "card.luau"
   max             = 4.0
   step            = 0.1
   advanced        = true
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_color"
@@ -371,6 +455,7 @@ entry = "card.luau"
   label_key       = "settings.divider_color.label"
   description_key = "settings.divider_color.description"
   default         = "outline"
+  visible_when    = { key = "show_styling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "history_points"
@@ -386,50 +471,4 @@ entry = "card.luau"
   # Host panel surface. DesktopWidget consumes these keys; the card reads them
   # only to keep lint's declared-key contract and to add an inset when the panel
   # is off. The card never draws a second outer surface.
-  [[desktop_widget.setting]]
-  key             = "background"
-  type            = "bool"
-  label_key       = "settings.background.label"
-  description_key = "settings.background.description"
-  default         = true
-
-  [[desktop_widget.setting]]
-  key             = "background_color"
-  type            = "color"
-  label_key       = "settings.background_color.label"
-  description_key = "settings.background_color.description"
-  default         = "surface"
-  visible_when    = { key = "background", values = ["true"] }
-
-  [[desktop_widget.setting]]
-  key             = "background_opacity"
-  type            = "double"
-  label_key       = "settings.background_opacity.label"
-  description_key = "settings.background_opacity.description"
-  default         = 0.8
-  min             = 0.0
-  max             = 1.0
-  step            = 0.01
-  visible_when    = { key = "background", values = ["true"] }
-
-  [[desktop_widget.setting]]
-  key             = "background_radius"
-  type            = "int"
-  label_key       = "settings.background_radius.label"
-  description_key = "settings.background_radius.description"
-  default         = 14
-  min             = 0
-  max             = 48
-  step            = 1
-  visible_when    = { key = "background", values = ["true"] }
-
-  [[desktop_widget.setting]]
-  key             = "background_padding"
-  type            = "int"
-  label_key       = "settings.background_padding.label"
-  description_key = "settings.background_padding.description"
-  default         = 14
-  min             = 0
-  max             = 32
-  step            = 1
-  visible_when    = { key = "background", values = ["true"] }
+  visible_when    = { key = "show_styling", values = ["true"] }

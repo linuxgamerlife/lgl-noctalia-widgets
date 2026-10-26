@@ -54,6 +54,10 @@
       "label": "CPU fan number",
       "description": "0 = automatic (a hwmon fan label containing \"cpu\"). Otherwise pick fan1, fan2, … on the motherboard sensor chip, matching the output of the sensors command."
     },
+    "show_styling": {
+      "label": "Show styling controls",
+      "description": "Reveal the colour, bar, chart and divider controls. Current values stay active while hidden. Noctalia renders plugin widget settings in one column, so this keeps the default panel short."
+    },
     "title": {
       "label": "Card title",
       "description": "Heading shown in the header."

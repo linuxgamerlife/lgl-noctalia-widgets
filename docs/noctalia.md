@@ -102,7 +102,7 @@ Changing `cpu_fan_number` takes effect on the next sample.
 
 The card settings are grouped in the plugin README:
 
-- sections: `title`, `show_header`, `show_network`, `show_cpu`, `show_ram`,
+- sections: `title`, `show_header`, `show_styling`, `show_network`, `show_cpu`, `show_ram`,
   `show_gpu`, `show_vram`, `show_disks`, `show_cpu_fan`, `allow_gpu_details`
 - layout: `content_width`, `card_gap`, `card_padding`, `card_radius`,
   `bar_height`, `segment_count`, `segment_gap`, `network_chart_height`,
@@ -115,6 +115,8 @@ The card settings are grouped in the plugin README:
 - safety: `temp_warm`, `temp_hot`, `disk_warning`
 - host surface: `background`, `background_color`, `background_opacity`,
   `background_radius`, `background_padding`
+
+Noctalia v5.3.0 renders the desktop-widget inspector as a single column and has no manifest field for columns, groups or sections. To keep that column usable, the host background controls are declared first and `show_styling` (default off) hides the long colour/bar/chart list; the stored values stay active. **Background transparency** is the host panel's `background_opacity`, shown at the top of the Widget section and in the host's own Background section.
 
 Every `double` that ranges 0–1 has an explicit `step` (`0.01` for the host
 opacity, `0.05` for the other opacities), so the sliders move continuously.
