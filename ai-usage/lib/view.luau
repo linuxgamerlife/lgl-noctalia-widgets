@@ -126,6 +126,51 @@ function M.bar(item, opts, key)
   return ui.column({ key = key, gap = 2 }, children)
 end
 
+local function modelSummary(model)
+  local parts = {}
+  if (model.steps or 0) > 0 then
+    table.insert(parts, M.tr("models.steps", "{n} steps", { n = formatter.formatCount(model.steps) }))
+  end
+  if (model.input or 0) + (model.output or 0) > 0 then
+    table.insert(parts, M.tr("models.tokens", "{input} in · {output} out", {
+      input = formatter.formatCount(model.input or 0),
+      output = formatter.formatCount(model.output or 0),
+    }))
+  end
+  return table.concat(parts, " · ")
+end
+
+function M.modelRow(model, opts, key)
+  local dense = opts and opts.dense
+  return ui.column({ key = key, gap = 0 }, {
+    ui.row({ key = key .. "-head", gap = 8, align = "center", justify = "space_between" }, {
+      ui.label({
+        key = key .. "-name",
+        text = (model.id or "unknown")
+          .. (model.variant ~= nil and model.variant ~= "default" and (" · " .. model.variant) or ""),
+        fontSize = dense and 11 or 12,
+        color = "on_surface",
+        maxLines = 1,
+        flexGrow = 1,
+      }),
+      ui.label({
+        key = key .. "-cost",
+        text = formatter.formatMoney(model.cost or 0, "usd"),
+        fontSize = dense and 11 or 12,
+        fontWeight = "semibold",
+        color = "on_surface",
+      }),
+    }),
+    ui.label({
+      key = key .. "-summary",
+      text = modelSummary(model),
+      fontSize = 9,
+      color = "on_surface_variant",
+      maxLines = 1,
+    }),
+  })
+end
+
 function M.card(section, opts)
   local dense = opts and opts.dense
   local gap = dense and 4 or 7
@@ -203,6 +248,46 @@ function M.card(section, opts)
   if showDetails then
     for index, row in ipairs(section.rows) do
       table.insert(children, M.valueRow(row, { dense = dense, dim = true }, "card-row-" .. section.key .. "-" .. index))
+    end
+  end
+
+  local localModels = section.localModels or {}
+  local localModelsError = section.localModelsError
+  if showDetails and (#localModels > 0 or (localModelsError ~= nil and localModelsError ~= "")) then
+    if #section.windows > 0 or #section.mainRows > 0 or #section.rows > 0 then
+      table.insert(children, ui.separator({
+        key = "models-separator-" .. section.key,
+        thickness = 1,
+        color = "outline/0.35",
+        spacing = 2,
+      }))
+    end
+    table.insert(children, ui.label({
+      key = "models-heading-" .. section.key,
+      text = M.tr("models.heading", "Models on this machine"),
+      fontSize = 10,
+      fontWeight = "medium",
+      color = "on_surface_variant",
+    }))
+    table.insert(children, ui.label({
+      key = "models-note-" .. section.key,
+      text = M.tr("models.note", "Local OpenCode data, not official Go quota"),
+      fontSize = 9,
+      color = "on_surface_variant",
+      maxLines = 2,
+    }))
+    if localModelsError ~= nil and localModelsError ~= "" then
+      table.insert(children, ui.label({
+        key = "models-error-" .. section.key,
+        text = M.tr("models.unavailable", "Local model stats unavailable: {error}", { error = localModelsError }),
+        fontSize = 10,
+        color = "tertiary",
+        maxLines = 3,
+      }))
+    else
+      for index, model in ipairs(localModels) do
+        table.insert(children, M.modelRow(model, opts, "model-" .. section.key .. "-" .. index))
+      end
     end
   end
 

@@ -34,6 +34,13 @@ options = [
   { value = "3600", label_key = "settings.refresh_seconds.option.1h" },
 ]
 
+[[setting]]
+key             = "show_model_stats"
+type            = "bool"
+label_key       = "settings.show_model_stats.label"
+description_key = "settings.show_model_stats.description"
+default         = true
+
 # Headless poller. One instance per plugin, started by Noctalia.
 [[service]]
 id    = "poller"

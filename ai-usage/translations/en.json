@@ -183,5 +183,12 @@
   "settings.card_opacity.label": "Account card opacity",
   "settings.card_opacity.description": "Opacity of the account cards inside the widget. Set it to 0 to blend the cards into the wallpaper.",
   "status.window.rate_limited": "Rate limited",
-  "status.window.exhausted": "Exhausted"
+  "status.window.exhausted": "Exhausted",
+  "settings.show_model_stats.label": "Show local model stats",
+  "settings.show_model_stats.description": "For OpenCode Go, read the local OpenCode database with `opencode stats --json --models` and show the top models on this machine. This is local data, not official Go quota.",
+  "models.heading": "Models on this machine",
+  "models.note": "Local OpenCode data, not official Go quota",
+  "models.steps": "{n} steps",
+  "models.tokens": "{input} in · {output} out",
+  "models.unavailable": "Local model stats unavailable: {error}"
 }

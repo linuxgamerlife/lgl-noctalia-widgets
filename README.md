@@ -131,6 +131,24 @@ each window, and shows **Rate limited** (and treats the window as 100%) when the
 status is `rate-limited`. Dollar figures would require the OpenCode console
 session, not an API key, so they are intentionally not used.
 
+### Local model stats (OpenCode Go)
+
+With `show_model_stats` enabled, the service also runs:
+
+```bash
+opencode stats --json --models --limit 10
+```
+
+It filters entries whose `model.providerID` is `opencode-go` and shows the top
+five by cost on each OpenCode Go card: model id, cost, steps, and input/output
+tokens. This is **local machine data** from the OpenCode database. It is not the
+official Go quota: it only sees usage from this machine, it does not identify
+which API key/account spent it, and it is all-time rather than the rolling
+5-hour/weekly/monthly windows. The card labels it “Models on this machine”.
+
+If the `opencode` CLI is not installed, the card says so; the quota percentages
+still work. The local read is refreshed at most every 5 minutes.
+
 ## How it gets data, and is it secure?
 
 ### Remote providers
@@ -238,6 +256,7 @@ Plugin-level (Settings → Plugins):
 | Key | Type | Default | Meaning |
 | --- | --- | --- | --- |
 | `refresh_seconds` | select | `30` | 30 s, 1, 5, 15, 30 or 60 minutes |
+| `show_model_stats` | bool | `true` | Read local OpenCode model usage with `opencode stats` and show it on OpenCode Go cards |
 
 Desktop card:
 
@@ -264,6 +283,7 @@ Bar widget:
 - `curl`, `timeout` and GNU `find` for remote checks
 - `secret-tool` (libsecret) and a Secret Service for keys
 - `gdbus` (glib2) for the locked-keyring probe
+- Optional: the `opencode` CLI for local per-model OpenCode Go stats
 
 ## Tests
 
