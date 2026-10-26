@@ -17,9 +17,12 @@ local state = {
 local config = {
   illustration_color = "#ff8800",
   controller_body_color = "#112233",
+  controller_stroke_width = 5.5,
   battery_color_mode = "connection",
   battery_fill_color = "#33cc99",
   battery_low_color = "#ed4c4c",
+  text_color = "#abcdef",
+  muted_text_color = "#123456",
   show_signal = true,
   signal_style = "bars_dbm",
   low_threshold = 20,
@@ -45,7 +48,7 @@ noctalia = {
     watch = function(_, cb) watch_cb = cb end,
   },
   pluginDataDir = function() return "/tmp/opencode/plugin-data" end,
-  readFile = function() return "<svg>{{BODY}}|{{COLOR}}</svg>" end,
+  readFile = function() return "<svg>{{BODY}}|{{COLOR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>" end,
   writeFile = function(path, content) written = { path = path, content = content }; return true end,
   setUpdateInterval = function() end,
   log = function() end,
@@ -73,13 +76,18 @@ local function find_text(t, text)
 end
 
 assert(tree and tree.type == "column", "card tree missing")
-assert(written and written.content == "<svg>#112233|#ff8800</svg>", "generated SVG wrong: " .. tostring(written and written.content))
+assert(written and written.content == "<svg>#112233|#ff8800|5.50|5.17</svg>", "generated SVG wrong: " .. tostring(written and written.content))
 assert(find_key(tree, "controller-art"), "controller art missing")
 assert(find_key(tree, "battery-fill"), "battery fill missing")
 assert(find_key(tree, "signal-bar-4"), "signal bars missing")
 assert(find_key(tree, "signal-dbm"), "dBm label missing")
 assert(find_text(tree, "64"), "battery percentage missing")
 assert(find_text(tree, "status.connected"), "connected status missing")
+assert(find_text(tree, "64").props.color == "#abcdef", "primary text colour not applied")
+assert(find_text(tree, "%").props.color == "#123456", "secondary text colour not applied")
+assert(find_text(tree, "status.connected").props.color == "#abcdef", "status text colour not applied")
+assert(find_text(tree, "-62 dBm").props.color == "#123456", "dBm text colour not applied")
+assert(find_key(tree, "status-glyph").props.color == "#abcdef", "marker text colour not applied")
 assert(frame_tick == false, "should not request frame ticks while idle")
 
 -- Charging: pulse frames should change the fill opacity.
@@ -97,6 +105,8 @@ state.battery_pct = 8
 watch_cb(state)
 assert(find_text(tree, "status.low"), "low status missing")
 assert(find_key(tree, "battery-fill").props.fill == "#ed4c4c", "low fill should be red")
+assert(find_text(tree, "8").props.color == "#ed4c4c", "low percentage should use low colour")
+assert(find_text(tree, "status.low").props.color == "#ed4c4c", "low status should use low colour")
 
 -- Stale state: show the waiting status and no fill.
 state.ts = os.time() - 100

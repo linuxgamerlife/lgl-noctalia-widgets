@@ -2,7 +2,7 @@ local shared = {}
 local watchers = {}
 local stream_cb = nil
 local tree = nil
-local config = { low_threshold = 20, notify_low = true, show_signal = true, signal_style = "bars", illustration_color = "#e8ebef", controller_body_color = "#2c3035", battery_color_mode = "connection", battery_fill_color = "#fcfcfc", battery_low_color = "#ed4c4c" }
+local config = { low_threshold = 20, notify_low = true, show_signal = true, signal_style = "bars", illustration_color = "#e8ebef", controller_body_color = "#2c3035", controller_stroke_width = 3.4, battery_color_mode = "connection", battery_fill_color = "#fcfcfc", battery_low_color = "#ed4c4c", text_color = "on_surface", muted_text_color = "on_surface_variant" }
 local notifications = 0
 
 local function ctor(t)
@@ -19,7 +19,7 @@ noctalia = {
   pluginDir = function() return "/tmp/opencode/plugin" end,
   pluginDataDir = function() return "/tmp/opencode/plugin-data" end,
   readFile = function(p)
-    if p == "assets/controller-template.svg" then return "<svg>{{BODY}}|{{COLOR}}</svg>" end
+    if p == "assets/controller-template.svg" then return "<svg>{{BODY}}|{{COLOR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>" end
     return nil
   end,
   writeFile = function() return true end,

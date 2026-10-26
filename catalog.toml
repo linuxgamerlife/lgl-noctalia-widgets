@@ -5,7 +5,7 @@
 [[plugin]]
 id           = "jahrek/steam-controller"
 name         = "Steam Controller Battery"
-version      = "2.1.0"
+version      = "2.2.0"
 author       = "Jahrek"
 license      = "MIT"
 icon         = "device-gamepad-2"

@@ -113,13 +113,16 @@ box_width  = 0.0             # 0 = auto-fit the card
 box_height = 0.0
 
 [desktop_widgets.widget.steam_controller.settings]
-illustration_color    = "#e8ebef"
-controller_body_color = "#2c3035"
-battery_color_mode    = "connection"   # connection | custom
+illustration_color      = "#e8ebef"
+controller_body_color   = "#2c3035"
+controller_stroke_width = 3.4
+battery_color_mode      = "connection"   # connection | custom
 battery_fill_color    = "#fcfcfc"      # used when mode = custom
-battery_low_color     = "#ed4c4c"
-show_signal           = true
-signal_style          = "bars"         # bars | bars_dbm | dbm
+battery_low_color       = "#ed4c4c"
+text_color              = "on_surface"
+muted_text_color        = "on_surface_variant"
+show_signal             = true
+signal_style            = "bars"         # bars | bars_dbm | dbm
 
 [plugin_settings."jahrek/steam-controller"]
 low_threshold = 20
@@ -137,9 +140,12 @@ entries are per-widget presentation settings.
 | `notify_low` | plugin | `true` | Send one desktop notification when the battery first drops to the threshold. |
 | `illustration_color` | desktop widget | `#e8ebef` | Controller line-art colour. |
 | `controller_body_color` | desktop widget | `#2c3035` | Controller body fill colour. |
+| `controller_stroke_width` | desktop widget | `3.4` | Controller outline and trackpad edge thickness (`0.5`–`8`). |
 | `battery_color_mode` | desktop widget | `connection` | `connection` uses the LED colours; `custom` uses `battery_fill_color`. |
 | `battery_fill_color` | desktop widget | `#fcfcfc` | Custom battery fill colour, used when `battery_color_mode = "custom"`. |
 | `battery_low_color` | desktop widget | `#ed4c4c` | Low-battery fill, percentage, weak-signal meter and marker colour. Always wins when low. |
+| `text_color` | desktop widget | `on_surface` | Percentage, status text, marker and active signal bars. |
+| `muted_text_color` | desktop widget | `on_surface_variant` | Percentage sign, `via` line, dBm label and inactive signal bars. |
 | `show_signal` | desktop widget | `true` | Show the wireless link meter for a controller connected through the puck. |
 | `signal_style` | desktop widget | `bars` | `bars`, `bars_dbm`, or `dbm`. |
 
@@ -151,17 +157,21 @@ The desktop widget also gets Noctalia's standard background settings
 
 ### Colours
 
-- `illustration_color` and `controller_body_color` are drawn into a generated
-  SVG in the plugin data directory. They accept a hex colour or a palette role
-  token.
+- `illustration_color`, `controller_body_color` and
+  `controller_stroke_width` are drawn into a generated SVG in the plugin data
+  directory. The colours accept a hex value or a palette role token;
+  `controller_stroke_width` scales the body outline and trackpad edges.
 - `battery_color_mode = "connection"` (the default) uses the controller's LED
   colours: white on the puck, blue over Bluetooth, green on USB-C, orange while
   charging off-dock.
 - `battery_color_mode = "custom"` uses `battery_fill_color` for the battery fill.
 - `battery_low_color` always takes precedence when the battery is low. It also
   colours the percentage, the weak-signal meter and the low-battery marker.
+- `text_color` and `muted_text_color` control the percentage/status/marker and
+  the secondary text (`%`, `via` line, dBm, inactive bars). They are passed
+  straight to the UI, so a role token follows a live theme change.
 
-The battery colour settings accept hex values or palette role tokens.
+The battery and text colour settings accept hex values or palette role tokens.
 
 For the controller colours, palette roles are resolved with
 `noctalia.getColor()` and re-resolved on every update (about once a second), so

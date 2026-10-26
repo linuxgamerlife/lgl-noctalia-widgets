@@ -12,9 +12,12 @@ local STALE_AFTER = 20 -- seconds without a daemon heartbeat
 local settings = {
   illustration_color = noctalia.getConfig("illustration_color") or "#e8ebef",
   controller_body_color = noctalia.getConfig("controller_body_color") or "#2c3035",
+  controller_stroke_width = tonumber(noctalia.getConfig("controller_stroke_width")) or 3.4,
   battery_color_mode = noctalia.getConfig("battery_color_mode") or "connection",
   battery_fill_color = noctalia.getConfig("battery_fill_color") or "#fcfcfc",
   battery_low_color = noctalia.getConfig("battery_low_color") or "#ed4c4c",
+  text_color = noctalia.getConfig("text_color") or "on_surface",
+  muted_text_color = noctalia.getConfig("muted_text_color") or "on_surface_variant",
   show_signal = noctalia.getConfig("show_signal"),
   signal_style = noctalia.getConfig("signal_style") or "bars",
 }
@@ -26,6 +29,17 @@ if settings.battery_fill_color == "" then
 end
 if settings.battery_low_color == "" then
   settings.battery_low_color = "#ed4c4c"
+end
+if settings.text_color == "" then
+  settings.text_color = "on_surface"
+end
+if settings.muted_text_color == "" then
+  settings.muted_text_color = "on_surface_variant"
+end
+if settings.controller_stroke_width < 0.5 then
+  settings.controller_stroke_width = 0.5
+elseif settings.controller_stroke_width > 8 then
+  settings.controller_stroke_width = 8
 end
 if settings.show_signal == nil then
   settings.show_signal = true
@@ -94,12 +108,16 @@ local function controller_art()
   if not valid_hex(body) then
     body = "#2c3035"
   end
+  local stroke = settings.controller_stroke_width
+  local stroke_text = string.format("%.2f", stroke)
+  local grip_text = string.format("%.2f", stroke * 0.94)
 
   local dir = noctalia.pluginDataDir()
   if not dir then
     return fallback
   end
-  local path = dir .. "/controller-v2-" .. color_key(line) .. "-" .. color_key(body) .. ".svg"
+  local path = dir .. "/controller-v3-" .. color_key(line) .. "-" .. color_key(body)
+    .. "-" .. color_key(stroke_text) .. ".svg"
   if path == art_path then
     return path
   end
@@ -110,6 +128,8 @@ local function controller_art()
 
   local svg = string.gsub(template, "{{BODY}}", body)
   svg = string.gsub(svg, "{{COLOR}}", line)
+  svg = string.gsub(svg, "{{STROKE_BODY}}", stroke_text)
+  svg = string.gsub(svg, "{{STROKE_GRIP}}", grip_text)
   local written = noctalia.writeFile(path, svg)
   if not written then
     return fallback
@@ -232,10 +252,10 @@ local function marker_color(mode, connected, s)
       return LED.bluetooth
     end
     -- White on a light card disappears; the battery keeps the LED colour.
-    return connected and "on_surface" or LED.docked
+    return connected and settings.text_color or LED.docked
   end
   if not connected then
-    return "on_surface_variant"
+    return settings.muted_text_color
   end
   if s.connection == "bluetooth" then
     return LED.bluetooth
@@ -243,7 +263,7 @@ local function marker_color(mode, connected, s)
   if s.connection == "usb" then
     return LED.cable
   end
-  return "on_surface"
+  return settings.text_color
 end
 
 local function signal_level(connected, s)
@@ -275,7 +295,7 @@ local function pct_row(pct, known, shown, provisional, mode)
       text = tostring(math.floor(pct + 0.5)),
       fontSize = 30,
       fontWeight = "semibold",
-      color = mode == "low" and settings.battery_low_color or "on_surface",
+      color = mode == "low" and settings.battery_low_color or settings.text_color,
       opacity = opacity,
     }))
     table.insert(children, ui.label({
@@ -283,7 +303,7 @@ local function pct_row(pct, known, shown, provisional, mode)
       text = "%",
       fontSize = 16,
       fontWeight = "medium",
-      color = mode == "low" and settings.battery_low_color or "on_surface_variant",
+      color = mode == "low" and settings.battery_low_color or settings.muted_text_color,
       opacity = opacity,
     }))
     if provisional then
@@ -291,7 +311,8 @@ local function pct_row(pct, known, shown, provisional, mode)
         key = "pct-clock",
         name = "clock",
         size = 12,
-        color = "on_surface_variant/0.7",
+        color = settings.muted_text_color,
+        opacity = 0.7,
       }))
     end
   else
@@ -300,7 +321,7 @@ local function pct_row(pct, known, shown, provisional, mode)
       text = "—",
       fontSize = 30,
       fontWeight = "semibold",
-      color = "on_surface_variant",
+      color = settings.muted_text_color,
     }))
   end
 
@@ -322,7 +343,7 @@ local function status_row(mode, connected, charging, s, is_fresh)
   end
 
   local text_color = mode == "low" and settings.battery_low_color
-    or (is_fresh and "on_surface" or "on_surface_variant")
+    or (is_fresh and settings.text_color or settings.muted_text_color)
 
   table.insert(children, ui.label({
     key = "status-text",
@@ -351,7 +372,9 @@ local function signal_node(level, dbm)
         width = 3,
         height = heights[i],
         radius = 1.5,
-        fill = active and (level == 1 and settings.battery_low_color or "on_surface") or "on_surface_variant/0.35",
+        fill = active and (level == 1 and settings.battery_low_color or settings.text_color)
+          or settings.muted_text_color,
+        opacity = active and 1 or 0.35,
       }))
     end
   end
@@ -361,7 +384,8 @@ local function signal_node(level, dbm)
       key = "signal-dbm",
       text = tostring(dbm) .. " dBm",
       fontSize = 11,
-      color = style == "dbm" and (level == 1 and settings.battery_low_color or "on_surface") or "on_surface_variant",
+      color = style == "dbm" and (level == 1 and settings.battery_low_color or settings.text_color)
+        or settings.muted_text_color,
     }))
   end
 
@@ -394,7 +418,7 @@ local function render()
       key = "via-internal",
       text = noctalia.tr("status.via_internal"),
       fontSize = 11,
-      color = "on_surface_variant",
+      color = settings.muted_text_color,
       opacity = 0.85,
     }))
   end

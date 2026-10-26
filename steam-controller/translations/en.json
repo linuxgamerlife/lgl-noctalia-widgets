@@ -30,6 +30,10 @@
       "description": "Fill colour of the controller drawing's body.",
       "label": "Controller body colour"
     },
+    "controller_stroke_width": {
+      "description": "Thickness of the controller outline and trackpad edges (0.5–8).",
+      "label": "Controller outline thickness"
+    },
     "illustration_color": {
       "description": "Line-art colour for the controller drawing.",
       "label": "Controller line colour"
@@ -37,6 +41,10 @@
     "low_threshold": {
       "description": "Show the low-battery state and send the notification at or below this percentage.",
       "label": "Low battery threshold"
+    },
+    "muted_text_color": {
+      "description": "Percentage sign, 'via' line, dBm label and inactive signal bars. Accepts a hex colour or palette role.",
+      "label": "Secondary text colour"
     },
     "notify_low": {
       "description": "Send a desktop notification when the battery first drops to the threshold.",
@@ -54,6 +62,10 @@
         "bars_dbm": "Bars and dBm",
         "dbm": "dBm only"
       }
+    },
+    "text_color": {
+      "description": "Percentage, status text and active signal bars. Accepts a hex colour or palette role.",
+      "label": "Text colour"
     }
   },
   "status": {
