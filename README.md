@@ -98,16 +98,23 @@ per-account error states, the 1 MiB answer cap and the read-only local sources.
 
 ### Background and width
 
-The desktop widget has two independent opacity sliders:
+The desktop widget has an outer panel and account cards, controlled separately:
 
-- **Outer background opacity** is the panel behind the header and cards. At `0`
-  the outer fill and border are removed.
-- **Account card opacity** is the surface of each account card. At `0` the cards
-  have no fill or border, so only text and bars remain over the wallpaper.
+- **Show outer panel** turns Noctalia’s desktop-widget panel behind the header
+  and cards on or off.
+- **Outer panel opacity** controls that panel. It is the host’s own background,
+  so the slider updates live.
+- **Account card opacity** controls the surface of each account card. At `0` the
+  cards have no fill or border, so only text and bars remain.
 
-Set both to `0` for a completely transparent widget. The selection handles and
-the white rectangle in the widget editor are the editor’s own chrome, not part
-of the widget, and disappear when you leave the editor.
+For a completely transparent widget, turn **Show outer panel** off and set
+**Account card opacity** to `0`. The selection handles and the white rectangle
+in the widget editor are the editor’s own chrome, not part of the widget, and
+disappear when you leave the editor.
+
+The plugin does not draw a second outer surface on top of the host panel. That
+was what made the opacity slider look like an on/off switch: the host panel was
+behind an opaque plugin surface, so only the padding around it changed.
 
 **Widget width** sets the content width in logical pixels. Rows, progress bars
 and separators stretch to that width. The desktop tile itself is sized by the
@@ -265,7 +272,8 @@ Desktop card:
 | `show_header` | bool | `true` | Title, refresh and settings buttons |
 | `show_details` | bool | `true` | Tokens, plan, billing mode, top-up, member budgets |
 | `card_width` | int | `360` | Content width in logical px; cards, rows and bars grow with it |
-| `background_opacity` | double | `0.85` | Outer panel opacity; `0` removes the outer fill and border |
+| `background` | bool | `true` | Show Noctalia’s outer desktop-widget panel behind the cards |
+| `background_opacity` | double | `0.85` | Opacity of that outer panel; only shown when `background` is on |
 | `card_opacity` | double | `0.42` | Account card opacity; `0` blends the cards into the wallpaper |
 | `dense` | bool | `false` | Smaller text, gaps and bars |
 

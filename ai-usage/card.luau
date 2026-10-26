@@ -15,6 +15,12 @@ if showDetails == nil then
   showDetails = true
 end
 local dense = noctalia.getConfig("dense") == true
+-- The host draws the outer desktop-widget panel and owns the outer opacity
+-- slider. The plugin only draws the contents and the account cards.
+local showOuterPanel = noctalia.getConfig("background")
+if showOuterPanel == nil then
+  showOuterPanel = true
+end
 local backgroundOpacity = tonumber(noctalia.getConfig("background_opacity"))
 if backgroundOpacity == nil then
   backgroundOpacity = 0.85
@@ -142,18 +148,16 @@ local function render()
     end
   end
 
+  -- No fill or border here: the host panel behind the content is the outer
+  -- background, so its opacity slider updates live. When the host panel is
+  -- disabled the content sits directly on the wallpaper.
   local container = {
     key = "ai-usage",
     width = cardWidth,
     gap = dense and 6 or 10,
-    padding = dense and 8 or 14,
+    padding = showOuterPanel and (dense and 8 or 14) or 0,
     radius = dense and 10 or 16,
   }
-  if backgroundOpacity > 0 then
-    container.fill = string.format("surface/%.2f", backgroundOpacity)
-    container.border = "outline/0.22"
-    container.borderWidth = 1
-  end
   desktopWidget.render(ui.column(container, children))
 end
 

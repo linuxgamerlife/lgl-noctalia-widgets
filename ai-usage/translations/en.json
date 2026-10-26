@@ -12,8 +12,8 @@
   "settings.show_header.description": "Show the title, refresh button and settings button above the cards.",
   "settings.show_details.label": "Show details",
   "settings.show_details.description": "Show the extra rows: tokens, plan, billing mode, top-up and member budgets.",
-  "settings.background_opacity.label": "Outer background opacity",
-  "settings.background_opacity.description": "Opacity of the outer panel. Set it to 0 for no outer fill or border.",
+  "settings.background_opacity.label": "Outer panel opacity",
+  "settings.background_opacity.description": "Opacity of Noctalia's desktop-widget panel. Only shown when the outer panel is on.",
   "settings.dense.label": "Compact cards",
   "settings.dense.description": "Use smaller text, gaps and bars.",
   "settings.show_percent.label": "Show percentage",
@@ -181,7 +181,7 @@
   "settings.card_width.label": "Widget width",
   "settings.card_width.description": "Content width in logical pixels. Account cards, rows and bars grow with it. The desktop tile itself is sized in the widget editor.",
   "settings.card_opacity.label": "Account card opacity",
-  "settings.card_opacity.description": "Opacity of the account cards inside the widget. Set it to 0 to blend the cards into the wallpaper.",
+  "settings.card_opacity.description": "Opacity of the account cards inside the widget. Set it to 0 for transparent cards.",
   "status.window.rate_limited": "Rate limited",
   "status.window.exhausted": "Exhausted",
   "settings.show_model_stats.label": "Show local model stats",
@@ -190,5 +190,7 @@
   "models.note": "Local OpenCode data, not official Go quota",
   "models.steps": "{n} steps",
   "models.tokens": "{input} in · {output} out",
-  "models.unavailable": "Local model stats unavailable: {error}"
+  "models.unavailable": "Local model stats unavailable: {error}",
+  "settings.background.label": "Show outer panel",
+  "settings.background.description": "Use Noctalia's desktop-widget background behind the cards. Turn it off for no outer panel; the cards and text remain."
 }
