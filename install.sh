@@ -8,6 +8,7 @@ SOURCE_DIR="$SCRIPT_DIR/ai-usage"
 APP_DIR="noctalia"
 CLI="noctalia"
 DATA_HOME="${NOCTALIA_DATA_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}}"
+PLUGIN_ID="lukk17/ai-usage"
 PLUGIN_DIR="$DATA_HOME/$APP_DIR/plugins/ai-usage"
 
 if [ ! -d "$SOURCE_DIR" ]; then
@@ -32,8 +33,8 @@ if [ -n "${NOCTALIA_DATA_HOME:-}" ]; then
     echo "==> NOCTALIA_DATA_HOME is set; enable 'AI Usage' manually"
 elif command -v "$CLI" >/dev/null 2>&1 && "$CLI" msg config-reload >/dev/null 2>&1; then
     sleep 0.3
-    if "$CLI" msg plugins enable lukk17/ai-usage >/dev/null 2>&1; then
-        echo "==> Enabled lukk17/ai-usage"
+    if "$CLI" msg plugins enable "$PLUGIN_ID" >/dev/null 2>&1; then
+        echo "==> Enabled $PLUGIN_ID"
     else
         echo "==> Enable 'AI Usage' in Settings -> Plugins"
     fi

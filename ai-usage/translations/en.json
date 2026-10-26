@@ -1,200 +1,407 @@
 {
-  "app.title": "AI Usage",
-  "settings.refresh_seconds.label": "Refresh every",
-  "settings.refresh_seconds.description": "How often subscription limits are checked. Spend services are checked at most every 5 minutes. Choose 0 / Manual only to stop automatic checks; use Refresh now when you want a check.",
-  "settings.refresh_seconds.option.30s": "30 seconds",
-  "settings.refresh_seconds.option.1m": "1 minute",
-  "settings.refresh_seconds.option.5m": "5 minutes",
-  "settings.refresh_seconds.option.15m": "15 minutes",
-  "settings.refresh_seconds.option.30m": "30 minutes",
-  "settings.refresh_seconds.option.1h": "1 hour",
-  "settings.show_header.label": "Show header",
-  "settings.show_header.description": "Show the title, refresh button and settings button above the cards.",
-  "settings.show_details.label": "Show details",
-  "settings.show_details.description": "Show the extra rows: tokens, plan, billing mode, top-up and member budgets.",
-  "settings.background_opacity.label": "Outer panel opacity",
-  "settings.background_opacity.description": "Opacity of Noctalia's desktop-widget panel. Only shown when the outer panel is on.",
-  "settings.dense.label": "Compact cards",
-  "settings.dense.description": "Use smaller text, gaps and bars.",
-  "settings.show_percent.label": "Show percentage",
-  "settings.show_percent.description": "Show the worst current limit next to the bar icon.",
-  "settings.glyph.label": "Icon",
-  "settings.glyph.description": "Glyph used by the bar widget.",
-  "settings.mode.label": "Bar value",
-  "settings.mode.description": "What the bar widget shows next to its icon.",
-  "settings.mode.option.worst": "Worst limit",
-  "settings.mode.option.errors": "Error count",
-  "settings.mode.option.count": "Account count",
-  "status.accounts": "{n} accounts",
-  "status.service_waiting": "Waiting for the service to publish data",
-  "status.last_update": "Last update {time}",
-  "empty.title": "No accounts yet",
-  "empty.body": "Add a service to start checking limits, spend and balance.",
-  "stale.title": "Waiting for the AI Usage service",
-  "stale.body": "The poller has not published data yet. Enable the plugin and check its settings.",
-  "wallet.hint": "The keyring is locked or unavailable. Unlock it with your keyring app, then refresh.",
-  "wallet.not_running": "The Secret Service is not running. Start your keyring app and try again.",
-  "wallet.no_answer": "The Secret Service did not answer. Try again.",
-  "wallet.locked": "The keyring is locked, or no key is stored for this account. Unlock it and try again.",
-  "wallet.write_failed": "The Secret Service could not save the key.",
-  "wallet.remove_failed": "The Secret Service could not remove the key.",
-  "wallet.failed": "The Secret Service answered with an error.",
-  "wallet.invalid_key": "The key must be plain ASCII without spaces or line breaks.",
-  "tools.hint": "curl, secret-tool or timeout is missing. Install curl, libsecret and coreutils.",
-  "ui.add_account": "Add account",
-  "ui.manage_accounts": "Manage accounts",
-  "ui.refresh_now": "Refresh now",
-  "ui.refreshing": "Refreshing every account now",
-  "ui.open_plugin_settings": "Open plugin settings",
-  "ui.save": "Save",
-  "ui.add": "Add",
-  "ui.cancel": "Cancel",
-  "ui.delete": "Delete",
-  "message.refresh_requested": "Asked the service to check every account now",
-  "message.added": "Added {name}",
-  "message.saved": "Saved {name}",
-  "message.deleted": "Deleted {name}",
-  "message.reordered": "Account order saved",
-  "message.added_many": "Added {n} accounts",
-  "message.failed": "The accounts file could not be saved: {error}",
-  "accounts.title": "Accounts",
-  "refresh.every": "Refresh every {value}",
-  "delete.confirm": "Delete this account and its stored key?",
-  "add.title": "Add account",
-  "edit.title": "Edit account",
-  "form.service": "Service",
-  "form.name": "Account label",
-  "form.name_placeholder": "Name (email addresses are masked)",
-  "form.key": "Key",
-  "form.key_paste": "Paste the key",
-  "form.key_keep": "Leave empty to keep the saved key",
-  "form.error.name": "Type a name of 1 to 100 characters",
-  "form.error.field": "{label}: use letters, digits and - only, at most 64",
-  "form.error.key": "Paste the key",
-  "form.error.service": "Pick a service",
-  "form.error.account": "This account is not valid",
-  "form.discovery_names": "Type a name or email for at least one organization",
-  "form.saving": "Saving to the Secret Service...",
-  "form.add_selected": "Add the named organizations",
-  "discovery.claude_reading": "Reading the Claude desktop app file",
-  "discovery.claude_none_new": "No new accounts found in the Claude desktop app file",
-  "period.five_hour": "5hr",
-  "period.daily": "daily",
-  "period.weekly": "weekly",
-  "period.monthly": "monthly",
-  "period.hours": "{count}hr",
-  "period.days": "{count} days",
-  "period.minutes": "{count} min",
-  "period.interval": "interval",
-  "period.top_up": "top-up",
-  "label.spent_this_month": "Spent this month",
-  "label.balance": "Balance",
-  "label.input_tokens_this_month": "Input tokens this month",
-  "label.output_tokens_this_month": "Output tokens this month",
-  "label.member_spend": "{name}",
-  "label.budget_left": "Budget left",
-  "label.member_budget_left": "{name} budget left",
-  "label.included_credits_left": "Included credits left",
-  "label.plan": "Plan",
-  "label.billing_mode": "Billing mode",
-  "error.cannot_connect": "Cannot connect ({reason})",
-  "error.key_rejected": "Key rejected ({reason})",
-  "error.rate_limited": "Rate limited",
-  "error.unexpected_answer": "Unexpected answer ({reason})",
-  "reason.timeout": "timed out",
-  "reason.no_connection": "no connection",
-  "reason.curl_error": "curl error, exit code {code}",
-  "reason.request_timeout": "the request timed out",
-  "reason.command_failed": "the check could not run",
-  "reason.incomplete": "the check stopped before the answer was complete",
-  "reason.tool_missing": "secret-tool, curl or timeout is not installed",
-  "reason.answer_too_large": "the answer was larger than {size}",
-  "reason.http_status": "HTTP {status}",
-  "reason.service_error": "service error, HTTP {status}",
-  "reason.payment_required": "payment required, HTTP 402",
-  "reason.redirect": "the service answered with a redirect, HTTP {status}",
-  "reason.shape_changed": "the answer format changed",
-  "reason.service_code": "service code {code}",
-  "reason.internal": "internal error",
-  "reason.no_key": "add the key in the account settings",
-  "reason.key_format": "the stored key contains a space, a line break or a character that is not plain ASCII",
-  "reason.secret_service_timeout": "the Secret Service did not answer",
-  "reason.secret_service_unavailable": "the Secret Service is locked or not running",
-  "reason.wallet_locked": "the keyring is locked",
-  "reason.team_organization_required": "the usage API needs a team organization in the Claude Console",
-  "reason.admin_key_required": "HTTP 401, use an Admin API key, an OAuth token with the org:admin scope, or a personal or service account key that is not scoped to a workspace",
-  "reason.openai_admin_key_required": "HTTP {status}, use an Admin API key",
-  "reason.go_subscription_required": "OpenCode Go subscription required",
-  "reason.zen_all_permissions": "the service account key needs All permissions",
-  "reason.balance_exhausted": "organization balance exhausted, HTTP 402",
-  "reason.balance_needs_manage": "balance needs an API key with manage permission",
-  "reason.insufficient_balance": "insufficient balance, service code {code}",
-  "reason.file_read_failed": "could not read the file",
-  "reason.file_too_large": "the file was larger than {size}",
-  "reason.file_format_changed": "the file format changed",
-  "reason.claude_file_missing": "the Claude desktop app file plan-usage-history.json was not found",
-  "reason.claude_org_missing": "the Claude desktop app file has no data for this account",
-  "reason.codex_missing": "no Codex session found",
-  "reason.codex_no_limits": "the newest Codex session file has no limits yet",
-  "reason.field_missing": "the answer has no {field} field",
-  "reason.hf_billing_permission": "HTTP 403, the token needs the billing read permission",
-  "reason.jetbrains_log_missing": "no JetBrains IDE log was found",
-  "reason.jetbrains_no_quota": "the JetBrains IDE logs have no AI quota line yet",
-  "reset.at_no_newer": "Reset at {time}, no newer data",
-  "reset.no_newer": "No newer data",
-  "reset.about": "Resets about {time}",
-  "reset.in": "Resets in {duration} ({time})",
-  "amount.no_limit": "{value}, no limit",
-  "amount.of_limit": "{value} of {limit}",
-  "duration.less_than_minute": "less than a minute",
-  "duration.seconds": "{n} seconds",
-  "duration.minutes": "{n} min",
-  "duration.one_minute": "1 minute",
-  "duration.hours": "{n}h",
-  "duration.hours_minutes": "{h}h {m}min",
-  "duration.days": "{n} days",
-  "duration.days_hours": "{d}d {h}h",
-  "provider.claude.title": "Claude",
-  "provider.chatgpt.title": "ChatGPT",
-  "provider.openai.title": "OpenAI API",
-  "provider.anthropic.title": "Anthropic API",
-  "provider.xai.title": "xAI API",
-  "provider.opencodeGo.title": "OpenCode Go",
-  "provider.opencodeZen.title": "OpenCode Zen",
-  "provider.minimax.title": "MiniMax",
-  "provider.requesty.title": "Requesty",
-  "provider.huggingFace.title": "Hugging Face",
-  "provider.jetbrains.title": "JetBrains AI",
-  "provider.claude.key_help": "No key needed. The widget reads the Claude desktop app history file.",
-  "provider.chatgpt.key_help": "No key needed. The widget reads the newest Codex session file.",
-  "provider.openai.key_help": "Admin API key, from the OpenAI Platform.",
-  "provider.anthropic.key_help": "Admin API key, from the Claude Console (team organizations only).",
-  "provider.xai.key_help": "Management key, from the xAI Console.",
-  "provider.opencodeGo.key_help": "Go API key, from the OpenCode console.",
-  "provider.opencodeZen.key_help": "Service account key, from the OpenCode console.",
-  "provider.minimax.key_help": "Token Plan key, from the MiniMax Platform.",
-  "provider.requesty.key_help": "API key with manage permission, from the Requesty dashboard.",
-  "provider.huggingFace.key_help": "Fine-grained access token with billing read permission, from Hugging Face settings.",
-  "provider.jetbrains.key_help": "No key needed. The widget reads the JetBrains IDE log.",
-  "form.name_keep": "Leave empty to keep the current label",
-  "form.current_label": "Current label: {name}",
-  "settings.card_width.label": "Widget width",
-  "settings.card_width.description": "Content width in logical pixels. Account cards, rows and bars grow with it. The desktop tile itself is sized in the widget editor.",
-  "settings.card_opacity.label": "Account card opacity",
-  "settings.card_opacity.description": "Opacity of the account cards inside the widget. Set it to 0 for transparent cards.",
-  "status.window.rate_limited": "Rate limited",
-  "status.window.exhausted": "Exhausted",
-  "settings.show_model_stats.label": "Show local model stats",
-  "settings.show_model_stats.description": "For OpenCode Go, read the local OpenCode database with `opencode stats --json --models` and show the top models on this machine. This is local data, not official Go quota.",
-  "models.heading": "Models on this machine",
-  "models.note": "Local OpenCode data, not official Go quota",
-  "models.steps": "{n} steps",
-  "models.tokens": "{input} in · {output} out",
-  "models.unavailable": "Local model stats unavailable: {error}",
-  "settings.background.label": "Show outer panel",
-  "settings.background.description": "Use Noctalia's desktop-widget background behind the cards. Turn it off for no outer panel; the cards and text remain.",
-  "settings.refresh_seconds.option.manual": "Manual only",
-  "duration.manual": "Manual only",
-  "refresh.manual": "Manual only — use Refresh now",
-  "ui.refresh": "Refresh"
+  "app": {
+    "title": "AI Usage"
+  },
+  "settings": {
+    "refresh_seconds": {
+      "label": "Refresh every",
+      "description": "How often subscription limits are checked. Spend services are checked at most every 5 minutes. Choose 0 / Manual only to stop automatic checks; use Refresh now when you want a check.",
+      "option": {
+        "30s": "30 seconds",
+        "1m": "1 minute",
+        "5m": "5 minutes",
+        "15m": "15 minutes",
+        "30m": "30 minutes",
+        "1h": "1 hour",
+        "manual": "Manual only"
+      }
+    },
+    "show_header": {
+      "label": "Show header",
+      "description": "Show the icon, title and buttons above the account sections."
+    },
+    "show_details": {
+      "label": "Show details",
+      "description": "Show the extra rows: tokens, plan, billing mode, top-up, member budgets and local model stats."
+    },
+    "background_opacity": {
+      "label": "Panel opacity",
+      "description": "Host panel opacity, applied live by Noctalia without reloading the widget."
+    },
+    "show_percent": {
+      "label": "Show percentage",
+      "description": "Show the worst current limit next to the bar icon."
+    },
+    "glyph": {
+      "label": "Icon",
+      "description": "Glyph used by the bar widget."
+    },
+    "mode": {
+      "label": "Bar value",
+      "description": "What the bar widget shows next to its icon.",
+      "option": {
+        "worst": "Worst limit",
+        "errors": "Error count",
+        "count": "Account count"
+      }
+    },
+    "card_opacity": {
+      "label": "Account section opacity",
+      "description": "Background opacity behind each account section, from 0 (divider-only, HUD style) to 1 (solid card)."
+    },
+    "show_model_stats": {
+      "label": "Show local model stats",
+      "description": "For OpenCode Go, read the local OpenCode database with `opencode stats --json --models` and show the top models on this machine. This is local data, not official Go quota."
+    },
+    "background": {
+      "label": "Host panel background",
+      "description": "Let Noctalia draw its surface behind the card. Turn off to place the content directly on the desktop wallpaper."
+    },
+    "title": {
+      "label": "Card title",
+      "description": "Heading shown in the header."
+    },
+    "show_reset_times": {
+      "label": "Show reset times",
+      "description": "Show the reset time under each limit bar."
+    },
+    "show_service_icon": {
+      "label": "Show service icons",
+      "description": "Show a glyph for each provider in the account section header."
+    },
+    "content_width": {
+      "label": "Content width",
+      "description": "Width of the card content in logical px. Match this to the tile width in the desktop-widget editor for a tight fit (the host panel adds its own padding)."
+    },
+    "bar_height": {
+      "label": "Progress bar height",
+      "description": "Thickness of each limit bar."
+    },
+    "divider_width": {
+      "label": "Divider thickness",
+      "description": "Thickness of the header, account and section dividers."
+    },
+    "divider_color": {
+      "label": "Divider colour",
+      "description": "Colour of the header, account and section dividers. Accepts a hex colour or palette role."
+    },
+    "divider_opacity": {
+      "label": "Divider opacity",
+      "description": "Opacity of the dividers, from 0 (invisible) to 1 (solid)."
+    },
+    "header_color": {
+      "label": "Header icon colour",
+      "description": "Colour of the header badge outline and icon. Accepts a hex colour or palette role."
+    },
+    "header_glyph": {
+      "label": "Header icon",
+      "description": "Glyph shown in the header badge."
+    },
+    "normal_color": {
+      "label": "Normal limit colour",
+      "description": "Colour of bars and values below the warning threshold. Accepts a hex colour or palette role."
+    },
+    "warning_color": {
+      "label": "Warning limit colour",
+      "description": "Colour used from 75% used. Accepts a hex colour or palette role."
+    },
+    "critical_color": {
+      "label": "Critical limit colour",
+      "description": "Colour used from 90% used, and for rejected keys and expired windows. Accepts a hex colour or palette role."
+    },
+    "unknown_color": {
+      "label": "Unknown / expired colour",
+      "description": "Colour for expired, disabled or unavailable values. Accepts a hex colour or palette role."
+    },
+    "track_color": {
+      "label": "Bar track colour",
+      "description": "Colour of the unfilled part of each limit bar. Accepts a hex colour or palette role."
+    },
+    "track_opacity": {
+      "label": "Bar track opacity",
+      "description": "Opacity of the unfilled part of each limit bar."
+    },
+    "text_color": {
+      "label": "Primary text colour",
+      "description": "Titles, values and labels. Accepts a hex colour or palette role."
+    },
+    "muted_text_color": {
+      "label": "Secondary text colour",
+      "description": "Account labels, reset times, units and inactive values. Accepts a hex colour or palette role."
+    },
+    "card_color": {
+      "label": "Account section colour",
+      "description": "Fill colour used only when Account section opacity is above 0. Accepts a hex colour or palette role."
+    },
+    "card_radius": {
+      "label": "Account section radius",
+      "description": "Corner radius of the optional account section surface."
+    },
+    "card_border_color": {
+      "label": "Account section border colour",
+      "description": "Border colour of the optional account section surface. Accepts a hex colour or palette role."
+    },
+    "card_border_opacity": {
+      "label": "Account section border opacity",
+      "description": "Border opacity of the optional account section surface, from 0 (no border) to 1."
+    },
+    "card_border_width": {
+      "label": "Account section border width",
+      "description": "Border thickness of the optional account section surface."
+    },
+    "background_color": {
+      "label": "Panel colour",
+      "description": "Host panel fill colour. Accepts a hex colour or palette role. Handled by Noctalia, not the plugin."
+    },
+    "background_radius": {
+      "label": "Panel corner radius",
+      "description": "Host panel corner radius in logical px."
+    },
+    "background_padding": {
+      "label": "Panel padding",
+      "description": "Space between the host panel edge and the card content in logical px."
+    },
+    "model_stats_limit": {
+      "label": "Local models shown",
+      "description": "How many local OpenCode Go models to show (1–20)."
+    }
+  },
+  "status": {
+    "accounts": "{n} accounts",
+    "service_waiting": "Waiting for the service to publish data",
+    "last_update": "Last update {time}",
+    "window": {
+      "rate_limited": "Rate limited",
+      "exhausted": "Exhausted"
+    }
+  },
+  "empty": {
+    "title": "No accounts yet",
+    "body": "Add a service to start checking limits, spend and balance."
+  },
+  "stale": {
+    "title": "Waiting for the AI Usage service",
+    "body": "The poller has not published data yet. Enable the plugin and check its settings."
+  },
+  "wallet": {
+    "hint": "The keyring is locked or unavailable. Unlock it with your keyring app, then refresh.",
+    "not_running": "The Secret Service is not running. Start your keyring app and try again.",
+    "no_answer": "The Secret Service did not answer. Try again.",
+    "locked": "The keyring is locked, or no key is stored for this account. Unlock it and try again.",
+    "write_failed": "The Secret Service could not save the key.",
+    "remove_failed": "The Secret Service could not remove the key.",
+    "failed": "The Secret Service answered with an error.",
+    "invalid_key": "The key must be plain ASCII without spaces or line breaks."
+  },
+  "tools": {
+    "hint": "curl, secret-tool or timeout is missing. Install curl, libsecret and coreutils."
+  },
+  "ui": {
+    "add_account": "Add account",
+    "manage_accounts": "Manage accounts",
+    "refresh_now": "Refresh now",
+    "refreshing": "Refreshing every account now",
+    "open_plugin_settings": "Open plugin settings",
+    "save": "Save",
+    "add": "Add",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "refresh": "Refresh"
+  },
+  "message": {
+    "refresh_requested": "Asked the service to check every account now",
+    "added": "Added {name}",
+    "saved": "Saved {name}",
+    "deleted": "Deleted {name}",
+    "reordered": "Account order saved",
+    "added_many": "Added {n} accounts",
+    "failed": "The accounts file could not be saved: {error}"
+  },
+  "accounts": {
+    "title": "Accounts"
+  },
+  "refresh": {
+    "every": "Refresh every {value}",
+    "manual": "Manual only — use Refresh now"
+  },
+  "delete": {
+    "confirm": "Delete this account and its stored key?"
+  },
+  "add": {
+    "title": "Add account"
+  },
+  "edit": {
+    "title": "Edit account"
+  },
+  "form": {
+    "service": "Service",
+    "name": "Account label",
+    "name_placeholder": "Name (email addresses are masked)",
+    "key": "Key",
+    "key_paste": "Paste the key",
+    "key_keep": "Leave empty to keep the saved key",
+    "error": {
+      "name": "Type a name of 1 to 100 characters",
+      "field": "{label}: use letters, digits and - only, at most 64",
+      "key": "Paste the key",
+      "service": "Pick a service",
+      "account": "This account is not valid"
+    },
+    "discovery_names": "Type a name or email for at least one organization",
+    "saving": "Saving to the Secret Service...",
+    "add_selected": "Add the named organizations",
+    "name_keep": "Leave empty to keep the current label",
+    "current_label": "Current label: {name}"
+  },
+  "discovery": {
+    "claude_reading": "Reading the Claude desktop app file",
+    "claude_none_new": "No new accounts found in the Claude desktop app file"
+  },
+  "period": {
+    "five_hour": "5hr",
+    "daily": "daily",
+    "weekly": "weekly",
+    "monthly": "monthly",
+    "hours": "{count}hr",
+    "days": "{count} days",
+    "minutes": "{count} min",
+    "interval": "interval",
+    "top_up": "top-up"
+  },
+  "label": {
+    "spent_this_month": "Spent this month",
+    "balance": "Balance",
+    "input_tokens_this_month": "Input tokens this month",
+    "output_tokens_this_month": "Output tokens this month",
+    "member_spend": "{name}",
+    "budget_left": "Budget left",
+    "member_budget_left": "{name} budget left",
+    "included_credits_left": "Included credits left",
+    "plan": "Plan",
+    "billing_mode": "Billing mode"
+  },
+  "error": {
+    "cannot_connect": "Cannot connect ({reason})",
+    "key_rejected": "Key rejected ({reason})",
+    "rate_limited": "Rate limited",
+    "unexpected_answer": "Unexpected answer ({reason})"
+  },
+  "reason": {
+    "timeout": "timed out",
+    "no_connection": "no connection",
+    "curl_error": "curl error, exit code {code}",
+    "request_timeout": "the request timed out",
+    "command_failed": "the check could not run",
+    "incomplete": "the check stopped before the answer was complete",
+    "tool_missing": "secret-tool, curl or timeout is not installed",
+    "answer_too_large": "the answer was larger than {size}",
+    "http_status": "HTTP {status}",
+    "service_error": "service error, HTTP {status}",
+    "payment_required": "payment required, HTTP 402",
+    "redirect": "the service answered with a redirect, HTTP {status}",
+    "shape_changed": "the answer format changed",
+    "service_code": "service code {code}",
+    "internal": "internal error",
+    "no_key": "add the key in the account settings",
+    "key_format": "the stored key contains a space, a line break or a character that is not plain ASCII",
+    "secret_service_timeout": "the Secret Service did not answer",
+    "secret_service_unavailable": "the Secret Service is locked or not running",
+    "wallet_locked": "the keyring is locked",
+    "team_organization_required": "the usage API needs a team organization in the Claude Console",
+    "admin_key_required": "HTTP 401, use an Admin API key, an OAuth token with the org:admin scope, or a personal or service account key that is not scoped to a workspace",
+    "openai_admin_key_required": "HTTP {status}, use an Admin API key",
+    "go_subscription_required": "OpenCode Go subscription required",
+    "zen_all_permissions": "the service account key needs All permissions",
+    "balance_exhausted": "organization balance exhausted, HTTP 402",
+    "balance_needs_manage": "balance needs an API key with manage permission",
+    "insufficient_balance": "insufficient balance, service code {code}",
+    "file_read_failed": "could not read the file",
+    "file_too_large": "the file was larger than {size}",
+    "file_format_changed": "the file format changed",
+    "claude_file_missing": "the Claude desktop app file plan-usage-history.json was not found",
+    "claude_org_missing": "the Claude desktop app file has no data for this account",
+    "codex_missing": "no Codex session found",
+    "codex_no_limits": "the newest Codex session file has no limits yet",
+    "field_missing": "the answer has no {field} field",
+    "hf_billing_permission": "HTTP 403, the token needs the billing read permission",
+    "jetbrains_log_missing": "no JetBrains IDE log was found",
+    "jetbrains_no_quota": "the JetBrains IDE logs have no AI quota line yet"
+  },
+  "reset": {
+    "at_no_newer": "Reset at {time}, no newer data",
+    "no_newer": "No newer data",
+    "about": "Resets about {time}",
+    "in": "Resets in {duration} ({time})"
+  },
+  "amount": {
+    "no_limit": "{value}, no limit",
+    "of_limit": "{value} of {limit}"
+  },
+  "duration": {
+    "less_than_minute": "less than a minute",
+    "seconds": "{n} seconds",
+    "minutes": "{n} min",
+    "one_minute": "1 minute",
+    "hours": "{n}h",
+    "hours_minutes": "{h}h {m}min",
+    "days": "{n} days",
+    "days_hours": "{d}d {h}h",
+    "manual": "Manual only"
+  },
+  "provider": {
+    "claude": {
+      "title": "Claude",
+      "key_help": "No key needed. The widget reads the Claude desktop app history file."
+    },
+    "chatgpt": {
+      "title": "ChatGPT",
+      "key_help": "No key needed. The widget reads the newest Codex session file."
+    },
+    "openai": {
+      "title": "OpenAI API",
+      "key_help": "Admin API key, from the OpenAI Platform."
+    },
+    "anthropic": {
+      "title": "Anthropic API",
+      "key_help": "Admin API key, from the Claude Console (team organizations only)."
+    },
+    "xai": {
+      "title": "xAI API",
+      "key_help": "Management key, from the xAI Console."
+    },
+    "opencodeGo": {
+      "title": "OpenCode Go",
+      "key_help": "Go API key, from the OpenCode console."
+    },
+    "opencodeZen": {
+      "title": "OpenCode Zen",
+      "key_help": "Service account key, from the OpenCode console."
+    },
+    "minimax": {
+      "title": "MiniMax",
+      "key_help": "Token Plan key, from the MiniMax Platform."
+    },
+    "requesty": {
+      "title": "Requesty",
+      "key_help": "API key with manage permission, from the Requesty dashboard."
+    },
+    "huggingFace": {
+      "title": "Hugging Face",
+      "key_help": "Fine-grained access token with billing read permission, from Hugging Face settings."
+    },
+    "jetbrains": {
+      "title": "JetBrains AI",
+      "key_help": "No key needed. The widget reads the JetBrains IDE log."
+    }
+  },
+  "models": {
+    "heading": "Models on this machine",
+    "note": "Local OpenCode data, not official Go quota",
+    "steps": "{n} steps",
+    "tokens": "{input} in · {output} out",
+    "unavailable": "Local model stats unavailable: {error}"
+  },
+  "meta": {
+    "name": "AI Usage"
+  }
 }

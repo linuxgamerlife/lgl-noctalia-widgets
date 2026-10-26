@@ -13,7 +13,7 @@ plugin_api  = 24
 author      = "Łukasz Sarna"
 license     = "GPL-3.0-or-later"
 icon        = "chart-bar"
-description = "Limits, spend and balance for Claude, ChatGPT, OpenAI, Anthropic, xAI, OpenCode, MiniMax, Requesty, Hugging Face and JetBrains AI."
+description = "Limits, spend and balance for Claude, ChatGPT, OpenAI, Anthropic, xAI, OpenCode, MiniMax, Requesty, Hugging Face and JetBrains AI, with theme-aware colours and configurable card, divider and surface styling."
 tags        = ["ai", "usage", "limits", "spend", "desktop", "panel"]
 dependencies = ["curl", "libsecret", "glib2"]
 
@@ -42,6 +42,16 @@ label_key       = "settings.show_model_stats.label"
 description_key = "settings.show_model_stats.description"
 default         = true
 
+[[setting]]
+key             = "model_stats_limit"
+type            = "int"
+label_key       = "settings.model_stats_limit.label"
+description_key = "settings.model_stats_limit.description"
+default         = 5
+min             = 1
+max             = 20
+step            = 1
+
 # Headless poller. One instance per plugin, started by Noctalia.
 [[service]]
 id    = "poller"
@@ -51,6 +61,13 @@ entry = "service.luau"
 [[desktop_widget]]
 id    = "card"
 entry = "card.luau"
+
+  [[desktop_widget.setting]]
+  key             = "title"
+  type            = "string"
+  label_key       = "settings.title.label"
+  description_key = "settings.title.description"
+  default         = "AI Usage"
 
   [[desktop_widget.setting]]
   key             = "show_header"
@@ -67,14 +84,197 @@ entry = "card.luau"
   default         = true
 
   [[desktop_widget.setting]]
-  key             = "card_width"
-  type            = "int"
-  label_key       = "settings.card_width.label"
-  description_key = "settings.card_width.description"
-  default         = 360
-  min             = 220
-  max             = 900
+  key             = "show_reset_times"
+  type            = "bool"
+  label_key       = "settings.show_reset_times.label"
+  description_key = "settings.show_reset_times.description"
+  default         = true
 
+  [[desktop_widget.setting]]
+  key             = "show_service_icon"
+  type            = "bool"
+  label_key       = "settings.show_service_icon.label"
+  description_key = "settings.show_service_icon.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "content_width"
+  type            = "int"
+  label_key       = "settings.content_width.label"
+  description_key = "settings.content_width.description"
+  default         = 432
+  min             = 240
+  max             = 900
+  step            = 4
+
+  [[desktop_widget.setting]]
+  key             = "bar_height"
+  type            = "double"
+  label_key       = "settings.bar_height.label"
+  description_key = "settings.bar_height.description"
+  default         = 5.0
+  min             = 2.0
+  max             = 14.0
+  step            = 0.5
+
+  [[desktop_widget.setting]]
+  key             = "divider_width"
+  type            = "double"
+  label_key       = "settings.divider_width.label"
+  description_key = "settings.divider_width.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 4.0
+  step            = 0.1
+
+  [[desktop_widget.setting]]
+  key             = "divider_color"
+  type            = "color"
+  label_key       = "settings.divider_color.label"
+  description_key = "settings.divider_color.description"
+  default         = "outline"
+
+  [[desktop_widget.setting]]
+  key             = "divider_opacity"
+  type            = "double"
+  label_key       = "settings.divider_opacity.label"
+  description_key = "settings.divider_opacity.description"
+  default         = 0.5
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "header_color"
+  type            = "color"
+  label_key       = "settings.header_color.label"
+  description_key = "settings.header_color.description"
+  default         = "primary"
+
+  [[desktop_widget.setting]]
+  key             = "header_glyph"
+  type            = "glyph"
+  label_key       = "settings.header_glyph.label"
+  description_key = "settings.header_glyph.description"
+  default         = "chart-bar"
+
+  [[desktop_widget.setting]]
+  key             = "normal_color"
+  type            = "color"
+  label_key       = "settings.normal_color.label"
+  description_key = "settings.normal_color.description"
+  default         = "primary"
+
+  [[desktop_widget.setting]]
+  key             = "warning_color"
+  type            = "color"
+  label_key       = "settings.warning_color.label"
+  description_key = "settings.warning_color.description"
+  default         = "tertiary"
+
+  [[desktop_widget.setting]]
+  key             = "critical_color"
+  type            = "color"
+  label_key       = "settings.critical_color.label"
+  description_key = "settings.critical_color.description"
+  default         = "error"
+
+  [[desktop_widget.setting]]
+  key             = "unknown_color"
+  type            = "color"
+  label_key       = "settings.unknown_color.label"
+  description_key = "settings.unknown_color.description"
+  default         = "on_surface_variant"
+
+  [[desktop_widget.setting]]
+  key             = "track_color"
+  type            = "color"
+  label_key       = "settings.track_color.label"
+  description_key = "settings.track_color.description"
+  default         = "on_surface"
+
+  [[desktop_widget.setting]]
+  key             = "track_opacity"
+  type            = "double"
+  label_key       = "settings.track_opacity.label"
+  description_key = "settings.track_opacity.description"
+  default         = 0.14
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "text_color"
+  type            = "color"
+  label_key       = "settings.text_color.label"
+  description_key = "settings.text_color.description"
+  default         = "on_surface"
+
+  [[desktop_widget.setting]]
+  key             = "muted_text_color"
+  type            = "color"
+  label_key       = "settings.muted_text_color.label"
+  description_key = "settings.muted_text_color.description"
+  default         = "on_surface_variant"
+
+  # Optional grouping surface for account sections. Default 0 keeps the card
+  # HUD-like: no inner panels, only dividers.
+  [[desktop_widget.setting]]
+  key             = "card_color"
+  type            = "color"
+  label_key       = "settings.card_color.label"
+  description_key = "settings.card_color.description"
+  default         = "surface_variant"
+
+  [[desktop_widget.setting]]
+  key             = "card_opacity"
+  type            = "double"
+  label_key       = "settings.card_opacity.label"
+  description_key = "settings.card_opacity.description"
+  default         = 0.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+
+  [[desktop_widget.setting]]
+  key             = "card_radius"
+  type            = "int"
+  label_key       = "settings.card_radius.label"
+  description_key = "settings.card_radius.description"
+  default         = 12
+  min             = 0
+  max             = 32
+  step            = 1
+
+  [[desktop_widget.setting]]
+  key             = "card_border_color"
+  type            = "color"
+  label_key       = "settings.card_border_color.label"
+  description_key = "settings.card_border_color.description"
+  default         = "outline"
+
+  [[desktop_widget.setting]]
+  key             = "card_border_opacity"
+  type            = "double"
+  label_key       = "settings.card_border_opacity.label"
+  description_key = "settings.card_border_opacity.description"
+  default         = 0.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "card_border_width"
+  type            = "double"
+  label_key       = "settings.card_border_width.label"
+  description_key = "settings.card_border_width.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 4.0
+  step            = 0.1
+
+  # Host panel surface. These keys are consumed by DesktopWidget::applyCommonSettings
+  # and applySetting, not by this script.
   [[desktop_widget.setting]]
   key             = "background"
   type            = "bool"
@@ -83,32 +283,45 @@ entry = "card.luau"
   default         = true
 
   [[desktop_widget.setting]]
+  key             = "background_color"
+  type            = "color"
+  label_key       = "settings.background_color.label"
+  description_key = "settings.background_color.description"
+  default         = "surface"
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
   key             = "background_opacity"
   type            = "double"
   label_key       = "settings.background_opacity.label"
   description_key = "settings.background_opacity.description"
-  default         = 0.85
+  default         = 0.8
   min             = 0.0
   max             = 1.0
   step            = 0.01
   visible_when    = { key = "background", values = ["true"] }
 
   [[desktop_widget.setting]]
-  key             = "card_opacity"
-  type            = "double"
-  label_key       = "settings.card_opacity.label"
-  description_key = "settings.card_opacity.description"
-  default         = 0.42
-  min             = 0.0
-  max             = 1.0
-  step            = 0.01
+  key             = "background_radius"
+  type            = "int"
+  label_key       = "settings.background_radius.label"
+  description_key = "settings.background_radius.description"
+  default         = 12
+  min             = 0
+  max             = 48
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
 
   [[desktop_widget.setting]]
-  key             = "dense"
-  type            = "bool"
-  label_key       = "settings.dense.label"
-  description_key = "settings.dense.description"
-  default         = false
+  key             = "background_padding"
+  type            = "int"
+  label_key       = "settings.background_padding.label"
+  description_key = "settings.background_padding.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
 
 # Compact bar widget, the equivalent of the KDE panel icon.
 [[widget]]

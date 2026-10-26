@@ -87,6 +87,12 @@ local tools = {
   runCommand = runCommand,
 }
 
+local panelStyle = view.defaultStyle()
+panelStyle.card_fill = "surface_variant/0.35"
+panelStyle.card_border = "outline/0.2"
+panelStyle.card_radius = 12
+panelStyle.card_border_width = 1
+
 -- Forward declarations: these are referenced by functions defined earlier in
 -- the file, and Lua resolves locals lexically.
 local render
@@ -481,14 +487,14 @@ local function panelHeader(title, opts)
   local options = opts or {}
   local left = {}
   if options.back then
-    table.insert(left, ui.button({ key = "header-back", glyph = "arrow-left", variant = "ghost", onClick = "onBack" }))
+    table.insert(left, ui.button({ key = "header-back", glyph = "arrow-left", glyphSize = 16, variant = "ghost", controlSize = "sm", onClick = "onBack" }))
   end
-  table.insert(left, ui.glyph({ key = "header-glyph", name = "chart-bar", size = 17, color = "primary" }))
+  table.insert(left, ui.glyph({ key = "header-glyph", name = "chart-bar", size = 20, color = "primary" }))
   table.insert(left, ui.label({
     key = "header-title",
     text = title,
-    fontSize = 16,
-    fontWeight = "bold",
+    fontSize = 18,
+    fontWeight = "semibold",
     color = "on_surface",
     flexGrow = 1,
     maxLines = 1,
@@ -499,15 +505,16 @@ local function panelHeader(title, opts)
       key = "header-refresh",
       text = tr("ui.refresh", "Refresh"),
       glyph = "refresh",
+      glyphSize = 16,
       variant = "ghost",
       controlSize = "sm",
       onClick = "onRefresh",
     }))
   end
   if options.settings then
-    table.insert(right, ui.button({ key = "header-settings", glyph = "settings", variant = "ghost", onClick = "onSettings" }))
+    table.insert(right, ui.button({ key = "header-settings", glyph = "settings", glyphSize = 16, variant = "ghost", controlSize = "sm", onClick = "onSettings" }))
   end
-  table.insert(right, ui.button({ key = "header-close", glyph = "x", variant = "ghost", onClick = "onClose" }))
+  table.insert(right, ui.button({ key = "header-close", glyph = "x", glyphSize = 16, variant = "ghost", controlSize = "sm", onClick = "onClose" }))
   return ui.row({
     key = "panel-header",
     gap = 6,
@@ -537,15 +544,15 @@ local function renderCards()
     panelHeader(tr("app.title", "AI Usage"), { refresh = true, settings = true }),
   }
   if isStale() then
-    table.insert(children, view.waitingCard("onRefresh"))
+    table.insert(children, view.waitingCard("onRefresh", { style = panelStyle }))
   else
     local model = formatter.buildViewModel(current.accounts or {}, nowMs())
     local cards = {}
     if not model.hasAccounts then
-      table.insert(cards, view.emptyCard("onAdd"))
+      table.insert(cards, view.emptyCard("onAdd", { style = panelStyle }))
     else
       for _, section in ipairs(model.sections) do
-        table.insert(cards, view.card(section, { dense = false, show_details = true }))
+        table.insert(cards, view.card(section, { show_details = true, style = panelStyle }))
       end
     end
     if model.walletLocked then

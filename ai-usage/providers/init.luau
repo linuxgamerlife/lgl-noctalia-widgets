@@ -3,7 +3,7 @@
 local M = {}
 
 M.ALL = {
-  require("./claudeDesktop.luau"),
+  require("./claude.luau"),
   require("./chatgpt.luau"),
   require("./openai.luau"),
   require("./anthropic.luau"),

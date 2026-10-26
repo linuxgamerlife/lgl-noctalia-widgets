@@ -16,11 +16,11 @@ local M = {}
 local HEARTBEAT_SECONDS = 30
 local MAX_COMMAND_TIMEOUT_MS = 59000
 local MODEL_STATS_INTERVAL_SECONDS = 300
-local MODEL_STATS_LIMIT = 5
 local MODEL_STATS_TIMEOUT_MS = 30000
 
 local refreshSeconds = accountsModule.DEFAULT_REFRESH_SECONDS
 local showModelStats = true
+local modelStatsLimit = 5
 local monitor = nil
 local started = false
 local lastPublishedAt = 0
@@ -163,6 +163,11 @@ local function configuredShowModelStats()
   return value == true or value == "true"
 end
 
+local function configuredModelStatsLimit()
+  local value = tonumber(noctalia.getConfig("model_stats_limit")) or 5
+  return math.max(1, math.min(20, value))
+end
+
 local function hasOpenCodeGo()
   if monitor == nil then
     return false
@@ -225,7 +230,7 @@ local function parseModelStats(stdout)
     return first.steps > second.steps
   end)
   local limited = {}
-  for index = 1, math.min(#models, MODEL_STATS_LIMIT) do
+  for index = 1, math.min(#models, modelStatsLimit) do
     table.insert(limited, models[index])
   end
   return limited, nil
@@ -270,6 +275,7 @@ function M.start()
   math.randomseed(os.time())
   refreshSeconds = configuredRefreshSeconds()
   showModelStats = configuredShowModelStats()
+  modelStatsLimit = configuredModelStatsLimit()
   monitor = monitorModule.create({
     findProvider = registry.find,
     now = nowMs,
@@ -333,6 +339,7 @@ function M.configChanged()
     modelStats.error = nil
   end
   refreshSeconds = configuredRefreshSeconds()
+  modelStatsLimit = configuredModelStatsLimit()
   monitor.configure(loadAccounts(), refreshSeconds * units.SECOND_MS)
   if refreshSeconds > 0 then
     monitor.refreshNow()

@@ -249,10 +249,23 @@ end
 -- ── Translations ────────────────────────────────────────────────────────────
 
 local translations = {}
+local function flattenTranslations(node, prefix)
+  if type(node) ~= "table" then
+    return
+  end
+  for key, value in pairs(node) do
+    local path = prefix == "" and tostring(key) or (prefix .. "." .. tostring(key))
+    if type(value) == "table" then
+      flattenTranslations(value, path)
+    elseif type(value) == "string" then
+      translations[path] = value
+    end
+  end
+end
 do
   local file = io.open(TRANSLATIONS, "r")
   if file then
-    translations = jsonDecode(file:read("*a"))
+    flattenTranslations(jsonDecode(file:read("*a")), "")
     file:close()
   end
 end

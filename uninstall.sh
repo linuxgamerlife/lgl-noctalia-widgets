@@ -9,6 +9,7 @@ APP_DIR="noctalia"
 CLI="noctalia"
 DATA_HOME="${NOCTALIA_DATA_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}}"
 STATE_HOME="${NOCTALIA_STATE_HOME:-${XDG_STATE_HOME:-$HOME/.local/state}}"
+PLUGIN_ID="lukk17/ai-usage"
 PLUGIN_DIR="$DATA_HOME/$APP_DIR/plugins/ai-usage"
 SETTINGS="$STATE_HOME/$APP_DIR/settings.toml"
 PLUGIN_DATA="$STATE_HOME/$APP_DIR/plugins/data/lukk17/ai-usage"
@@ -54,8 +55,8 @@ fi
 # Disable the plugin so Noctalia stops the service and tears down its runtimes.
 if [ -z "${NOCTALIA_DATA_HOME:-}" ] && [ -z "${NOCTALIA_STATE_HOME:-}" ] \
     && command -v "$CLI" >/dev/null 2>&1; then
-    if "$CLI" msg plugins disable lukk17/ai-usage >/dev/null 2>&1; then
-        echo "==> Disabled lukk17/ai-usage"
+    if "$CLI" msg plugins disable "$PLUGIN_ID" >/dev/null 2>&1; then
+        echo "==> Disabled $PLUGIN_ID"
         sleep 0.5
     fi
 fi
