@@ -139,7 +139,9 @@ end
 local function reloadAccounts()
   local list = loadAccounts()
   monitor.configure(list, refreshSeconds * units.SECOND_MS)
-  monitor.tick()
+  if refreshSeconds > 0 then
+    monitor.tick()
+  end
   if not showModelStats then
     modelStats.models = {}
     modelStats.error = nil
@@ -296,7 +298,8 @@ function M.start()
   noctalia.state.watch("ai_usage_refresh_seq", function(value)
     if value ~= lastRefreshSeq then
       lastRefreshSeq = value
-      monitor.refreshNow()
+      monitor.forceNow()
+      refreshModelStats(true)
     end
   end)
   monitor.tick()
@@ -307,9 +310,11 @@ function M.update()
   if not started then
     return
   end
-  monitor.tick()
-  if showModelStats and os.time() - modelStats.at >= MODEL_STATS_INTERVAL_SECONDS then
-    refreshModelStats(false)
+  if refreshSeconds > 0 then
+    monitor.tick()
+    if showModelStats and os.time() - modelStats.at >= MODEL_STATS_INTERVAL_SECONDS then
+      refreshModelStats(false)
+    end
   end
   if os.time() - lastPublishedAt >= HEARTBEAT_SECONDS then
     publish()
@@ -329,14 +334,17 @@ function M.configChanged()
   end
   refreshSeconds = configuredRefreshSeconds()
   monitor.configure(loadAccounts(), refreshSeconds * units.SECOND_MS)
-  monitor.refreshNow()
+  if refreshSeconds > 0 then
+    monitor.refreshNow()
+  end
   publish()
   refreshModelStats(true)
 end
 
 function M.ipc(event, _payload)
   if event == "refresh" and started then
-    monitor.refreshNow()
+    monitor.forceNow()
+    refreshModelStats(true)
   elseif event == "reload" and started then
     reloadAccounts()
   end

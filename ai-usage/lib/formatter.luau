@@ -204,6 +204,9 @@ function M.formatCount(value)
 end
 
 function M.refreshChoiceText(seconds)
+  if seconds <= 0 then
+    return translated("duration.manual", "Manual only")
+  end
   if seconds < 60 then
     return translated("duration.seconds", "{n} seconds", { n = seconds })
   end

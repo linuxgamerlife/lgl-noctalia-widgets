@@ -1,7 +1,7 @@
 {
   "app.title": "AI Usage",
   "settings.refresh_seconds.label": "Refresh every",
-  "settings.refresh_seconds.description": "How often subscription limits are checked. Spend services are checked at most every 5 minutes.",
+  "settings.refresh_seconds.description": "How often subscription limits are checked. Spend services are checked at most every 5 minutes. Choose 0 / Manual only to stop automatic checks; use Refresh now when you want a check.",
   "settings.refresh_seconds.option.30s": "30 seconds",
   "settings.refresh_seconds.option.1m": "1 minute",
   "settings.refresh_seconds.option.5m": "5 minutes",
@@ -192,5 +192,9 @@
   "models.tokens": "{input} in · {output} out",
   "models.unavailable": "Local model stats unavailable: {error}",
   "settings.background.label": "Show outer panel",
-  "settings.background.description": "Use Noctalia's desktop-widget background behind the cards. Turn it off for no outer panel; the cards and text remain."
+  "settings.background.description": "Use Noctalia's desktop-widget background behind the cards. Turn it off for no outer panel; the cards and text remain.",
+  "settings.refresh_seconds.option.manual": "Manual only",
+  "duration.manual": "Manual only",
+  "refresh.manual": "Manual only — use Refresh now",
+  "ui.refresh": "Refresh"
 }

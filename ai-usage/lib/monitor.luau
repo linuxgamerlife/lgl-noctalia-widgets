@@ -150,6 +150,20 @@ function M.create(deps)
     tick()
   end
 
+  -- Explicit user refresh: ignore the 30 s/manual floor and every backoff.
+  -- The provider's own rate limits still protect a service that rejects us.
+  local function forceNow()
+    local now = deps.now()
+    for _, key in ipairs(order) do
+      local entry = entries[key]
+      if entry and not entry.isLoading then
+        entries[key] = state.dueNow(entry, now)
+      end
+    end
+    notify()
+    tick()
+  end
+
   local function recheck(id)
     if not entries[id] then
       return
@@ -179,6 +193,7 @@ function M.create(deps)
     configure = configure,
     tick = tick,
     refreshNow = refreshNow,
+    forceNow = forceNow,
     recheck = recheck,
     snapshot = snapshot,
     setIntervalMs = setIntervalMs,

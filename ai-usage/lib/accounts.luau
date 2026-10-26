@@ -5,7 +5,8 @@ local validation = require("./validation.luau")
 
 local M = {}
 
-M.REFRESH_CHOICES_SECONDS = { 30, 60, 300, 900, 1800, 3600 }
+-- 0 means manual only: the initial start check still runs, but no timer checks.
+M.REFRESH_CHOICES_SECONDS = { 0, 30, 60, 300, 900, 1800, 3600 }
 M.DEFAULT_REFRESH_SECONDS = 30
 M.MIN_MANUAL_REFRESH_SECONDS = 30
 M.MAX_ACCOUNT_NAME_LENGTH = 100

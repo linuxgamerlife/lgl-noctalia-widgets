@@ -26,6 +26,7 @@ machine.
 | `remove-plugin-widgets.py` | Safely removes this plugin's desktop and bar widget instances from `settings.toml` |
 | `catalog.toml` | Noctalia source catalog (the repo can be added as a plugin source) |
 | `tests/` | LuaJIT tests with a mocked Noctalia API |
+| `docs/noctalia.md` | Noctalia-specific architecture, reload, settings and debugging notes |
 
 ## Install
 
@@ -67,9 +68,29 @@ noctalia-kwe msg panel-toggle lukk17/ai-usage:panel   # or: noctalia msg ...
    not a second settings editor: Noctalia owns plugin settings, and a plugin
    cannot write them.
 
-The desktop card has a refresh button, a settings button that opens the panel,
-and an **Add account** button when empty. The bar widget shows the worst current
-limit by default; click opens the panel, right-click asks the service to refresh.
+The desktop card has a **Refresh** button, a settings button that opens the
+panel, and an **Add account** button when empty. The panel has **Refresh now** in
+the cards and account views. The bar widget shows the worst current limit by
+default; click opens the panel, right-click asks the service to refresh.
+
+A manual refresh ignores the usual 30-second floor and any backoff, so it checks
+every account immediately. Provider rate limits still apply. It also refreshes
+the local OpenCode model stats.
+
+### Manual-only mode
+
+Set **Refresh every** to **Manual only** (`0`) to stop the timer. The service
+still performs one check at startup so the cards are not empty, then waits for
+an explicit refresh. Use any of these:
+
+- **Refresh** on the desktop card
+- **Refresh now** in the panel
+- right-click the bar widget
+- `noctalia msg plugin lukk17/ai-usage:poller all refresh`
+
+Automatic local model-stat reads are also paused in manual-only mode; a manual
+refresh updates them. The service still publishes a heartbeat so the widget does
+not show “waiting for the service” while it is idle.
 
 ## Feature mapping
 
@@ -81,7 +102,7 @@ limit by default; click opens the panel, right-click asks the service to refresh
 | One card per account: title, account, error, main rows, bars, extra rows | Same layout in `lib/view.luau` |
 | Bar severity colours: normal / warning / critical / unknown | Theme roles `primary` / `tertiary` / `error` / `on_surface_variant` |
 | Add, edit, delete, reorder accounts inside the popup | Panel account list and add/edit forms; up/down buttons instead of drag |
-| Refresh every 30 s … 1 h | Root `refresh_seconds` setting, read by the service |
+| Refresh every 30 s … 1 h | Root `refresh_seconds` setting, including `Manual only` (`0`) and a manual refresh action |
 | Accounts in `~/.config/ai-usage-widgetrc` | `pluginDataDir()/accounts.json` (atomic write, no secrets) |
 | Keys in KWallet via D-Bus | Secret Service via `secret-tool` (see below) |
 | Claude organization discovery | Panel discovery rows from the same history file |
@@ -154,7 +175,9 @@ which API key/account spent it, and it is all-time rather than the rolling
 5-hour/weekly/monthly windows. The card labels it “Models on this machine”.
 
 If the `opencode` CLI is not installed, the card says so; the quota percentages
-still work. The local read is refreshed at most every 5 minutes.
+still work. The local read is refreshed at most every 5 minutes in automatic
+mode, and on every manual refresh. In manual-only mode it is read at startup and
+when you press refresh.
 
 ## How it gets data, and is it secure?
 
@@ -262,7 +285,7 @@ Plugin-level (Settings → Plugins):
 
 | Key | Type | Default | Meaning |
 | --- | --- | --- | --- |
-| `refresh_seconds` | select | `30` | 30 s, 1, 5, 15, 30 or 60 minutes |
+| `refresh_seconds` | select | `30` | `Manual only` (`0`), 30 s, 1, 5, 15, 30 or 60 minutes |
 | `show_model_stats` | bool | `true` | Read local OpenCode model usage with `opencode stats` and show it on OpenCode Go cards |
 
 Desktop card:

@@ -495,7 +495,14 @@ local function panelHeader(title, opts)
   }))
   local right = {}
   if options.refresh then
-    table.insert(right, ui.button({ key = "header-refresh", glyph = "refresh", variant = "ghost", onClick = "onRefresh" }))
+    table.insert(right, ui.button({
+      key = "header-refresh",
+      text = tr("ui.refresh", "Refresh"),
+      glyph = "refresh",
+      variant = "ghost",
+      controlSize = "sm",
+      onClick = "onRefresh",
+    }))
   end
   if options.settings then
     table.insert(right, ui.button({ key = "header-settings", glyph = "settings", variant = "ghost", onClick = "onSettings" }))
@@ -561,6 +568,7 @@ local function renderCards()
     end
     table.insert(cards, ui.row({ key = "cards-actions", gap = 8, align = "center" }, {
       ui.button({ key = "cards-add", text = tr("ui.add_account", "Add account"), glyph = "plus", variant = "primary", onClick = "onAdd" }),
+      ui.button({ key = "cards-refresh", text = tr("ui.refresh_now", "Refresh now"), glyph = "refresh", variant = "outline", onClick = "onRefresh" }),
       ui.button({ key = "cards-manage", text = tr("ui.manage_accounts", "Manage accounts"), glyph = "settings", variant = "outline", onClick = "onSettings" }),
     }))
     table.insert(children, ui.scroll({ key = "cards-scroll", flexGrow = 1, gap = 8 }, cards))
@@ -574,21 +582,36 @@ end
 
 local function renderSettings()
   local refresh = accountsModule.refreshSeconds(noctalia.getConfig("refresh_seconds"))
+  local refreshText
+  if refresh <= 0 then
+    refreshText = tr("refresh.manual", "Manual only — use Refresh now")
+  else
+    refreshText = tr("refresh.every", "Refresh every {value}", { value = formatter.refreshChoiceText(refresh) })
+  end
   local children = {
     panelHeader(tr("accounts.title", "Accounts"), { back = true }),
     ui.column({ key = "settings-refresh", gap = 4 }, {
       ui.label({
         key = "settings-refresh-label",
-        text = tr("refresh.every", "Refresh every {value}", { value = formatter.refreshChoiceText(refresh) }),
+        text = refreshText,
         fontSize = 12,
         color = "on_surface",
       }),
-      ui.button({
-        key = "settings-open",
-        text = tr("ui.open_plugin_settings", "Open plugin settings"),
-        glyph = "settings",
-        variant = "outline",
-        onClick = "onOpenPluginSettings",
+      ui.row({ key = "settings-refresh-actions", gap = 8, align = "center" }, {
+        ui.button({
+          key = "settings-refresh-now",
+          text = tr("ui.refresh_now", "Refresh now"),
+          glyph = "refresh",
+          variant = "outline",
+          onClick = "onRefresh",
+        }),
+        ui.button({
+          key = "settings-open",
+          text = tr("ui.open_plugin_settings", "Open plugin settings"),
+          glyph = "settings",
+          variant = "outline",
+          onClick = "onOpenPluginSettings",
+        }),
       }),
     }),
   }

@@ -72,8 +72,10 @@ local function header(entries)
   local buttons = {
     ui.button({
       key = "header-refresh",
+      text = tr("ui.refresh", "Refresh"),
       glyph = "refresh",
       variant = "ghost",
+      controlSize = "sm",
       onClick = "onRefresh",
     }),
     ui.button({

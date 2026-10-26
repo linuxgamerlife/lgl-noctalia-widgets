@@ -26,6 +26,7 @@ label_key       = "settings.refresh_seconds.label"
 description_key = "settings.refresh_seconds.description"
 default         = "30"
 options = [
+  { value = "0",    label_key = "settings.refresh_seconds.option.manual" },
   { value = "30",   label_key = "settings.refresh_seconds.option.30s" },
   { value = "60",   label_key = "settings.refresh_seconds.option.1m" },
   { value = "300",  label_key = "settings.refresh_seconds.option.5m" },

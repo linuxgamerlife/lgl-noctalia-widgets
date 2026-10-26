@@ -17,10 +17,6 @@ function onIpc(event, payload)
   service.ipc(event, payload)
 end
 
-function onEnable()
-  service.ipc("refresh")
-end
-
 function onExit(_signal, _reason)
   service.stop()
 end
