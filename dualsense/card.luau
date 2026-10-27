@@ -464,20 +464,12 @@ local function profile_row(s, is_fresh)
         color = settings.muted_text_color,
       }),
     }),
-    ui.box({
+    ui.button({
       key = "profile-settings",
+      glyph = "settings",
       tooltip = noctalia.tr("actions.open_ds4u"),
-      width = 24,
-      height = 24,
-      radius = 5,
-      fill = "surface_container_high/0.9",
-      border = "outline_variant",
-      borderWidth = 1,
-      align = "center",
-      justify = "center",
+      controlSize = "small",
       onClick = "onOpenDs4u",
-    }, {
-      ui.glyph({ name = "settings", size = 14, color = settings.text_color }),
     }),
   }
   local header = ui.row({
@@ -568,7 +560,7 @@ render = function()
 
   local left = ui.column({
     key = "left",
-    width = 142,
+    width = 180,
     gap = 2,
     align = "center",
     opacity = dim,

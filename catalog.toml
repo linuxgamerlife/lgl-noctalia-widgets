@@ -5,7 +5,7 @@
 [[plugin]]
 id           = "deadYokai/dualsense"
 name         = "DualSense Battery"
-version      = "1.0.4"
+version      = "1.0.5"
 author       = "deadYokai"
 license      = "MIT"
 icon         = "device-gamepad-2"
