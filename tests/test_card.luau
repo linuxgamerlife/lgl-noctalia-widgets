@@ -26,6 +26,7 @@ local config = {
   controller_body_color = "#112233",
   controller_body_opacity = 0.4,
   controller_stroke_width = 4.0,
+  profile_settings_opacity = 0.35,
   battery_color_mode = "lightbar",
   battery_fill_color = "#33cc99",
   battery_fill_opacity = 0.5,
@@ -102,6 +103,7 @@ assert(find_key(tree, "profile-row"), "profile row missing")
 assert(find_key(tree, "profile-select"), "profile selector missing")
 assert(find_key(tree, "profile-settings"), "profile settings button missing")
 assert(find_key(tree, "profile-settings").type == "button", "profile settings must use a native button")
+assert(find_key(tree, "profile-settings").props.opacity == 0.35, "profile settings opacity not applied")
 assert(find_key(tree, "left").props.width == 180, "controller column is too narrow for profile controls")
 assert(find_key(tree, "lightbar-dot"), "lightbar indicator missing")
 assert(find_text(tree, "65"), "battery percentage missing")

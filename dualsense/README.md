@@ -13,7 +13,7 @@ profile's `lightbar_brightness`. Charging pulses; low battery turns red.
 | Field | Value |
 | --- | --- |
 | ID | `deadYokai/dualsense` |
-| Version | `1.0.5` |
+| Version | `1.0.6` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 
@@ -117,6 +117,7 @@ illustration_color      = "#e8ebef"
 controller_body_color   = "#2c3035"
 controller_body_opacity = 1.0            # 0 = line art only, 1 = solid body
 controller_stroke_width = 2.8
+profile_settings_opacity = 0.65           # cog button, 0 = transparent, 1 = solid
 battery_color_mode      = "lightbar"     # lightbar | connection | custom
 battery_fill_color      = "#0080ff"      # used when mode = custom
 battery_fill_opacity    = 1.0            # 0 = transparent, 1 = solid
@@ -142,6 +143,7 @@ notify_low    = true
 | `controller_body_color` | desktop widget | `#2c3035` | Controller body fill colour. |
 | `controller_body_opacity` | desktop widget | `1.0` | Controller body fill opacity (`0` = transparent line art, `1` = solid). |
 | `controller_stroke_width` | desktop widget | `2.8` | Controller outline and touchpad/button edge thickness (`0.5`–`8`). |
+| `profile_settings_opacity` | desktop widget | `0.65` | Opacity of the ds4u settings button, including its background and cog (`0`–`1`). |
 | `battery_color_mode` | desktop widget | `lightbar` | `lightbar` uses the active `ds4u` profile lightbar colour; `connection` uses link colours; `custom` uses `battery_fill_color`. |
 | `battery_fill_color` | desktop widget | `#0080ff` | Custom battery fill colour, used when `battery_color_mode = "custom"`. |
 | `battery_fill_opacity` | desktop widget | `1.0` | Battery fill opacity (`0` = transparent, `1` = solid). |

@@ -10,7 +10,7 @@ management of [`ds4u` (DualSense 4 You)](https://git.yokai.digital/deadYokai/ds4
 | Field | Value |
 | --- | --- |
 | Plugin ID | `deadYokai/dualsense` |
-| Version | `1.0.5` |
+| Version | `1.0.6` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 
@@ -43,6 +43,7 @@ same v5 plugin API and is supported by the install scripts.
 The desktop widget exposes:
 
 - controller line colour, body colour, body opacity and outline thickness
+- independent opacity for the ds4u profile-settings cog button
 - battery fill mode: `ds4u` lightbar colour, connection colours (blue on
   Bluetooth, green on USB-C), or a custom colour
 - battery fill opacity (`0–1`) and a separate low-battery colour

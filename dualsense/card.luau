@@ -14,6 +14,7 @@ local settings = {
   controller_body_color = noctalia.getConfig("controller_body_color") or "#2c3035",
   controller_body_opacity = tonumber(noctalia.getConfig("controller_body_opacity")) or 1.0,
   controller_stroke_width = tonumber(noctalia.getConfig("controller_stroke_width")) or 2.8,
+  profile_settings_opacity = tonumber(noctalia.getConfig("profile_settings_opacity")) or 0.65,
   battery_color_mode = noctalia.getConfig("battery_color_mode") or "lightbar",
   battery_fill_color = noctalia.getConfig("battery_fill_color") or "#0080ff",
   battery_fill_opacity = tonumber(noctalia.getConfig("battery_fill_opacity")) or 1.0,
@@ -42,6 +43,11 @@ if settings.controller_body_opacity < 0 then
   settings.controller_body_opacity = 0
 elseif settings.controller_body_opacity > 1 then
   settings.controller_body_opacity = 1
+end
+if settings.profile_settings_opacity < 0 then
+  settings.profile_settings_opacity = 0
+elseif settings.profile_settings_opacity > 1 then
+  settings.profile_settings_opacity = 1
 end
 if settings.text_color == "" then
   settings.text_color = "on_surface"
@@ -469,6 +475,7 @@ local function profile_row(s, is_fresh)
       glyph = "settings",
       tooltip = noctalia.tr("actions.open_ds4u"),
       controlSize = "small",
+      opacity = settings.profile_settings_opacity,
       onClick = "onOpenDs4u",
     }),
   }

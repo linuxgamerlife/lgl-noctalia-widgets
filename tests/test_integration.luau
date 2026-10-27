@@ -12,6 +12,7 @@ local config = {
   controller_body_color = "#2c3035",
   controller_body_opacity = 1.0,
   controller_stroke_width = 2.8,
+  profile_settings_opacity = 0.65,
   battery_color_mode = "lightbar",
   battery_fill_color = "#0080ff",
   battery_fill_opacity = 1.0,
