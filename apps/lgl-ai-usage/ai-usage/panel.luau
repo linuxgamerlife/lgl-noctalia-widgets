@@ -1,6 +1,6 @@
 --!nonstrict
 -- Panel: cards, account management and the add/edit forms. Accounts are kept
--- in pluginDataDir/accounts.json; keys are stored only in the Secret Service.
+-- in pluginDataDir/accounts.json; keys use the configured secure or local store.
 
 local accountsModule = require("./lib/accounts.luau")
 local check = require("./lib/check.luau")

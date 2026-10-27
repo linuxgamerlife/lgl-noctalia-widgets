@@ -16,6 +16,14 @@
         "manual": "Manual only"
       }
     },
+    "key_storage": {
+      "label": "API key storage",
+      "description": "Secret Service is recommended. Local files are unencrypted and mode 600; use only read-only, narrowly scoped and rotatable API keys.",
+      "option": {
+        "secret_service": "Secret Service (recommended)",
+        "local_file": "Local files (unencrypted)"
+      }
+    },
     "show_header": {
       "label": "Show header",
       "description": "Show the icon, title and buttons above the account sections."

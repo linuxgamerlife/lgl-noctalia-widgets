@@ -72,17 +72,26 @@ function M.buildCheckCommand(spec)
   if not spec.boundary:match(M.BOUNDARY_PATTERN) then
     error("the boundary is not allowed")
   end
-  local lockedGuard = "found=$(timeout " .. M.SECRET_TOOL_TIMEOUT_SECONDS .. " "
-    .. secrets.buildSearchPart(spec.providerId, spec.account) .. " 2>/dev/null); "
-    .. "case \"$found\" in \"(@ao [], [objectpath \"*) " .. marker(spec.boundary, "lookup", shell.quote("locked"))
-    .. "; exit 0;; esac"
+  local lockedGuard = nil
+  if not secrets.usesLocalFile() then
+    lockedGuard = "found=$(timeout " .. M.SECRET_TOOL_TIMEOUT_SECONDS .. " "
+      .. secrets.buildSearchPart(spec.providerId, spec.account) .. " 2>/dev/null); "
+      .. "case \"$found\" in \"(@ao [], [objectpath \"*) " .. marker(spec.boundary, "lookup", shell.quote("locked"))
+      .. "; exit 0;; esac"
+  end
   local lookup = "key=$(timeout " .. M.SECRET_TOOL_TIMEOUT_SECONDS .. " "
     .. secrets.buildLookupPart(spec.providerId, spec.account) .. "); rc=$?"
   local lookupGuard = "if [ \"$rc\" -ne 0 ]; then " .. marker(spec.boundary, "lookup", "\"$rc\"") .. "; exit 0; fi"
   local keyGuard = "case \"$key\" in "
     .. "'') " .. marker(spec.boundary, "lookup", shell.quote("empty")) .. "; exit 0;; "
     .. "*[!!-~]*) " .. marker(spec.boundary, "lookup", shell.quote("invalid")) .. "; exit 0;; esac"
-  local parts = { SAFE_START, lockedGuard, lookup, lookupGuard, keyGuard }
+  local parts = { SAFE_START }
+  if lockedGuard then
+    table.insert(parts, lockedGuard)
+  end
+  table.insert(parts, lookup)
+  table.insert(parts, lookupGuard)
+  table.insert(parts, keyGuard)
   for _, request in ipairs(spec.requests) do
     table.insert(parts, curlPart(spec, request))
   end

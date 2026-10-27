@@ -185,13 +185,22 @@ still work.
 
 ## Security and secrets
 
-Keys live only in the Secret Service under `server=ai-usage`,
+By default, keys live only in the Secret Service under `server=ai-usage`,
 `user=<service>.<account-id>`, `type=plaintext`. `accounts.json` contains only
 the account id, service, label and provider fields (no keys) and is written
 atomically with mode `600`; its directory is mode `700`. Email-style labels are
 masked before they are published or rendered.
 
-Remote checks read the key with `secret-tool lookup`, pipe the auth header into
+For systems without a Secret Service, **API key storage** can explicitly be set
+to **Local files (unencrypted)** in the plugin settings. Each key is then stored
+under `pluginDataDir()/keys/` in its own mode-`600` file; the directory is mode
+`700`, and key-file symlinks are not followed. This protects keys from other
+non-root users, but not from root, programs running as your user, disk access or
+unencrypted backups. **Only use read-only, narrowly scoped and rotatable API
+keys with this mode.** Never use an administrative, billing-capable or general
+purpose credential. Secret Service remains the recommended mode.
+
+Remote checks read the key from the configured store, pipe the auth header into
 `curl -H @-` on stdin, and use TLS 1.2+, no redirects and a 1 MiB cap. Saving a
 key is the one difference from KDE: Noctalia has no wallet D-Bus API, so the
 panel pipes a base64 key into `secret-tool store`; the base64 is briefly visible

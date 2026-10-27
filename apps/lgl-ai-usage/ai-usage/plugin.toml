@@ -36,6 +36,17 @@ options = [
 ]
 
 [[setting]]
+key             = "key_storage"
+type            = "select"
+label_key       = "settings.key_storage.label"
+description_key = "settings.key_storage.description"
+default         = "secret_service"
+options = [
+  { value = "secret_service", label_key = "settings.key_storage.option.secret_service" },
+  { value = "local_file",     label_key = "settings.key_storage.option.local_file" },
+]
+
+[[setting]]
 key             = "show_model_stats"
 type            = "bool"
 label_key       = "settings.show_model_stats.label"

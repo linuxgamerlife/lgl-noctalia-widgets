@@ -1,7 +1,7 @@
 -- Curl command and output parser tests.
 
 local mock = dofile("tests/support/mock.luau")
-mock.new({})
+local context = mock.new({})
 
 local curl = require("./lib/curlcommand.luau")
 
@@ -23,6 +23,14 @@ assert(command:find("--max-redirs 0", 1, true), "redirect cap missing")
 assert(command:find("--proto '=https'", 1, true), "https-only missing")
 assert(command:find("-H @-", 1, true), "curl stdin header missing")
 assert(not command:find("sk-", 1, true), "command must not contain a key")
+
+context.config.key_storage = "local_file"
+local localCommand = curl.buildCheckCommand(spec)
+assert(localCommand:find("cat --", 1, true), "local key lookup missing")
+assert(localCommand:find("test ! -L", 1, true), "local key symlink guard missing")
+assert(not localCommand:find("secret-tool", 1, true), "local mode must not use secret-tool")
+assert(not localCommand:find("gdbus", 1, true), "local mode must not use Secret Service")
+context.config.key_storage = nil
 
 local function block(id, body, status, retry, curlCode)
   return spec.boundary .. " begin " .. id .. "\n" .. body .. "\n" .. spec.boundary

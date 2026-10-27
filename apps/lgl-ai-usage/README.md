@@ -136,8 +136,10 @@ Requires LuaJIT. The tests mock `noctalia.*`, `ui.*`, `desktopWidget.*`,
 
 - Noctalia Shell with plugin API 24 or newer (upstream or `noctalia-kwe`)
 - `curl`, `timeout` and GNU `find` for remote checks
-- `secret-tool` (libsecret) and a Secret Service for keys
-- `gdbus` (glib2) for the locked-keyring probe
+- Recommended: `secret-tool` (libsecret) and a Secret Service for keys
+- `gdbus` (glib2) for the locked-keyring probe when using Secret Service
+- Alternatively, unencrypted mode-`600` local key files (use read-only,
+  narrowly scoped and rotatable keys only)
 - Optional: the `opencode` CLI for local per-model OpenCode Go stats
 
 ## Limitations

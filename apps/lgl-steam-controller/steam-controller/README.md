@@ -232,6 +232,9 @@ Use `noctalia msg ...` instead of `noctalia-kwe msg ...` on upstream Noctalia.
 
 ## Troubleshooting
 
+For a new machine, work through the
+[fresh-install checklist](../README.md#troubleshooting-a-fresh-install) first.
+
 - **Plugin never appears in Settings → Plugins / the desktop editor:** check the
   data path. `noctalia-kwe` reads
   `~/.local/share/noctalia-kwe/plugins`, not
@@ -244,6 +247,14 @@ Use `noctalia msg ...` instead of `noctalia-kwe msg ...` on upstream Noctalia.
 - **"Waiting for controller" forever:** check the plugin log and `python3
   --version`. Also verify the daemon can open the hidraw node:
   `python3 steam-controller/code/sc_battery_daemon.py --stream`.
+- **Controller never detected at all:** the daemon scans only `/dev/hidraw0`
+  to `hidraw31` and only Valve IDs `28de:1302` to `28de:1305`. Confirm the
+  device is visible with:
+  `grep -H . /sys/class/hidraw/hidraw*/device/uevent | grep -i 28de`.
+  No result means a driver or connection problem, not the plugin.
+- **Two Noctalia builds running:** upstream and KWE share
+  `$XDG_RUNTIME_DIR/noctalia-sc-battery.lock`. If both run this plugin, one
+  daemon exits quietly and only one shell receives state. Enable it in one.
 - **Battery stays at the last value:** the pad is on the puck's dock but
   switched off. The card shows the last known value dimmed with a clock.
 - **No signal meter:** signal strength is only sent over the puck link, not over

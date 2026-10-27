@@ -110,6 +110,65 @@ Noctalia session is needed.
 - Python 3 (standard library only)
 - Permission to read the controller's `/dev/hidraw*` nodes
 
+## Troubleshooting a fresh install
+
+If the widget does not work on a new machine, check these in order. The
+commands use `noctalia`; use `noctalia-kwe` instead on the KWE fork.
+
+1. **Right installer.** `./install-kwe.sh` is for `noctalia-kwe`,
+   `./install.sh` is for upstream Noctalia. They install into different
+   folders, so the wrong one means the plugin never appears.
+2. **New enough shell.** The plugin needs plugin API 17 or newer
+   (Noctalia v5).
+3. **Reload and enable the plugin**, then add the card in
+   **Settings → Desktop → Toggle Editor**:
+
+   ```bash
+   noctalia msg config-reload
+   noctalia msg plugins enable jahrek/steam-controller
+   ```
+
+4. **The install link still points somewhere.** Both installers link to the
+   cloned folder instead of copying it, so moving or deleting the clone breaks
+   the plugin. Check where the link goes:
+
+   ```bash
+   readlink -f ~/.local/share/noctalia/plugins/steam-controller
+   ```
+
+   If it points at a missing folder, re-run the installer from the current
+   clone. Also watch for `XDG_DATA_HOME` or `NOCTALIA_DATA_HOME`: if the
+   installer uses a different value than the running shell, the plugin is
+   installed somewhere Noctalia does not read.
+5. **Python 3 is available to Noctalia.** `command -v python3` should print a
+   path.
+6. **Permission to read the controller.** This is the usual cause of
+   "Waiting for controller": the card appears but never shows a battery. Test
+   the reader directly:
+
+   ```bash
+   python3 steam-controller/code/sc_battery_daemon.py --stream
+   ```
+
+   If it cannot open a hidraw node, add the udev rule from
+   [Requirements](steam-controller/README.md#requirements).
+7. **The controller is detected.** The daemon only looks for Valve USB IDs
+   `28de:1302` to `28de:1305`:
+
+   ```bash
+   grep -H . /sys/class/hidraw/hidraw*/device/uevent | grep -i 28de
+   ```
+
+   Nothing listed means a driver or connection problem, not the widget.
+8. **Only one Noctalia runs the plugin.** Upstream and KWE share one runtime
+   lock, so if both are running, one daemon exits quietly and only one shell
+   gets data. Enable the plugin in just one.
+
+If the daemon prints JSON but the card stays empty, the problem is plugin
+startup or discovery, not the controller. The
+[full troubleshooting list](steam-controller/README.md#troubleshooting) has
+more detail.
+
 ## Credits and License
 
 Based on Jahrek's
