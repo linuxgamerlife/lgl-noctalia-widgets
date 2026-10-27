@@ -44,7 +44,7 @@ the vendor HID reports directly.
 
 ## Install
 
-From the repository root:
+From the app directory (`apps/steam-controller`):
 
 ```bash
 # KineticWE's noctalia-kwe fork
@@ -78,11 +78,11 @@ noctalia-kwe msg config-reload
 noctalia-kwe msg plugins enable jahrek/steam-controller
 ```
 
-You can also add the `noctalia/` directory as a local source (it contains
+You can also add the app directory as a local source (it contains
 `catalog.toml`):
 
 ```bash
-noctalia-kwe msg plugins source add steam-controller path /path/to/repo/noctalia
+noctalia-kwe msg plugins source add steam-controller path /path/to/lgl-noctalia-widgets/apps/steam-controller
 ```
 
 Then:

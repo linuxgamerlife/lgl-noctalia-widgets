@@ -172,7 +172,7 @@ sudo gpasswd -d "$USER" input
 
 ## Install
 
-From the repository root:
+From the app directory (`apps/dualsense`):
 
 ```bash
 # KineticWE's noctalia-kwe fork

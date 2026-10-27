@@ -57,7 +57,7 @@ Full provider details, every setting and the security model are in
 
 ## Install
 
-From the repository root:
+From the app directory (`apps/ai-usage`):
 
 ```bash
 # KineticWE's noctalia-kwe fork

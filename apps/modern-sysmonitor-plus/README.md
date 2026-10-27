@@ -102,7 +102,7 @@ the formatter.
 
 ## Install
 
-From the repository root:
+From the app directory (`apps/modern-sysmonitor-plus`):
 
 ```bash
 # KineticWE's noctalia-kwe fork

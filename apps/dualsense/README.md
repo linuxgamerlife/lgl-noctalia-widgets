@@ -76,7 +76,7 @@ colour or `ds4u` lightbar colour changes. See the
 
 ## Install
 
-From the repository root:
+From the app directory (`apps/dualsense`):
 
 ```bash
 # KineticWE's noctalia-kwe fork

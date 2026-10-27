@@ -49,7 +49,7 @@ colour changes. See the
 
 ## Install
 
-From the repository root:
+From the app directory (`apps/steam-controller`):
 
 ```bash
 # KineticWE's noctalia-kwe fork

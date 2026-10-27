@@ -1,5 +1,5 @@
 # Index for using this directory as a Noctalia plugin source:
-#   noctalia msg plugins source add modern-sysmonitor path /path/to/repo
+#   noctalia msg plugins source add modern-sysmonitor path /path/to/lgl-noctalia-widgets/apps/modern-sysmonitor-plus
 # The per-plugin plugin.toml stays authoritative.
 
 [[plugin]]
