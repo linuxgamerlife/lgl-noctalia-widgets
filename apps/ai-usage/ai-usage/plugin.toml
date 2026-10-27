@@ -1,0 +1,412 @@
+# AI Usage for Noctalia Shell.
+#
+# A headless service checks every account on a timer and publishes plain state;
+# the desktop card, the bar widget and the panel only render that state.
+# plugin_api 24 is the first level with the direct-argv form of runAsync(), which
+# keeps account ids and paths out of a shell. Module require (22) and services
+# starting on enable (17) are also required.
+
+id          = "lukk17/ai-usage"
+name        = "AI Usage"
+version     = "1.0.0"
+plugin_api  = 24
+author      = "Łukasz Sarna"
+license     = "GPL-3.0-or-later"
+icon        = "chart-bar"
+description = "Limits, spend and balance for Claude, ChatGPT, OpenAI, Anthropic, xAI, OpenCode, MiniMax, Requesty, Hugging Face and JetBrains AI, with theme-aware colours and configurable card, divider and surface styling."
+tags        = ["ai", "usage", "limits", "spend", "desktop", "panel"]
+dependencies = ["curl", "libsecret", "glib2"]
+
+# Shared by the service, the card and the panel. Edited under
+# Settings -> Plugins (the gear on the plugin row).
+[[setting]]
+key             = "refresh_seconds"
+type            = "select"
+label_key       = "settings.refresh_seconds.label"
+description_key = "settings.refresh_seconds.description"
+default         = "30"
+options = [
+  { value = "0",    label_key = "settings.refresh_seconds.option.manual" },
+  { value = "30",   label_key = "settings.refresh_seconds.option.30s" },
+  { value = "60",   label_key = "settings.refresh_seconds.option.1m" },
+  { value = "300",  label_key = "settings.refresh_seconds.option.5m" },
+  { value = "900",  label_key = "settings.refresh_seconds.option.15m" },
+  { value = "1800", label_key = "settings.refresh_seconds.option.30m" },
+  { value = "3600", label_key = "settings.refresh_seconds.option.1h" },
+]
+
+[[setting]]
+key             = "show_model_stats"
+type            = "bool"
+label_key       = "settings.show_model_stats.label"
+description_key = "settings.show_model_stats.description"
+default         = true
+
+[[setting]]
+key             = "model_stats_limit"
+type            = "int"
+label_key       = "settings.model_stats_limit.label"
+description_key = "settings.model_stats_limit.description"
+default         = 5
+min             = 1
+max             = 20
+step            = 1
+
+# Headless poller. One instance per plugin, started by Noctalia.
+[[service]]
+id    = "poller"
+entry = "service.luau"
+
+# Full cards on the desktop.
+[[desktop_widget]]
+id    = "card"
+entry = "card.luau"
+
+  # ── Behaviour and display ────────────────────────────────────────────────
+  [[desktop_widget.setting]]
+  key             = "show_header"
+  type            = "bool"
+  label_key       = "settings.show_header.label"
+  description_key = "settings.show_header.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "title"
+  type            = "string"
+  label_key       = "settings.title.label"
+  description_key = "settings.title.description"
+  default         = "AI Usage"
+  visible_when    = { key = "show_header", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_details"
+  type            = "bool"
+  label_key       = "settings.show_details.label"
+  description_key = "settings.show_details.description"
+  default         = true
+
+  # ── Group toggles ────────────────────────────────────────────────────────
+  [[desktop_widget.setting]]
+  key             = "show_layout_settings"
+  type            = "bool"
+  label_key       = "settings.show_layout_settings.label"
+  description_key = "settings.show_layout_settings.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_colour_settings"
+  type            = "bool"
+  label_key       = "settings.show_colour_settings.label"
+  description_key = "settings.show_colour_settings.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_section_settings"
+  type            = "bool"
+  label_key       = "settings.show_section_settings.label"
+  description_key = "settings.show_section_settings.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "background"
+  type            = "bool"
+  label_key       = "settings.background.label"
+  description_key = "settings.background.description"
+  default         = true
+
+  # ── Header / layout ──────────────────────────────────────────────────────
+  [[desktop_widget.setting]]
+  key             = "show_reset_times"
+  type            = "bool"
+  label_key       = "settings.show_reset_times.label"
+  description_key = "settings.show_reset_times.description"
+  default         = true
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_service_icon"
+  type            = "bool"
+  label_key       = "settings.show_service_icon.label"
+  description_key = "settings.show_service_icon.description"
+  default         = true
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "content_width"
+  type            = "int"
+  label_key       = "settings.content_width.label"
+  description_key = "settings.content_width.description"
+  default         = 432
+  min             = 240
+  max             = 900
+  step            = 4
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "bar_height"
+  type            = "double"
+  label_key       = "settings.bar_height.label"
+  description_key = "settings.bar_height.description"
+  default         = 5.0
+  min             = 2.0
+  max             = 14.0
+  step            = 0.5
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "divider_width"
+  type            = "double"
+  label_key       = "settings.divider_width.label"
+  description_key = "settings.divider_width.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 4.0
+  step            = 0.1
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "divider_color"
+  type            = "color"
+  label_key       = "settings.divider_color.label"
+  description_key = "settings.divider_color.description"
+  default         = "outline"
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "divider_opacity"
+  type            = "double"
+  label_key       = "settings.divider_opacity.label"
+  description_key = "settings.divider_opacity.description"
+  default         = 0.5
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
+
+  # ── Colours ──────────────────────────────────────────────────────────────
+  [[desktop_widget.setting]]
+  key             = "header_color"
+  type            = "color"
+  label_key       = "settings.header_color.label"
+  description_key = "settings.header_color.description"
+  default         = "primary"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "header_glyph"
+  type            = "glyph"
+  label_key       = "settings.header_glyph.label"
+  description_key = "settings.header_glyph.description"
+  default         = "chart-bar"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "normal_color"
+  type            = "color"
+  label_key       = "settings.normal_color.label"
+  description_key = "settings.normal_color.description"
+  default         = "primary"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "warning_color"
+  type            = "color"
+  label_key       = "settings.warning_color.label"
+  description_key = "settings.warning_color.description"
+  default         = "tertiary"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "critical_color"
+  type            = "color"
+  label_key       = "settings.critical_color.label"
+  description_key = "settings.critical_color.description"
+  default         = "error"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "unknown_color"
+  type            = "color"
+  label_key       = "settings.unknown_color.label"
+  description_key = "settings.unknown_color.description"
+  default         = "on_surface_variant"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "track_color"
+  type            = "color"
+  label_key       = "settings.track_color.label"
+  description_key = "settings.track_color.description"
+  default         = "on_surface"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "track_opacity"
+  type            = "double"
+  label_key       = "settings.track_opacity.label"
+  description_key = "settings.track_opacity.description"
+  default         = 0.14
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "text_color"
+  type            = "color"
+  label_key       = "settings.text_color.label"
+  description_key = "settings.text_color.description"
+  default         = "on_surface"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "muted_text_color"
+  type            = "color"
+  label_key       = "settings.muted_text_color.label"
+  description_key = "settings.muted_text_color.description"
+  default         = "on_surface_variant"
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
+
+  # ── Optional account section surface ─────────────────────────────────────
+  [[desktop_widget.setting]]
+  key             = "card_color"
+  type            = "color"
+  label_key       = "settings.card_color.label"
+  description_key = "settings.card_color.description"
+  default         = "surface_variant"
+  visible_when    = { key = "show_section_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_opacity"
+  type            = "double"
+  label_key       = "settings.card_opacity.label"
+  description_key = "settings.card_opacity.description"
+  default         = 0.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+  visible_when    = { key = "show_section_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_radius"
+  type            = "int"
+  label_key       = "settings.card_radius.label"
+  description_key = "settings.card_radius.description"
+  default         = 12
+  min             = 0
+  max             = 32
+  step            = 1
+  visible_when    = { key = "show_section_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_border_color"
+  type            = "color"
+  label_key       = "settings.card_border_color.label"
+  description_key = "settings.card_border_color.description"
+  default         = "outline"
+  visible_when    = { key = "show_section_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_border_opacity"
+  type            = "double"
+  label_key       = "settings.card_border_opacity.label"
+  description_key = "settings.card_border_opacity.description"
+  default         = 0.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_section_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_border_width"
+  type            = "double"
+  label_key       = "settings.card_border_width.label"
+  description_key = "settings.card_border_width.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 4.0
+  step            = 0.1
+  visible_when    = { key = "show_section_settings", values = ["true"] }
+
+  # ── Host panel surface ───────────────────────────────────────────────────
+  [[desktop_widget.setting]]
+  key             = "background_color"
+  type            = "color"
+  label_key       = "settings.background_color.label"
+  description_key = "settings.background_color.description"
+  default         = "surface"
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_opacity"
+  type            = "double"
+  label_key       = "settings.background_opacity.label"
+  description_key = "settings.background_opacity.description"
+  default         = 0.8
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_radius"
+  type            = "int"
+  label_key       = "settings.background_radius.label"
+  description_key = "settings.background_radius.description"
+  default         = 12
+  min             = 0
+  max             = 48
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_padding"
+  type            = "int"
+  label_key       = "settings.background_padding.label"
+  description_key = "settings.background_padding.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+# Compact bar widget, the equivalent of the KDE panel icon.
+[[widget]]
+id    = "usage"
+entry = "bar.luau"
+
+  [[widget.setting]]
+  key             = "show_percent"
+  type            = "bool"
+  label_key       = "settings.show_percent.label"
+  description_key = "settings.show_percent.description"
+  default         = true
+
+  [[widget.setting]]
+  key             = "glyph"
+  type            = "glyph"
+  label_key       = "settings.glyph.label"
+  description_key = "settings.glyph.description"
+  default         = "chart-bar"
+
+  [[widget.setting]]
+  key             = "mode"
+  type            = "select"
+  label_key       = "settings.mode.label"
+  description_key = "settings.mode.description"
+  default         = "worst"
+  options = [
+    { value = "worst",  label_key = "settings.mode.option.worst" },
+    { value = "errors", label_key = "settings.mode.option.errors" },
+    { value = "count",  label_key = "settings.mode.option.count" },
+  ]
+
+# Cards, account management and the refresh-interval pointer. Opened by the
+# desktop card, the bar widget, or `noctalia msg panel-toggle lukk17/ai-usage:panel`.
+[[panel]]
+id         = "panel"
+entry      = "panel.luau"
+width      = 470
+height     = 660
+placement  = "floating"
+position   = "center"

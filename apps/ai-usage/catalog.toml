@@ -1,0 +1,16 @@
+# Index for using this directory as a Noctalia plugin source:
+#   noctalia msg plugins source add ai-usage path /path/to/repo
+# The per-plugin plugin.toml stays authoritative.
+
+[[plugin]]
+id           = "lukk17/ai-usage"
+name         = "AI Usage"
+version      = "1.0.0"
+author       = "Łukasz Sarna"
+license      = "GPL-3.0-or-later"
+icon         = "chart-bar"
+description  = "Limits, spend and balance for Claude, ChatGPT, OpenAI, Anthropic, xAI, OpenCode, MiniMax, Requesty, Hugging Face and JetBrains AI, with theme-aware colours and configurable card, divider and surface styling."
+deprecated   = false
+plugin_api   = 24
+tags         = ["ai", "usage", "limits", "spend", "desktop", "panel"]
+dependencies = ["curl", "libsecret", "glib2"]

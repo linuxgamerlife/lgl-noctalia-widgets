@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="288" viewBox="0 0 512 288">
+  <rect width="512" height="288" fill="#14161c"/>
+  <rect x="20" y="20" width="472" height="248" rx="16" fill="#1e2230" stroke="#3a4056"/>
+  <circle cx="46" cy="52" r="15" fill="#273049" stroke="#8ab4f8"/>
+  <path d="M40 59V45h4v6h3l3-9h3l-3 9h4l-2 8h-4v-5h-3v5h-5z" fill="#8ab4f8"/>
+  <text x="72" y="49" fill="#c9d1e6" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="600">AI Usage</text>
+  <text x="72" y="66" fill="#9aa0b4" font-family="DejaVu Sans, sans-serif" font-size="10">1 account</text>
+  <line x1="36" y1="84" x2="476" y2="84" stroke="#3a4056" stroke-opacity=".55"/>
+  <text x="36" y="108" fill="#c9d1e6" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="600">OpenCode Go</text>
+  <text x="36" y="124" fill="#9aa0b4" font-family="DejaVu Sans, sans-serif" font-size="10">m***</text>
+  <text x="36" y="150" fill="#c9d1e6" font-family="DejaVu Sans, sans-serif" font-size="12">5hr</text>
+  <text x="476" y="150" fill="#8ab4f8" font-family="DejaVu Sans, sans-serif" font-size="12" font-weight="600" text-anchor="end">2%</text>
+  <rect x="36" y="158" width="440" height="5" rx="2.5" fill="#c9d1e6" fill-opacity=".14"/>
+  <rect x="36" y="158" width="9" height="5" rx="2.5" fill="#8ab4f8"/>
+  <text x="36" y="176" fill="#9aa0b4" font-family="DejaVu Sans, sans-serif" font-size="9">Resets in 3h 51min</text>
+  <text x="36" y="198" fill="#c9d1e6" font-family="DejaVu Sans, sans-serif" font-size="12">weekly</text>
+  <text x="476" y="198" fill="#8ab4f8" font-family="DejaVu Sans, sans-serif" font-size="12" font-weight="600" text-anchor="end">2%</text>
+  <rect x="36" y="206" width="440" height="5" rx="2.5" fill="#c9d1e6" fill-opacity=".14"/>
+  <rect x="36" y="206" width="9" height="5" rx="2.5" fill="#8ab4f8"/>
+  <text x="36" y="224" fill="#9aa0b4" font-family="DejaVu Sans, sans-serif" font-size="9">Resets in 6d 7h</text>
+  <text x="36" y="246" fill="#c9d1e6" font-family="DejaVu Sans, sans-serif" font-size="12">monthly</text>
+  <text x="476" y="246" fill="#8ab4f8" font-family="DejaVu Sans, sans-serif" font-size="12" font-weight="600" text-anchor="end">14%</text>
+  <rect x="36" y="254" width="440" height="5" rx="2.5" fill="#c9d1e6" fill-opacity=".14"/>
+  <rect x="36" y="254" width="62" height="5" rx="2.5" fill="#8ab4f8"/>
+</svg>
