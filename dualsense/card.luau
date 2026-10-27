@@ -141,6 +141,7 @@ end
 -- colours. A generated SVG is used because ui.image cannot tint; fall back to
 -- the bundled one.
 local art_path = nil
+local settings_art_path = nil
 
 local function controller_art()
   local fallback = "assets/controller.svg"
@@ -190,6 +191,41 @@ local function controller_art()
 end
 
 art_path = controller_art()
+
+local function settings_button_art()
+  local fallback = "assets/settings-button.svg"
+  local background = resolve_color("surface_container_high", "#202124")
+  local icon = resolve_color(settings.text_color, "#e8ebef")
+  if not valid_hex(background) then
+    background = "#202124"
+  end
+  if not valid_hex(icon) then
+    icon = "#e8ebef"
+  end
+  local opacity = string.format("%.2f", settings.profile_settings_opacity)
+  local dir = noctalia.pluginDataDir()
+  if not dir then
+    return fallback
+  end
+  local path = dir .. "/dualsense-settings-v1-" .. color_key(background)
+    .. "-" .. color_key(icon) .. "-" .. color_key(opacity) .. ".svg"
+  if path == settings_art_path then
+    return path
+  end
+  local template = noctalia.readFile("assets/settings-button-template.svg")
+  if not template then
+    return fallback
+  end
+  local svg = string.gsub(template, "{{BACKGROUND}}", background)
+  svg = string.gsub(svg, "{{BACKGROUND_OPACITY}}", opacity)
+  svg = string.gsub(svg, "{{ICON}}", icon)
+  if not noctalia.writeFile(path, svg) then
+    return fallback
+  end
+  return path
+end
+
+settings_art_path = settings_button_art()
 
 local function fresh()
   if type(current_state) ~= "table" then
@@ -470,26 +506,14 @@ local function profile_row(s, is_fresh)
         color = settings.muted_text_color,
       }),
     }),
-    ui.box({
+    ui.image({
       key = "profile-settings",
       tooltip = noctalia.tr("actions.open_ds4u"),
+      path = settings_art_path or "assets/settings-button.svg",
       width = 28,
       height = 28,
-      radius = 6,
-      fill = "surface_container_high/" .. string.format("%.2f", settings.profile_settings_opacity),
-      border = "outline_variant/" .. string.format("%.2f", settings.profile_settings_opacity),
-      borderWidth = 1,
-      align = "center",
-      justify = "center",
+      fit = "contain",
       onClick = "onOpenDs4u",
-    }, {
-      ui.glyph({
-        key = "profile-settings-icon",
-        name = "settings",
-        size = 15,
-        color = settings.text_color,
-        opacity = 1.0,
-      }),
     }),
   }
   local header = ui.row({
@@ -719,15 +743,18 @@ end
 
 function update()
   art_path = controller_art()
+  settings_art_path = settings_button_art()
   render()
 end
 
 current_state = noctalia.state.get("controller")
 art_path = controller_art()
+settings_art_path = settings_button_art()
 noctalia.setUpdateInterval(1000)
 noctalia.state.watch("controller", function(value)
   current_state = value
   art_path = controller_art()
+  settings_art_path = settings_button_art()
   render()
 end)
 render()
