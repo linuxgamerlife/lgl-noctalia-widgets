@@ -10,7 +10,7 @@ management of [`ds4u` (DualSense 4 You)](https://git.yokai.digital/deadYokai/ds4
 | Field | Value |
 | --- | --- |
 | Plugin ID | `deadYokai/dualsense` |
-| Version | `1.0.3` |
+| Version | `1.0.4` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 

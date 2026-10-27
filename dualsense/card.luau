@@ -430,13 +430,6 @@ local function profile_row(s, is_fresh)
   end
   local lb = active_lightbar_hex()
   local header_children = {
-    ui.box({
-      key = "lightbar-dot",
-      width = 7,
-      height = 7,
-      radius = 3.5,
-      fill = lb,
-    }),
     ui.row({
       key = "profile-select",
       width = 104,
@@ -450,6 +443,13 @@ local function profile_row(s, is_fresh)
       borderWidth = 1,
       onClick = "onToggleProfileMenu",
     }, {
+      ui.box({
+        key = "lightbar-dot",
+        width = 7,
+        height = 7,
+        radius = 3.5,
+        fill = lb,
+      }),
       ui.label({
         key = "profile-name",
         text = options[selected_index + 1] or prof,
@@ -480,15 +480,6 @@ local function profile_row(s, is_fresh)
       ui.glyph({ name = "settings", size = 14, color = settings.text_color }),
     }),
   }
-  if s.ds4u_daemon == true then
-    table.insert(header_children, ui.glyph({
-      key = "ds4u-daemon-badge",
-      name = "bolt",
-      size = 10,
-      color = lb,
-      opacity = 0.85,
-    }))
-  end
   local header = ui.row({
     key = "profile-row",
     gap = 5,
