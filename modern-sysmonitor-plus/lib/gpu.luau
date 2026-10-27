@@ -54,6 +54,11 @@ function M.read_amd()
     vram_pct = total > 0 and (used / total * 100) or 0,
   }
 
+  local device_id = trim(hwmon.read_text(best .. "/device") or "")
+  if device_id ~= "" then
+    gpu.device_id = string.lower(device_id)
+  end
+
   local uevent = hwmon.read_text(best .. "/uevent")
   if uevent then
     local slot = uevent:match("PCI_SLOT_NAME=([^\n]+)")

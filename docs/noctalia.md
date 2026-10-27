@@ -158,9 +158,10 @@ No notifications are sent; the KDE widget had none.
 
 ## Sampling and performance
 
-- The CPU name is read once from `/proc/cpuinfo`; the AMD GPU name comes from a
-  one-shot `lspci -nn` query. Nvidia names come from `nvidia-smi`. `lspci` is
-  optional (pciutils); without it the AMD GPU title shows just "GPU".
+- The CPU name is read once from `/proc/cpuinfo`; the AMD GPU name comes from
+  `vulkaninfo --summary` (exact board name), with a one-shot `lspci -nn`
+  fallback. Nvidia names come from `nvidia-smi`. `vulkan-tools` and `pciutils`
+  are optional; without them the AMD GPU title shows just "GPU".
 - CPU, RAM, network and temperatures are read synchronously from `/proc` and
   `/sys`. They are small text files and the sampler runs once per update
   interval (2 s by default).

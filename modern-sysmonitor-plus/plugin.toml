@@ -17,7 +17,7 @@ license     = "GPL-2.0-or-later"
 icon        = "cpu"
 description = "CPU, GPU, RAM, VRAM, network and physical-disk monitoring with solid bars, live usage/network charts and theme-aware colours."
 tags        = ["system", "monitor", "hardware", "desktop"]
-dependencies = ["pciutils"]
+dependencies = ["pciutils", "vulkan-tools"]
 
 # Shared by the service (sampling) and the card (stale-state timeout).
 [[setting]]

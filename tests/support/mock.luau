@@ -169,6 +169,7 @@ function M.new(options)
     df_stdout = opts.df_stdout or "",
     nvidia_stdout = opts.nvidia_stdout or "",
     lspci_stdout = opts.lspci_stdout or "",
+    vulkaninfo_stdout = opts.vulkaninfo_stdout or "",
     translations = deep_copy(DEFAULT_TRANSLATIONS),
     colors = opts.colors or {},
     run_async = opts.run_async,
@@ -207,6 +208,8 @@ function M.new(options)
       stdout = context.nvidia_stdout
     elseif command:find("lspci", 1, true) then
       stdout = context.lspci_stdout
+    elseif command:find("vulkaninfo", 1, true) then
+      stdout = context.vulkaninfo_stdout
     end
     if callback then
       callback({ exitCode = 0, stdout = stdout, stderr = "", timedOut = false })

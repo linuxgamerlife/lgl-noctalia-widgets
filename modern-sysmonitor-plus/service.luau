@@ -26,6 +26,7 @@ local cpu_name = nil
 local sampler_state = sampler.new()
 local seq = 0
 local pci_names = {}
+local vulkan_names = {}
 
 local cached_disks = nil
 local disks_pending = false
@@ -162,8 +163,51 @@ local function request_pci_names()
   end)
 end
 
+-- Vulkan reports the exact board name (for example "AMD Radeon RX 9070 XT
+-- (RADV GFX1201)"), while lspci only knows the shared PCI-ID variant list.
+-- Prefer the Vulkan name and fall back to lspci.
+local function parse_vulkan_names(text)
+  local map = {}
+  if type(text) ~= "string" then
+    return map
+  end
+  local device_id = nil
+  for line in text:gmatch("[^\n]+") do
+    local id = line:match("deviceID%s*=%s*(0x%x+)")
+    if id then
+      device_id = string.lower(id)
+    end
+    local name = line:match("deviceName%s*=%s*(.+)")
+    if name and device_id then
+      name = name:gsub("^%s+", ""):gsub("%s+$", "")
+      name = name:gsub("%s+%([^%)]*RADV[^%)]*%)%s*$", "")
+      if name ~= "" then
+        map[device_id] = name
+      end
+      device_id = nil
+    end
+  end
+  return map
+end
+
+local function request_vulkan_names()
+  if type(noctalia.commandExists) ~= "function" or not noctalia.commandExists("vulkaninfo") then
+    return false
+  end
+  return noctalia.runAsync("vulkaninfo --summary 2>/dev/null", function(result)
+    if result and result.exitCode == 0 then
+      vulkan_names = parse_vulkan_names(result.stdout or "")
+    end
+  end)
+end
+
 local function attach_pci_name(gpu)
-  if type(gpu) == "table" and gpu.pci_slot and pci_names[gpu.pci_slot] then
+  if type(gpu) ~= "table" then
+    return gpu
+  end
+  if gpu.device_id and vulkan_names[gpu.device_id] then
+    gpu.name = vulkan_names[gpu.device_id]
+  elseif gpu.pci_slot and pci_names[gpu.pci_slot] then
     gpu.name = pci_names[gpu.pci_slot]
   end
   return gpu
@@ -282,5 +326,6 @@ cpu_name = sampler.cpu_name()
 has_nvidia_smi = type(noctalia.commandExists) == "function"
   and noctalia.commandExists("nvidia-smi") == true
 request_pci_names()
+request_vulkan_names()
 noctalia.setUpdateInterval(update_interval * 1000)
 poll()

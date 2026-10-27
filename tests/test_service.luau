@@ -48,6 +48,7 @@ local function base_files()
 
     ["/sys/class/drm/card0/device/uevent"] = "DRIVER=amdgpu\nPCI_SLOT_NAME=0000:03:00.0\n",
     ["/sys/class/drm/card0/device/vendor"] = "0x1002\n",
+    ["/sys/class/drm/card0/device/device"] = "0x7550\n",
     ["/sys/class/drm/card0/device/gpu_busy_percent"] = "37\n",
     ["/sys/class/drm/card0/device/mem_info_vram_total"] = "8589934592\n",
     ["/sys/class/drm/card0/device/mem_info_vram_used"] = "2147483648\n",
@@ -129,6 +130,7 @@ local ctx = mock.new({
   dirs = base_dirs(),
   df_stdout = df_stdout,
   lspci_stdout = "03:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Navi 48 [Radeon RX 9070/9070 XT/9070 GRE] [1002:7550] (rev c0)\n",
+  vulkaninfo_stdout = "GPU0:\n\tvendorID = 0x1002\n\tdeviceID = 0x7550\n\tdeviceName = AMD Radeon RX 9070 XT (RADV GFX1201)\n",
   now_ms = 1000000,
 })
 
@@ -142,7 +144,7 @@ local stats = ctx.state.stats
 assert(stats ~= nil, "service did not publish stats")
 assert(stats.seq == 1, "first sequence should be 1")
 assert(stats.cpu.name == "AMD Ryzen 9 9950X3D", "cleaned CPU name")
-assert(stats.gpu.name == "AMD Radeon RX 9070/9070 XT/9070 GRE", "AMD GPU name from lspci")
+assert(stats.gpu.name == "AMD Radeon RX 9070 XT", "AMD GPU exact name from Vulkan")
 assert(stats.cpu.usage == nil, "first CPU sample must wait for a delta")
 close(stats.cpu.temp_c, 60, 0.001, "CPU temperature is the hottest package sensor")
 close(stats.cpu.fan_rpm, 1200, 0.001, "automatic CPU fan")
