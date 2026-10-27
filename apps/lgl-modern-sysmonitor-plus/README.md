@@ -15,11 +15,11 @@
 ## Overview
 
 LGL Modern SysMonitor Plus is a Noctalia v5 desktop widget and headless poller
-adapted from the KDE Plasma 6 widget
-[Modern SysMonitor Plus](https://github.com/UnsaidSpeech/modern-sysmonitor-plus).
+adapted from the KDE Plasma 6 widget Modern SysMonitor Plus by UnsaidSpeech.
 It shows CPU, GPU, RAM, VRAM, network, and physical-disk activity with solid
-bars and live charts. The original Modern SysMonitor design and code are by
-Joao Gabriel Medeiros; the Plus changes are by UnsaidSpeech.
+bars and live charts. The Plus widget is based on
+[Modern SysMonitor](https://github.com/joaogabrielmedeiros/kde_plasma_widgets),
+whose original design and code are by Joao Gabriel Medeiros.
 
 | Field | Value |
 | --- | --- |

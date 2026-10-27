@@ -176,7 +176,7 @@ specific implementation and improvements in each app's README.
 
 [^ai-usage]: Based on the [AI Usage KDE Plasma widget](https://github.com/lukk17/ai-usage-widget) by Łukasz Sarna.
 [^dualsense]: Uses the desktop-card approach inspired by Jahrek's [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget), with DualSense protocol and profile work informed by deadYokai's [ds4u](https://git.yokai.digital/deadYokai/ds4u).
-[^sysmonitor]: Based on [Modern SysMonitor Plus](https://github.com/UnsaidSpeech/modern-sysmonitor-plus) by UnsaidSpeech, itself based on the original Modern SysMonitor by Joao Gabriel Medeiros.
+[^sysmonitor]: Based on Modern SysMonitor Plus by UnsaidSpeech, itself based on [Modern SysMonitor](https://github.com/joaogabrielmedeiros/kde_plasma_widgets) by Joao Gabriel Medeiros.
 [^steam-controller]: Based on Jahrek's [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget).
 
 ---
