@@ -1,5 +1,5 @@
 # Index for using this directory as a Noctalia plugin source:
-#   noctalia msg plugins source add dualsense path /path/to/lgl-noctalia-widgets/apps/dualsense
+#   noctalia msg plugins source add dualsense path /path/to/lgl-noctalia-widgets/apps/lgl-dualsense
 # The per-plugin plugin.toml stays authoritative.
 
 [[plugin]]

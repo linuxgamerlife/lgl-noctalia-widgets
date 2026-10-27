@@ -1,5 +1,5 @@
 # Index for using this directory as a Noctalia plugin source:
-#   noctalia msg plugins source add steam-controller path /path/to/lgl-noctalia-widgets/apps/steam-controller
+#   noctalia msg plugins source add steam-controller path /path/to/lgl-noctalia-widgets/apps/lgl-steam-controller
 # The per-plugin plugin.toml stays authoritative.
 
 [[plugin]]

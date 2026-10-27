@@ -49,7 +49,7 @@ colour changes. See the
 
 ## Install
 
-From the app directory (`apps/steam-controller`):
+From the app directory (`apps/lgl-steam-controller`):
 
 ```bash
 # KineticWE's noctalia-kwe fork

@@ -44,7 +44,7 @@ the vendor HID reports directly.
 
 ## Install
 
-From the app directory (`apps/steam-controller`):
+From the app directory (`apps/lgl-steam-controller`):
 
 ```bash
 # KineticWE's noctalia-kwe fork
@@ -82,7 +82,7 @@ You can also add the app directory as a local source (it contains
 `catalog.toml`):
 
 ```bash
-noctalia-kwe msg plugins source add steam-controller path /path/to/lgl-noctalia-widgets/apps/steam-controller
+noctalia-kwe msg plugins source add steam-controller path /path/to/lgl-noctalia-widgets/apps/lgl-steam-controller
 ```
 
 Then:

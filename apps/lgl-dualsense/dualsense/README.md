@@ -172,7 +172,7 @@ sudo gpasswd -d "$USER" input
 
 ## Install
 
-From the app directory (`apps/dualsense`):
+From the app directory (`apps/lgl-dualsense`):
 
 ```bash
 # KineticWE's noctalia-kwe fork
