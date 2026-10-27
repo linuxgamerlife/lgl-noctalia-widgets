@@ -7,7 +7,7 @@
 
 id           = "deadYokai/dualsense"
 name         = "DualSense Battery"
-version      = "1.0.9"
+version      = "1.0.10"
 plugin_api   = 17
 author       = "deadYokai"
 license      = "MIT"

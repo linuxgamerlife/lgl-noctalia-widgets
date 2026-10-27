@@ -13,7 +13,7 @@ profile's `lightbar_brightness`. Charging pulses; low battery turns red.
 | Field | Value |
 | --- | --- |
 | ID | `deadYokai/dualsense` |
-| Version | `1.0.9` |
+| Version | `1.0.10` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 

@@ -67,7 +67,7 @@ LOCK_FILE = os.path.join(RUNTIME_DIR, "noctalia-dualsense-battery.lock")
 DS4U_SOCKET = os.path.join(RUNTIME_DIR, "ds4u.socket")
 CONFIG_HOME = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
 DS4U_CONFIG_DIR = os.path.join(CONFIG_HOME, "ds4u")
-DAEMON_VERSION = "1.0.9"
+DAEMON_VERSION = "1.0.10"
 
 PLAYER_LED_PATTERNS = (
     0b00000,
@@ -265,6 +265,20 @@ def query_ds4u_daemon():
     is_bt = bool(cdata.get("is_bt", False))
     serial = str(cdata.get("serial") or "")
 
+    # ds4u may retain a stale HidDevice after unplugging; GetControllerInfo can
+    # then keep returning the old serial even though its fd points at a deleted
+    # hidraw node. Trust current sysfs presence for connect/disconnect state.
+    present_conn, present_serial, present_pid = find_present_controller()
+    if present_pid not in DS_PIDS:
+        return {
+            "ds4u_daemon": True,
+            "connected": False,
+            **cfg,
+        }
+    pid = present_pid
+    is_bt = present_conn == "bluetooth"
+    serial = present_serial or serial
+
     bat_resp = ds4u_ipc_request({"cmd": "GetBattery"}, timeout=1.2)
     battery_pct = -1
     battery_status = "Unknown"
@@ -276,6 +290,12 @@ def query_ds4u_daemon():
         battery_status = str(bdata.get("status") or "Unknown")
         charging = battery_status in ("Charging", "Full")
         full = battery_status == "Full"
+
+    # A present controller plus an invalid battery response means ds4u is still
+    # using its pre-disconnect handle. Yield to the direct HID path so a newly
+    # created hidraw node is opened and reconnects are visible immediately.
+    if battery_pct < 0:
+        return None
 
     return {
         "ds4u_daemon": True,
@@ -309,6 +329,20 @@ def hid_info(dev):
         pass
     conn = "bluetooth" if bus == "0005" else "usb"
     return conn, uniq, pid
+
+
+def find_present_controller():
+    """Return (connection, address, pid) from current hidraw sysfs nodes.
+
+    This deliberately does not open or read hidraw, so it can validate ds4u's
+    cached controller handle without competing with the daemon for reports.
+    """
+    for sysfs_path in glob.glob("/sys/class/hidraw/hidraw*"):
+        dev = "/dev/" + os.path.basename(sysfs_path)
+        conn, uniq, pid = hid_info(dev)
+        if pid in DS_PIDS:
+            return conn, uniq, pid
+    return "", "", 0
 
 
 def sysfs_battery(dev=None, uniq=""):
