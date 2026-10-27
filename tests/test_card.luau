@@ -2,7 +2,6 @@ local tree = nil
 local frame_tick = false
 local watch_cb = nil
 local written = nil
-local settings_written = nil
 local last_action = nil
 local async_cmd = nil
 local state = {
@@ -62,18 +61,9 @@ noctalia = {
     watch = function(_, cb) watch_cb = cb end,
   },
   pluginDataDir = function() return "/tmp/opencode/plugin-data" end,
-  readFile = function(path)
-    if path == "assets/settings-button-template.svg" then
-      return "<svg>{{BACKGROUND}}|{{BACKGROUND_OPACITY}}|{{ICON}}</svg>"
-    end
-    return "<svg>{{BODY}}|{{BODY_OPACITY}}|{{COLOR}}|{{LIGHTBAR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>"
-  end,
+  readFile = function() return "<svg>{{BODY}}|{{BODY_OPACITY}}|{{COLOR}}|{{LIGHTBAR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>" end,
   writeFile = function(path, content)
-    if string.find(path, "dualsense-settings", 1, true) then
-      settings_written = { path = path, content = content }
-    else
-      written = { path = path, content = content }
-    end
+    written = { path = path, content = content }
     return true
   end,
   commandExists = function() return true end,
@@ -115,8 +105,10 @@ assert(find_key(tree, "player-leds-row"), "player LEDs missing")
 assert(find_key(tree, "profile-row"), "profile row missing")
 assert(find_key(tree, "profile-select"), "profile selector missing")
 assert(find_key(tree, "profile-settings"), "profile settings button missing")
-assert(find_key(tree, "profile-settings").type == "image", "profile settings control should use stable image rendering")
-assert(settings_written and settings_written.content == "<svg>#202124|0.35|#abcdef</svg>", "settings SVG opacity or cog colour is wrong")
+assert(find_key(tree, "profile-settings").type == "row", "profile settings control should use stable row rendering")
+assert(find_key(tree, "profile-settings").props.fill == "surface_container_high/0.35", "settings background opacity is wrong")
+assert(find_key(tree, "profile-settings-icon").props.name == "settings", "standard settings glyph is missing")
+assert(find_key(tree, "profile-settings-icon").props.opacity == 1.0, "settings glyph should remain opaque")
 assert(find_key(tree, "left").props.width == 180, "controller column is too narrow for profile controls")
 assert(find_key(tree, "lightbar-dot"), "lightbar indicator missing")
 assert(find_text(tree, "65"), "battery percentage missing")

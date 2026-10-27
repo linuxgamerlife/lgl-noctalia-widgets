@@ -40,9 +40,6 @@ noctalia = {
     if p == "assets/controller-template.svg" then
       return "<svg>{{BODY}}|{{BODY_OPACITY}}|{{COLOR}}|{{LIGHTBAR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>"
     end
-    if p == "assets/settings-button-template.svg" then
-      return "<svg>{{BACKGROUND}}|{{BACKGROUND_OPACITY}}|{{ICON}}</svg>"
-    end
     return nil
   end,
   writeFile = function() return true end,
