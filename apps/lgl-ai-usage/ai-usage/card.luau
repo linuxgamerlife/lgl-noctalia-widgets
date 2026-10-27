@@ -78,6 +78,7 @@ end
 local groups = {
   show_layout_settings = cfg_bool("show_layout_settings", true),
   show_colour_settings = cfg_bool("show_colour_settings", false),
+  show_scaling_settings = cfg_bool("show_scaling_settings", false),
   show_section_settings = cfg_bool("show_section_settings", false),
 }
 
@@ -88,6 +89,7 @@ local settings = {
   show_reset_times = cfg_bool("show_reset_times", true),
   show_service_icon = cfg_bool("show_service_icon", true),
   content_width = math.floor(cfg_number("content_width", 432, 240, 900) + 0.5),
+  text_scale = cfg_number("text_scale", 1, 0.5, 2),
   bar_height = cfg_number("bar_height", 5, 2, 14),
   divider_width = cfg_number("divider_width", 1, 0.5, 4),
   divider_color = color_with_alpha(
@@ -114,6 +116,12 @@ local settings = {
   card_border_width = cfg_number("card_border_width", 1, 0.5, 4),
 }
 
+-- Text grows independently from the bars and dividers: every font size, the
+-- fixed widths that hold it and the inline glyphs are multiplied by text_scale.
+local function text_size(value)
+  return math.max(1, math.floor(value * settings.text_scale + 0.5))
+end
+
 -- Host-handled surface keys. The card draws no outer surface of its own; these
 -- reads keep the lint contract and let the content inset follow the panel state.
 local host_surface = {
@@ -125,6 +133,7 @@ local host_surface = {
 }
 
 local style = {
+  text_scale = settings.text_scale,
   text_color = settings.text_color,
   muted_text_color = settings.muted_text_color,
   divider_color = settings.divider_color,
@@ -176,22 +185,22 @@ local function header(entries)
   return ui.row({ key = "header", gap = 12, align = "center" }, {
     ui.column({
       key = "header-badge",
-      width = 34,
-      height = 34,
-      radius = 17,
+      width = text_size(34),
+      height = text_size(34),
+      radius = text_size(17),
       fill = "on_surface/0.08",
       border = settings.header_color,
       borderWidth = 1.5,
       align = "center",
       justify = "center",
     }, {
-      ui.glyph({ key = "header-glyph", name = settings.header_glyph, size = 20, color = settings.header_color }),
+      ui.glyph({ key = "header-glyph", name = settings.header_glyph, size = text_size(20), color = settings.header_color }),
     }),
     ui.column({ key = "header-titles", gap = 0, flexGrow = 1 }, {
       ui.label({
         key = "header-title",
         text = settings.title,
-        fontSize = 18,
+        fontSize = text_size(18),
         fontWeight = "semibold",
         color = settings.text_color,
         maxLines = 1,
@@ -200,7 +209,7 @@ local function header(entries)
       ui.label({
         key = "header-subtitle",
         text = tr("status.accounts", "{n} accounts", { n = count }),
-        fontSize = 11,
+        fontSize = text_size(11),
         color = settings.muted_text_color,
         maxLines = 1,
       }),
@@ -253,7 +262,7 @@ local function render()
         table.insert(children, ui.label({
           key = "wallet-hint",
           text = tr("wallet.hint", "The keyring is locked or unavailable. Unlock it with your keyring app, then refresh."),
-          fontSize = 11,
+          fontSize = text_size(11),
           color = settings.warning_color,
           maxLines = 3,
         }))

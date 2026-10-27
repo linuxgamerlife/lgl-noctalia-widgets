@@ -38,6 +38,7 @@ local context = mock.new({
     show_reset_times = true,
     show_service_icon = true,
     content_width = 500,
+    text_scale = 1,
     bar_height = 8,
     divider_width = 2,
     divider_color = "#8899aa",
@@ -112,6 +113,35 @@ local refresh = mock.find(tree, "header-refresh")
 assert(refresh ~= nil, "refresh button missing")
 mock.click(refresh)
 assert(context.state.ai_usage_refresh_seq == 1, "refresh request not published")
+
+-- Text scaling grows typography but leaves bars and dividers alone. ----------
+context.config.text_scale = 1.5
+mock.loadEntry("card.luau")
+tree = context.desktopTree
+assert(tree.props.width == 500, "text scale must not change content width")
+assert(mock.find(tree, "header-title").props.fontSize == 27, "scaled header title")
+assert(mock.find(tree, "header-subtitle").props.fontSize == 17, "scaled header subtitle")
+assert(mock.find(tree, "card-title-a1").props.fontSize == 24, "scaled card title")
+assert(mock.find(tree, "header-badge").props.width == 51, "scaled header badge")
+assert(mock.find(tree, "card-window-a1-1-bar").props.height == 8, "text scale leaves bar height alone")
+assert(mock.find(tree, "header-divider").props.thickness == 2, "text scale leaves divider thickness alone")
+assert(mock.findText(tree, "92%").props.fontSize == 21, "scaled percent")
+assert(mock.findText(tree, "5hr").props.fontSize == 20, "scaled bar label")
+assert(mock.findText(tree, "-$1.50").props.fontSize == 20, "scaled row value")
+context.config.text_scale = 1
+
+-- Logical section toggles hide reset lines, service icons and detail rows. ---
+context.config.show_details = false
+context.config.show_reset_times = false
+context.config.show_service_icon = false
+mock.loadEntry("card.luau")
+tree = context.desktopTree
+assert(mock.find(tree, "card-window-a1-1-reset") == nil, "reset line should be hidden")
+assert(mock.find(tree, "card-glyph-a1") == nil, "service icon should be hidden")
+assert(mock.findText(tree, "Input tokens this month") == nil, "detail rows should be hidden")
+context.config.show_details = true
+context.config.show_reset_times = true
+context.config.show_service_icon = true
 
 -- Empty state ----------------------------------------------------------------
 context.state.ai_usage = {

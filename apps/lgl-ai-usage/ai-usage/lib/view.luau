@@ -19,6 +19,7 @@ local GLYPHS = {
 }
 
 local DEFAULTS = {
+  text_scale = 1.0,
   text_color = "on_surface",
   muted_text_color = "on_surface_variant",
   divider_color = "outline/0.5",
@@ -43,6 +44,11 @@ function M.defaultStyle()
     style[key] = value
   end
   return style
+end
+
+-- Text size is independent of the bar, divider and section-surface dimensions.
+local function font_size(style, size)
+  return math.max(1, math.floor(size * ((style and style.text_scale) or 1) + 0.5))
 end
 
 function M.severityColor(severity, style)
@@ -90,14 +96,14 @@ function M.valueRow(row, opts, key)
   }, {
     ui.label({
       text = row.label,
-      fontSize = 13,
+      fontSize = font_size(style, 13),
       color = dim and style.muted_text_color or style.text_color,
       maxLines = 1,
       flexGrow = 1,
     }),
     ui.label({
       text = row.valueText,
-      fontSize = 13,
+      fontSize = font_size(style, 13),
       fontWeight = "medium",
       color = color,
       textAlign = "right",
@@ -117,14 +123,14 @@ function M.bar(item, opts, key)
     }, {
       ui.label({
         text = item.label,
-        fontSize = 13,
+        fontSize = font_size(style, 13),
         color = style.text_color,
         maxLines = 1,
         flexGrow = 1,
       }),
       ui.label({
         text = item.percentText,
-        fontSize = 14,
+        fontSize = font_size(style, 14),
         fontWeight = "semibold",
         color = M.severityColor(item.severity, style),
       }),
@@ -142,7 +148,7 @@ function M.bar(item, opts, key)
     table.insert(children, ui.label({
       key = key .. "-reset",
       text = item.resetText,
-      fontSize = 11,
+      fontSize = font_size(style, 11),
       color = style.muted_text_color,
       maxLines = 2,
     }))
@@ -151,7 +157,7 @@ function M.bar(item, opts, key)
     table.insert(children, ui.label({
       key = key .. "-status",
       text = item.statusText,
-      fontSize = 11,
+      fontSize = font_size(style, 11),
       color = style.critical_color,
       maxLines = 1,
     }))
@@ -181,7 +187,7 @@ function M.modelRow(model, opts, key)
         key = key .. "-name",
         text = (model.id or "unknown")
           .. (model.variant ~= nil and model.variant ~= "default" and (" · " .. model.variant) or ""),
-        fontSize = 13,
+        fontSize = font_size(style, 13),
         color = style.text_color,
         maxLines = 1,
         flexGrow = 1,
@@ -189,7 +195,7 @@ function M.modelRow(model, opts, key)
       ui.label({
         key = key .. "-cost",
         text = formatter.formatMoney(model.cost or 0, "usd"),
-        fontSize = 13,
+        fontSize = font_size(style, 13),
         fontWeight = "medium",
         color = style.text_color,
       }),
@@ -197,7 +203,7 @@ function M.modelRow(model, opts, key)
     ui.label({
       key = key .. "-summary",
       text = modelSummary(model, style),
-      fontSize = 11,
+      fontSize = font_size(style, 11),
       color = style.muted_text_color,
       maxLines = 1,
     }),
@@ -214,7 +220,7 @@ function M.card(section, opts)
     table.insert(head, ui.glyph({
       key = "card-glyph-" .. section.key,
       name = M.glyphFor(section.service),
-      size = 20,
+      size = font_size(style, 20),
       color = M.severityColor(glyphSeverity, style),
     }))
   end
@@ -222,7 +228,7 @@ function M.card(section, opts)
     ui.label({
       key = "card-title-" .. section.key,
       text = section.title,
-      fontSize = 16,
+      fontSize = font_size(style, 16),
       fontWeight = "semibold",
       color = style.text_color,
       maxLines = 1,
@@ -230,7 +236,7 @@ function M.card(section, opts)
     section.account ~= "" and ui.label({
       key = "card-account-" .. section.key,
       text = section.account,
-      fontSize = 12,
+      fontSize = font_size(style, 12),
       color = style.muted_text_color,
       maxLines = 1,
     }) or nil,
@@ -239,7 +245,7 @@ function M.card(section, opts)
     table.insert(head, ui.glyph({
       key = "card-loading-" .. section.key,
       name = "loader",
-      size = 14,
+      size = font_size(style, 14),
       color = style.muted_text_color,
     }))
   end
@@ -253,7 +259,7 @@ function M.card(section, opts)
     table.insert(children, ui.label({
       key = "card-error-" .. section.key,
       text = section.errorText,
-      fontSize = 12,
+      fontSize = font_size(style, 12),
       color = section.errorSeverity == formatter.SEVERITY.CRITICAL and style.critical_color or style.warning_color,
       maxLines = 4,
     }))
@@ -287,14 +293,14 @@ function M.card(section, opts)
     table.insert(children, ui.label({
       key = "models-heading-" .. section.key,
       text = M.tr("models.heading", "Models on this machine"),
-      fontSize = 11,
+      fontSize = font_size(style, 11),
       fontWeight = "medium",
       color = style.muted_text_color,
     }))
     table.insert(children, ui.label({
       key = "models-note-" .. section.key,
       text = M.tr("models.note", "Local OpenCode data, not official Go quota"),
-      fontSize = 10,
+      fontSize = font_size(style, 10),
       color = style.muted_text_color,
       maxLines = 2,
     }))
@@ -302,7 +308,7 @@ function M.card(section, opts)
       table.insert(children, ui.label({
         key = "models-error-" .. section.key,
         text = M.tr("models.unavailable", "Local model stats unavailable: {error}", { error = localModelsError }),
-        fontSize = 11,
+        fontSize = font_size(style, 11),
         color = style.warning_color,
         maxLines = 3,
       }))
@@ -332,11 +338,11 @@ end
 function M.emptyCard(onAdd, opts)
   local style = opts and opts.style or DEFAULTS
   local children = {
-    ui.glyph({ key = "empty-glyph", name = "chart-bar", size = 30, color = style.normal_color }),
+    ui.glyph({ key = "empty-glyph", name = "chart-bar", size = font_size(style, 30), color = style.normal_color }),
     ui.label({
       key = "empty-title",
       text = M.tr("empty.title", "No accounts yet"),
-      fontSize = 18,
+      fontSize = font_size(style, 18),
       fontWeight = "semibold",
       color = style.text_color,
       textAlign = "center",
@@ -344,7 +350,7 @@ function M.emptyCard(onAdd, opts)
     ui.label({
       key = "empty-body",
       text = M.tr("empty.body", "Add a service to start checking limits, spend and balance."),
-      fontSize = 13,
+      fontSize = font_size(style, 13),
       color = style.muted_text_color,
       textAlign = "center",
       maxLines = 3,
@@ -379,11 +385,11 @@ end
 function M.waitingCard(onRefresh, opts)
   local style = opts and opts.style or DEFAULTS
   local children = {
-    ui.glyph({ key = "waiting-glyph", name = "hourglass-empty", size = 28, color = style.muted_text_color }),
+    ui.glyph({ key = "waiting-glyph", name = "hourglass-empty", size = font_size(style, 28), color = style.muted_text_color }),
     ui.label({
       key = "waiting-title",
       text = M.tr("stale.title", "Waiting for the AI Usage service"),
-      fontSize = 16,
+      fontSize = font_size(style, 16),
       fontWeight = "semibold",
       color = style.text_color,
       textAlign = "center",
@@ -391,7 +397,7 @@ function M.waitingCard(onRefresh, opts)
     ui.label({
       key = "waiting-body",
       text = M.tr("stale.body", "The poller has not published data yet. Enable the plugin and check its settings."),
-      fontSize = 12,
+      fontSize = font_size(style, 12),
       color = style.muted_text_color,
       textAlign = "center",
       maxLines = 4,

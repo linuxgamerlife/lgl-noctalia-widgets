@@ -39,14 +39,22 @@ local accounts = {
   },
 }
 
+local function commandText(command)
+  if type(command) == "table" then
+    return table.concat(command, " ")
+  end
+  return command
+end
+
 local function runAsync(command, callback, _timeout, context)
-  if command:find("plan-usage-history.json", 1, true) then
-    local text = mock.jsonEncode(history)
-    callback({ exitCode = 0, stdout = "found " .. #text .. "\n" .. text, stderr = "", timedOut = false })
+  local text = commandText(command)
+  if text:find("plan-usage-history.json", 1, true) then
+    local content = mock.jsonEncode(history)
+    callback({ exitCode = 0, stdout = "found " .. #content .. "\n" .. content, stderr = "", timedOut = false })
     return true
   end
-  if command:find("curl --disable", 1, true) then
-    local boundary = command:match("(aiu%x+)")
+  if text:find("curl --disable", 1, true) then
+    local boundary = text:match("(aiu%x+)")
     if context.failLookup then
       callback({ exitCode = 0, stdout = boundary .. " lookup 127\n", stderr = "", timedOut = false })
       return true

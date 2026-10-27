@@ -50,7 +50,7 @@ directories.
 | Glass panel | Host desktop-widget panel (`background`, colour, opacity, radius, padding) |
 | KDE theme colours | Palette role tokens by default; configurable colours follow or override the live theme |
 | — | Local OpenCode Go per-model stats (`opencode stats`) |
-| — | Optional account-section surface, dividers, bar height and width controls |
+| — | Optional account-section surface, dividers, bar height, text scaling and width controls |
 
 ## Project Layout
 

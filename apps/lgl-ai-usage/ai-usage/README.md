@@ -75,26 +75,44 @@ noctalia msg plugin lukk17/ai-usage:poller all refresh
 **Manual only** (`0`) stops the timer. The service still checks once at startup,
 then waits for an explicit refresh. Automatic local model-stat reads also stop.
 
-### Card layout
+### Card display
+
+The inspector keeps four optional groups of controls; all default off except
+layout. Hidden values stay active, so collapsing a group only changes the
+editor.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
+| Show layout settings | on | Reveal content width and the optional account-section fill, radius and border. |
+| Show colour settings | off | Reveal header, limit, track, text and divider colours. |
+| Show scaling settings | off | Reveal text size, progress bar height and divider thickness. |
+| Show section toggles | off | Reveal the Show header, details, reset times and service icons toggles. |
 | Card title | AI Usage | Header heading. |
 | Show header | on | Header badge, title, refresh and settings buttons. |
 | Show details | on | Extra rows (tokens, plan, billing mode, top-up, member budgets) and local model stats. |
-| Show layout settings | on | Reveal content width, bar height, reset/service toggles and divider controls. |
-| Show colour settings | off | Reveal header, limit, track and text colours. |
-| Show account section settings | off | Reveal the optional account-section fill, radius and border. |
 | Show reset times | on | Reset line under each limit bar. |
 | Show service icons | on | Provider glyph in each account section header. |
+
+### Layout
+
+| Setting | Default | What it does |
+| --- | --- | --- |
 | Content width | 432 px | Width of the card content (240–900). Match the editor tile width. |
-| Progress bar height | 5 px | Thickness of each limit bar (2–14). |
-| Divider thickness | 1 px | Header, account and section dividers (0.5–4). |
-| Divider opacity | 0.5 | Divider opacity (0–1). |
 | Account section opacity | 0 | Fill behind each account section. `0` keeps the HUD-style divider-only layout. |
 | Account section radius | 12 px | Radius of the optional section surface. |
 | Account section border opacity | 0 | Border opacity of the optional section surface. |
 | Account section border width | 1 px | Border thickness of the optional section surface. |
+
+### Scaling
+
+Text size is independent of every other dimension, so larger labels do not make
+the bars or dividers thicker.
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| Text size | 1.0× | Multiplies every title, label, value, reset and detail font size (0.5–2.0), including the header badge and inline glyphs. Bars, dividers and section surfaces keep their own dimensions. |
+| Progress bar height | 5 px | Thickness of each limit bar (2–14). |
+| Divider thickness | 1 px | Header, account and section dividers (0.5–4). |
 
 ### Colours
 
@@ -117,6 +135,7 @@ suffix in a setting, so translucent surfaces have separate opacity settings.
 | Primary text colour | `on_surface` | Titles, values and labels. |
 | Secondary text colour | `on_surface_variant` | Account labels, reset times, units and inactive values. |
 | Divider colour | `outline` | Header, account and section dividers. |
+| Divider opacity | 0.5 | Divider opacity (0–1). |
 | Account section colour | `surface_variant` | Fill used only when Account section opacity is above 0. |
 | Account section border colour | `outline` | Border of the optional section surface. |
 
@@ -178,6 +197,8 @@ still work.
   bar track.
 - Fixed hex values in user settings do not change with the theme.
 - Stale data is dimmed and labelled; it is never shown as a misleading zero.
+- Text size scales titles, labels, values and inline glyphs without changing the
+  bar, divider or section-surface dimensions.
 - The card never draws a second outer surface on top of the host panel, so the
   host opacity control cannot be hidden by an opaque plugin fill.
 - Account-section fills are optional and default to `0`, matching the HUD-style

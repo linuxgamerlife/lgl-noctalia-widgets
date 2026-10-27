@@ -85,6 +85,10 @@
       "label": "Progress bar height",
       "description": "Thickness of each limit bar."
     },
+    "text_scale": {
+      "label": "Text size",
+      "description": "Multiplies every title, label, value, reset and detail font size (0.5–2.0) without changing the bar or divider dimensions."
+    },
     "divider_width": {
       "label": "Divider thickness",
       "description": "Thickness of the header, account and section dividers."
@@ -175,15 +179,19 @@
     },
     "show_layout_settings": {
       "label": "Show layout settings",
-      "description": "Reveal content width, progress bar height, reset/service toggles and divider controls."
+      "description": "Reveal content width and the optional account-section fill, radius and border."
     },
     "show_colour_settings": {
       "label": "Show colour settings",
-      "description": "Reveal header, limit, track and text colours."
+      "description": "Reveal header, limit, track, text and divider colours."
+    },
+    "show_scaling_settings": {
+      "label": "Show scaling settings",
+      "description": "Reveal text size, progress bar height and divider thickness. Current values stay active while hidden."
     },
     "show_section_settings": {
-      "label": "Show account section settings",
-      "description": "Reveal the optional account-section fill, radius and border."
+      "label": "Show section toggles",
+      "description": "Reveal the show header, details, reset times and service icons toggles. Current values stay active while hidden."
     }
   },
   "status": {

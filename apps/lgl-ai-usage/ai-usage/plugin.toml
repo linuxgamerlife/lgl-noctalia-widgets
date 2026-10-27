@@ -80,6 +80,7 @@ entry = "card.luau"
   label_key       = "settings.show_header.label"
   description_key = "settings.show_header.description"
   default         = true
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "title"
@@ -95,6 +96,7 @@ entry = "card.luau"
   label_key       = "settings.show_details.label"
   description_key = "settings.show_details.description"
   default         = true
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   # ── Group toggles ────────────────────────────────────────────────────────
   [[desktop_widget.setting]]
@@ -109,6 +111,13 @@ entry = "card.luau"
   type            = "bool"
   label_key       = "settings.show_colour_settings.label"
   description_key = "settings.show_colour_settings.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_scaling_settings"
+  type            = "bool"
+  label_key       = "settings.show_scaling_settings.label"
+  description_key = "settings.show_scaling_settings.description"
   default         = false
 
   [[desktop_widget.setting]]
@@ -132,7 +141,7 @@ entry = "card.luau"
   label_key       = "settings.show_reset_times.label"
   description_key = "settings.show_reset_times.description"
   default         = true
-  visible_when    = { key = "show_layout_settings", values = ["true"] }
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_service_icon"
@@ -140,7 +149,7 @@ entry = "card.luau"
   label_key       = "settings.show_service_icon.label"
   description_key = "settings.show_service_icon.description"
   default         = true
-  visible_when    = { key = "show_layout_settings", values = ["true"] }
+  visible_when    = { key = "show_section_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "content_width"
@@ -154,6 +163,17 @@ entry = "card.luau"
   visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
+  key             = "text_scale"
+  type            = "double"
+  label_key       = "settings.text_scale.label"
+  description_key = "settings.text_scale.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 2.0
+  step            = 0.05
+  visible_when    = { key = "show_scaling_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
   key             = "bar_height"
   type            = "double"
   label_key       = "settings.bar_height.label"
@@ -162,7 +182,7 @@ entry = "card.luau"
   min             = 2.0
   max             = 14.0
   step            = 0.5
-  visible_when    = { key = "show_layout_settings", values = ["true"] }
+  visible_when    = { key = "show_scaling_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_width"
@@ -173,7 +193,7 @@ entry = "card.luau"
   min             = 0.5
   max             = 4.0
   step            = 0.1
-  visible_when    = { key = "show_layout_settings", values = ["true"] }
+  visible_when    = { key = "show_scaling_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_color"
@@ -181,7 +201,7 @@ entry = "card.luau"
   label_key       = "settings.divider_color.label"
   description_key = "settings.divider_color.description"
   default         = "outline"
-  visible_when    = { key = "show_layout_settings", values = ["true"] }
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_opacity"
@@ -192,7 +212,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
-  visible_when    = { key = "show_layout_settings", values = ["true"] }
+  visible_when    = { key = "show_colour_settings", values = ["true"] }
 
   # ── Colours ──────────────────────────────────────────────────────────────
   [[desktop_widget.setting]]
@@ -285,7 +305,7 @@ entry = "card.luau"
   label_key       = "settings.card_color.label"
   description_key = "settings.card_color.description"
   default         = "surface_variant"
-  visible_when    = { key = "show_section_settings", values = ["true"] }
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_opacity"
@@ -296,7 +316,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.01
-  visible_when    = { key = "show_section_settings", values = ["true"] }
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_radius"
@@ -307,7 +327,7 @@ entry = "card.luau"
   min             = 0
   max             = 32
   step            = 1
-  visible_when    = { key = "show_section_settings", values = ["true"] }
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_border_color"
@@ -315,7 +335,7 @@ entry = "card.luau"
   label_key       = "settings.card_border_color.label"
   description_key = "settings.card_border_color.description"
   default         = "outline"
-  visible_when    = { key = "show_section_settings", values = ["true"] }
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_border_opacity"
@@ -326,7 +346,7 @@ entry = "card.luau"
   min             = 0.0
   max             = 1.0
   step            = 0.05
-  visible_when    = { key = "show_section_settings", values = ["true"] }
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "card_border_width"
@@ -337,7 +357,7 @@ entry = "card.luau"
   min             = 0.5
   max             = 4.0
   step            = 0.1
-  visible_when    = { key = "show_section_settings", values = ["true"] }
+  visible_when    = { key = "show_layout_settings", values = ["true"] }
 
   # ── Host panel surface ───────────────────────────────────────────────────
   [[desktop_widget.setting]]
