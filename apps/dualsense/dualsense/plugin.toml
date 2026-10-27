@@ -1,0 +1,161 @@
+# DualSense / DualSense Edge battery and ds4u status widget for Noctalia Shell.
+#
+# A headless service runs the bundled HID / ds4u IPC reader and publishes the
+# controller state; the desktop widget renders the card. plugin_api 17 is the
+# first level where services start when a plugin is enabled (not only at shell
+# launch).
+
+id           = "deadYokai/dualsense"
+name         = "DualSense Battery"
+version      = "1.0.10"
+plugin_api   = 17
+author       = "deadYokai"
+license      = "MIT"
+icon         = "device-gamepad-2"
+description  = "Battery level, charging state, lightbar sync and ds4u profile controls for DualSense and DualSense Edge controllers."
+tags         = ["gaming", "hardware", "battery", "dualsense", "desktop"]
+dependencies = ["python3"]
+
+# Shared by the service (notifications) and the desktop widget (low state).
+[[setting]]
+key             = "low_threshold"
+type            = "int"
+label_key       = "settings.low_threshold.label"
+description_key = "settings.low_threshold.description"
+default         = 20
+min             = 0
+max             = 100
+step            = 1
+
+[[setting]]
+key             = "notify_low"
+type            = "bool"
+label_key       = "settings.notify_low.label"
+description_key = "settings.notify_low.description"
+default         = true
+
+# Headless HID / ds4u IPC reader. One instance per plugin, started by Noctalia.
+[[service]]
+id    = "battery"
+entry = "battery.luau"
+
+# The desktop card.
+[[desktop_widget]]
+id    = "card"
+entry = "card.luau"
+
+  [[desktop_widget.setting]]
+  key             = "illustration_color"
+  type            = "color"
+  label_key       = "settings.illustration_color.label"
+  description_key = "settings.illustration_color.description"
+  default         = "#e8ebef"
+
+  [[desktop_widget.setting]]
+  key             = "controller_body_color"
+  type            = "color"
+  label_key       = "settings.controller_body_color.label"
+  description_key = "settings.controller_body_color.description"
+  default         = "#2c3035"
+
+  [[desktop_widget.setting]]
+  key             = "controller_body_opacity"
+  type            = "double"
+  label_key       = "settings.controller_body_opacity.label"
+  description_key = "settings.controller_body_opacity.description"
+  default         = 1.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "controller_stroke_width"
+  type            = "double"
+  label_key       = "settings.controller_stroke_width.label"
+  description_key = "settings.controller_stroke_width.description"
+  default         = 2.8
+  min             = 0.5
+  max             = 8.0
+  step            = 0.1
+
+  [[desktop_widget.setting]]
+  key             = "profile_settings_opacity"
+  type            = "double"
+  label_key       = "settings.profile_settings_opacity.label"
+  description_key = "settings.profile_settings_opacity.description"
+  default         = 0.65
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "battery_color_mode"
+  type            = "select"
+  label_key       = "settings.battery_color_mode.label"
+  description_key = "settings.battery_color_mode.description"
+  default         = "lightbar"
+  options = [
+    { value = "lightbar",   label_key = "settings.battery_color_mode.option.lightbar" },
+    { value = "connection", label_key = "settings.battery_color_mode.option.connection" },
+    { value = "custom",     label_key = "settings.battery_color_mode.option.custom" },
+  ]
+
+  [[desktop_widget.setting]]
+  key             = "battery_fill_color"
+  type            = "color"
+  label_key       = "settings.battery_fill_color.label"
+  description_key = "settings.battery_fill_color.description"
+  default         = "#0080ff"
+  visible_when    = { key = "battery_color_mode", values = ["custom"] }
+
+  [[desktop_widget.setting]]
+  key             = "battery_fill_opacity"
+  type            = "double"
+  label_key       = "settings.battery_fill_opacity.label"
+  description_key = "settings.battery_fill_opacity.description"
+  default         = 1.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+
+  [[desktop_widget.setting]]
+  key             = "battery_low_color"
+  type            = "color"
+  label_key       = "settings.battery_low_color.label"
+  description_key = "settings.battery_low_color.description"
+  default         = "#ed4c4c"
+
+  [[desktop_widget.setting]]
+  key             = "text_color"
+  type            = "color"
+  label_key       = "settings.text_color.label"
+  description_key = "settings.text_color.description"
+  default         = "on_surface"
+
+  [[desktop_widget.setting]]
+  key             = "muted_text_color"
+  type            = "color"
+  label_key       = "settings.muted_text_color.label"
+  description_key = "settings.muted_text_color.description"
+  default         = "on_surface_variant"
+
+  [[desktop_widget.setting]]
+  key             = "show_profile"
+  type            = "bool"
+  label_key       = "settings.show_profile.label"
+  description_key = "settings.show_profile.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_player_leds"
+  type            = "bool"
+  label_key       = "settings.show_player_leds.label"
+  description_key = "settings.show_player_leds.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_model_badge"
+  type            = "bool"
+  label_key       = "settings.show_model_badge.label"
+  description_key = "settings.show_model_badge.description"
+  default         = true
