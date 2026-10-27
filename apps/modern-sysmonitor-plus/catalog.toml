@@ -1,0 +1,16 @@
+# Index for using this directory as a Noctalia plugin source:
+#   noctalia msg plugins source add modern-sysmonitor path /path/to/repo
+# The per-plugin plugin.toml stays authoritative.
+
+[[plugin]]
+id           = "unsaidspeech/modern-sysmonitor-plus"
+name         = "Modern SysMonitor Plus"
+version      = "1.0.0"
+author       = "UnsaidSpeech"
+license      = "GPL-2.0-or-later"
+icon         = "cpu"
+description  = "CPU, GPU, RAM, VRAM, network and physical-disk monitoring with solid bars, live usage/network charts and theme-aware colours."
+deprecated   = false
+plugin_api   = 22
+tags         = ["system", "monitor", "hardware", "desktop"]
+dependencies = ["pciutils", "vulkan-tools"]

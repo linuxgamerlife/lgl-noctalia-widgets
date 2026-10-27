@@ -1,0 +1,258 @@
+{
+  "meta": {
+    "name": "Modern SysMonitor Plus"
+  },
+  "labels": {
+    "unknown": "—",
+    "na": "N/A",
+    "usage": "Usage",
+    "temp": "Temp",
+    "fan": "Fan",
+    "network": "NETWORK",
+    "download": "Download",
+    "upload": "Upload",
+    "cpu": "CPU",
+    "ram": "RAM",
+    "gpu": "GPU",
+    "vram": "VRAM",
+    "disks": "DISKS"
+  },
+  "gpu": {
+    "more": "More",
+    "less": "Less",
+    "junction": "Junction:",
+    "mem_temp": "Mem temp:",
+    "clock": "Clock:",
+    "mem_clock": "Mem clock:",
+    "fan": "Fan:",
+    "power": "Power:"
+  },
+  "status": {
+    "waiting": "Waiting for system data",
+    "unavailable": "Sensor data unavailable",
+    "no_sections": "All sections are hidden",
+    "no_gpu": "No GPU detected"
+  },
+  "units": {
+    "bps": "B/s",
+    "kbps": "KB/s",
+    "mbps": "MB/s",
+    "gbps": "GB/s",
+    "gb": "GB",
+    "tb": "TB",
+    "rpm": "RPM",
+    "celsius": "°C",
+    "mhz": "MHz",
+    "watts": "W"
+  },
+  "settings": {
+    "update_interval": {
+      "label": "Update every",
+      "description": "Seconds between samples (1–60). The network charts gain one point per sample."
+    },
+    "cpu_fan_number": {
+      "label": "CPU fan number",
+      "description": "0 = automatic (a hwmon fan label containing \"cpu\"). Otherwise pick fan1, fan2, … on the motherboard sensor chip, matching the output of the sensors command."
+    },
+    "show_styling": {
+      "label": "Show styling controls",
+      "description": "Reveal the colour, bar, temperature, chart and divider controls. Current values stay active while hidden. Noctalia renders plugin widget settings in one column, so this keeps the default panel short."
+    },
+    "show_card_settings": {
+      "label": "Show card settings",
+      "description": "Reveal the card title, content width, gap, padding, radius, fill and border controls. Current values stay active while hidden."
+    },
+    "show_sections": {
+      "label": "Show section toggles",
+      "description": "Reveal the Show header, network, CPU, RAM, GPU, VRAM, disks, CPU fan and GPU details controls. Their current values stay active while hidden."
+    },
+    "title": {
+      "label": "Card title",
+      "description": "Heading shown in the header."
+    },
+    "show_header": {
+      "label": "Show header",
+      "description": "Show the title and settings button above the cards."
+    },
+    "show_network": {
+      "label": "Show network",
+      "description": "Show the download/upload values and their history charts."
+    },
+    "show_cpu": {
+      "label": "Show CPU",
+      "description": "Show CPU usage, temperature and the optional CPU fan row."
+    },
+    "show_ram": {
+      "label": "Show RAM",
+      "description": "Show RAM usage and the segmented memory bar."
+    },
+    "show_gpu": {
+      "label": "Show GPU",
+      "description": "Show GPU usage, temperature and the More details panel. Hides itself behind an explicit \"No GPU detected\" line when no probe is available."
+    },
+    "show_vram": {
+      "label": "Show VRAM",
+      "description": "Show GPU memory usage and the segmented VRAM bar."
+    },
+    "show_disks": {
+      "label": "Show disks",
+      "description": "Show one block per physical disk with mounted filesystems, including usage and temperature when the kernel exposes it."
+    },
+    "show_cpu_fan": {
+      "label": "Show CPU fan",
+      "description": "Show the CPU fan row when a fan was found."
+    },
+    "allow_gpu_details": {
+      "label": "Allow GPU details",
+      "description": "Show the More/Less button in the GPU card for junction/memory temperatures, clocks, fan and power."
+    },
+    "content_width": {
+      "label": "Content width",
+      "description": "Width of the card content in logical px. Match this to the tile width in the desktop-widget editor for a tight fit; the host panel adds its own padding."
+    },
+    "card_gap": {
+      "label": "Card gap",
+      "description": "Space between the header and the cards, and between cards."
+    },
+    "card_padding": {
+      "label": "Card padding",
+      "description": "Inner padding of each card."
+    },
+    "card_radius": {
+      "label": "Card corner radius",
+      "description": "Corner radius of the inner cards."
+    },
+    "card_fill_color": {
+      "label": "Card fill colour",
+      "description": "Fill colour of the inner cards. Accepts a hex colour or palette role."
+    },
+    "card_fill_opacity": {
+      "label": "Card fill opacity",
+      "description": "Opacity of the inner-card fill, from 0 (no fill) to 1 (solid)."
+    },
+    "card_border_color": {
+      "label": "Card border colour",
+      "description": "Border colour of the inner cards. Accepts a hex colour or palette role."
+    },
+    "card_border_width": {
+      "label": "Card border width",
+      "description": "Border thickness of the inner cards in logical px."
+    },
+    "accent_color": {
+      "label": "Accent colour",
+      "description": "Section headings, segmented bar fills, chart lines and normal temperature bars. Accepts a hex colour or palette role."
+    },
+    "text_color": {
+      "label": "Primary text colour",
+      "description": "Values and titles. Accepts a hex colour or palette role."
+    },
+    "muted_text_color": {
+      "label": "Secondary text colour",
+      "description": "Labels, units, placeholders and inactive values. Accepts a hex colour or palette role."
+    },
+    "track_color": {
+      "label": "Bar track colour",
+      "description": "Unfilled part of the segmented bars and the temperature progress track. Accepts a hex colour or palette role."
+    },
+    "track_opacity": {
+      "label": "Bar track opacity",
+      "description": "Opacity of the unfilled bar track, from 0 (invisible) to 1 (solid)."
+    },
+    "bar_height": {
+      "label": "Bar height",
+      "description": "Height of the solid usage, memory and temperature bars in logical px (4–16)."
+    },
+    "temp_warm": {
+      "label": "Warm temperature",
+      "description": "CPU/GPU temperature (°C) at or above which the warm colour is used."
+    },
+    "temp_hot": {
+      "label": "Critical temperature",
+      "description": "CPU/GPU temperature (°C) at or above which the critical colour and a warning glyph are used. The critical colour wins over the warm colour."
+    },
+    "temp_warm_color": {
+      "label": "Warm temperature colour",
+      "description": "Colour of the temperature bar and value between the warm and critical thresholds. Accepts a hex colour or palette role."
+    },
+    "critical_color": {
+      "label": "Critical colour",
+      "description": "Colour used for temperatures at or above the critical threshold and for disks at or above the disk warning. Accepts a hex colour or palette role."
+    },
+    "disk_warning": {
+      "label": "Disk warning",
+      "description": "Disk usage percentage at or above which the bar, percentage and warning glyph use the critical colour."
+    },
+    "network_chart_height": {
+      "label": "Network chart height",
+      "description": "Download chart height in logical px (16–80); the upload chart is 65% of it."
+    },
+    "network_line_width": {
+      "label": "Chart line width",
+      "description": "Thickness of the network and CPU/GPU usage chart lines."
+    },
+    "network_fill_opacity": {
+      "label": "Chart fill opacity",
+      "description": "Opacity of the area fill under the network and CPU/GPU usage chart lines."
+    },
+    "network_scale_kbps": {
+      "label": "Network chart scale",
+      "description": "Minimum top of the network scale in KB/s; a larger sample raises it automatically (1–1024)."
+    },
+    "divider_width": {
+      "label": "Divider thickness",
+      "description": "Thickness of the header, GPU details and disk dividers."
+    },
+    "divider_color": {
+      "label": "Divider colour",
+      "description": "Colour of the header, GPU details and disk dividers. Accepts a hex colour or palette role."
+    },
+    "history_points": {
+      "label": "Chart history",
+      "description": "Number of samples kept for the network and CPU/GPU usage charts (10–120)."
+    },
+    "background": {
+      "label": "Host panel background",
+      "description": "Let Noctalia draw its surface behind the card. Turn off to place the content directly on the desktop wallpaper."
+    },
+    "background_color": {
+      "label": "Panel colour",
+      "description": "Host panel fill colour. Accepts a hex colour or palette role. Handled by Noctalia, not the plugin."
+    },
+    "background_opacity": {
+      "label": "Panel opacity",
+      "description": "Host panel opacity, applied live by Noctalia without reloading the widget."
+    },
+    "background_radius": {
+      "label": "Panel corner radius",
+      "description": "Host panel corner radius in logical px."
+    },
+    "background_padding": {
+      "label": "Panel padding",
+      "description": "Space between the host panel edge and the card content in logical px."
+    },
+    "cpu_chart_height": {
+      "label": "CPU chart height",
+      "description": "Height of the CPU usage chart in logical px (12–48)."
+    },
+    "cpu_chart_scale": {
+      "label": "CPU chart scale",
+      "description": "Minimum top of the CPU usage scale in percent; a larger sample raises it automatically. Set 100 for an absolute 0–100% scale."
+    },
+    "gpu_chart_height": {
+      "label": "GPU chart height",
+      "description": "Height of the GPU usage chart in logical px (12–48)."
+    },
+    "gpu_chart_scale": {
+      "label": "GPU chart scale",
+      "description": "Minimum top of the GPU usage scale in percent; a larger sample raises it automatically. Set 100 for an absolute 0–100% scale."
+    },
+    "chart_scale_mode": {
+      "label": "Chart scale mode",
+      "description": "Auto fits the largest visible sample. Fixed keeps the scale setting as the top and clips larger samples, which makes small changes look more zig-zaggy.",
+      "option": {
+        "auto": "Auto — fit largest sample",
+        "fixed": "Fixed — use scale setting"
+      }
+    }
+  }
+}
