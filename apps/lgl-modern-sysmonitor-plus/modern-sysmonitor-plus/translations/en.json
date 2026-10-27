@@ -56,7 +56,15 @@
     },
     "show_styling": {
       "label": "Show styling controls",
-      "description": "Reveal the colour, bar, temperature, chart and divider controls. Current values stay active while hidden. Noctalia renders plugin widget settings in one column, so this keeps the default panel short."
+      "description": "Reveal the colour, temperature and disk-warning controls. Current values stay active while hidden. Noctalia renders plugin widget settings in one column, so this keeps the default panel short."
+    },
+    "show_scaling": {
+      "label": "Show scaling controls",
+      "description": "Reveal the text size, bar and divider dimensions, and the chart size/scale controls. Current values stay active while hidden."
+    },
+    "text_scale": {
+      "label": "Text size",
+      "description": "Multiplies every title, label and value font size (0.5–2.0) without changing bar or chart dimensions."
     },
     "show_card_settings": {
       "label": "Show card settings",

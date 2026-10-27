@@ -39,6 +39,7 @@ local function base_config()
     title = "Lab Rig",
     show_header = true,
     show_styling = false,
+    show_scaling = false,
     show_card_settings = false,
     show_sections = false,
     show_network = true,
@@ -63,6 +64,7 @@ local function base_config()
     track_color = "#00ff00",
     track_opacity = 0.5,
     bar_height = 8,
+    text_scale = 1,
     temp_warm = 70,
     temp_hot = 85,
     temp_warm_color = "#ffaa00",
@@ -246,7 +248,7 @@ assert(find("disk-2-divider"), "disks should be separated")
 -- Host-handled keys are read (lint contract) and the card adds no surface.
 for _, key in ipairs({
   "background", "background_color", "background_opacity", "background_radius", "background_padding",
-  "show_styling", "show_card_settings", "show_sections",
+  "show_styling", "show_scaling", "show_card_settings", "show_sections",
 }) do
   assert(ctx.requested[key], "setting " .. key .. " was not read")
 end
@@ -334,6 +336,25 @@ assert_eq(mock.find(role_tree, "vram-pct").props.color, "primary", "default VRAM
 assert_eq(mock.find(role_tree, "cpu-usage-graph").props.height, 20, "default CPU chart height")
 assert_eq(mock.find(role_tree, "network-down-graph").props.color, "primary", "default chart role")
 assert_eq(mock.find(role_tree, "header-divider").props.color, "outline", "default divider role")
+
+-- Text size scales fonts, their fixed widths and inline glyphs independently
+-- from the bar and chart dimensions.
+local text_ctx = mock.new({
+  config = copy_config({ text_scale = 1.5 }),
+  state = { stats = fresh_state() },
+})
+mock.loadEntry("card.luau")
+local text_tree = text_ctx.desktop_tree
+assert_eq(mock.find(text_tree, "header-title").props.fontSize, 27, "scaled title font")
+assert_eq(mock.find(text_tree, "cpu-usage-value").props.fontSize, 17, "scaled value font")
+assert_eq(mock.find(text_tree, "cpu-usage-label").props.width, 72, "scaled label width")
+assert_eq(mock.find(text_tree, "cpu-usage-value").props.width, 63, "scaled value width")
+assert_eq(mock.find(text_tree, "cpu-header-glyph").props.size, 21, "scaled header glyph")
+assert_eq(mock.find(text_tree, "gpu-details-toggle").props.fontSize, 15, "scaled details font")
+assert_eq(mock.find(text_tree, "gpu-details-toggle").props.height, 33, "scaled details height")
+assert_eq(mock.find(text_tree, "cpu-usage-graph").props.height, 24, "text scale leaves chart height alone")
+assert_eq(mock.find(text_tree, "ram-bar").props.height, 8, "text scale leaves bar height alone")
+assert_eq(text_ctx.requested.text_scale, true, "text scale setting was not read")
 
 -- Hiding every section leaves the header and an explicit status.
 local hidden_ctx = mock.new({

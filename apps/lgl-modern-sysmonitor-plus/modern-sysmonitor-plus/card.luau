@@ -62,8 +62,10 @@ end
 local settings = {
   title = cfg_text("title", noctalia.tr("meta.name")),
   show_header = cfg_bool("show_header", true),
-  -- Settings-editor hint only: the card always renders with the stored styling.
+  -- Settings-editor hints only: the card always renders with the stored
+  -- styling and scaling.
   show_styling = cfg_bool("show_styling", false),
+  show_scaling = cfg_bool("show_scaling", false),
   show_card_settings = cfg_bool("show_card_settings", false),
   show_sections = cfg_bool("show_sections", false),
   show_network = cfg_bool("show_network", true),
@@ -91,6 +93,7 @@ local settings = {
   track_opacity = cfg_number("track_opacity", 0.14, 0, 1),
 
   bar_height = cfg_number("bar_height", 8, 4, 16),
+  text_scale = cfg_number("text_scale", 1, 0.5, 2),
 
   temp_warm = math.floor(cfg_number("temp_warm", 70, 30, 110) + 0.5),
   temp_hot = math.floor(cfg_number("temp_hot", 85, 40, 120) + 0.5),
@@ -115,6 +118,13 @@ local settings = {
 
 if settings.chart_scale_mode ~= "fixed" then
   settings.chart_scale_mode = "auto"
+end
+
+-- Text grows independently from the bars and charts: every font size, the
+-- fixed label widths that hold it, and the inline glyphs are multiplied by
+-- text_scale. The bar/chart dimensions keep their own settings.
+local function text_size(value)
+  return math.max(1, math.floor(value * settings.text_scale + 0.5))
 end
 
 if settings.temp_hot <= settings.temp_warm then
@@ -351,11 +361,11 @@ end
 
 local function section_header(key, glyph, label, extra, model)
   local children = {
-    ui.glyph({ key = key .. "-glyph", name = glyph, size = 14, color = settings.accent_color }),
+    ui.glyph({ key = key .. "-glyph", name = glyph, size = text_size(14), color = settings.accent_color }),
     ui.label({
       key = key .. "-label",
       text = label,
-      fontSize = 11,
+      fontSize = text_size(11),
       fontWeight = "bold",
       color = settings.accent_color,
       maxLines = 1,
@@ -365,7 +375,7 @@ local function section_header(key, glyph, label, extra, model)
     table.insert(children, ui.label({
       key = key .. "-model",
       text = model,
-      fontSize = 10,
+      fontSize = text_size(10),
       color = settings.muted_text_color,
       maxLines = 1,
       flexGrow = 1,
@@ -401,8 +411,8 @@ local function usage_row(key, percent, history, known, chart_height, chart_scale
     ui.label({
       key = key .. "-label",
       text = noctalia.tr("labels.usage"),
-      width = 48,
-      fontSize = 11,
+      width = text_size(48),
+      fontSize = text_size(11),
       color = settings.muted_text_color,
       maxLines = 1,
     }),
@@ -418,9 +428,9 @@ local function usage_row(key, percent, history, known, chart_height, chart_scale
     ui.label({
       key = key .. "-value",
       text = known and format.pct(percent) or DASH,
-      width = 42,
+      width = text_size(42),
       textAlign = "end",
-      fontSize = 11,
+      fontSize = text_size(11),
       fontWeight = "bold",
       color = value_color(known),
       maxLines = 1,
@@ -434,8 +444,8 @@ local function temp_row(key, temp, known)
     ui.label({
       key = key .. "-label",
       text = noctalia.tr("labels.temp"),
-      width = 48,
-      fontSize = 11,
+      width = text_size(48),
+      fontSize = text_size(11),
       color = settings.muted_text_color,
       maxLines = 1,
     }),
@@ -446,7 +456,7 @@ local function temp_row(key, temp, known)
     table.insert(children, ui.glyph({
       key = key .. "-alert",
       name = "alert-triangle",
-      size = 12,
+      size = text_size(12),
       color = settings.critical_color,
     }))
   end
@@ -454,9 +464,9 @@ local function temp_row(key, temp, known)
   table.insert(children, ui.label({
     key = key .. "-value",
     text = known and fmt_temp(temp) or DASH,
-    width = 46,
+    width = text_size(46),
     textAlign = "end",
-    fontSize = 11,
+    fontSize = text_size(11),
     fontWeight = "bold",
     color = known and color or settings.muted_text_color,
     maxLines = 1,
@@ -474,8 +484,8 @@ local function fan_row(key, rpm)
     ui.label({
       key = key .. "-label",
       text = noctalia.tr("labels.fan"),
-      width = 48,
-      fontSize = 11,
+      width = text_size(48),
+      fontSize = text_size(11),
       color = settings.muted_text_color,
       maxLines = 1,
     }),
@@ -483,7 +493,7 @@ local function fan_row(key, rpm)
     ui.label({
       key = key .. "-value",
       text = string.format("%d %s", math.floor(speed + 0.5), units.rpm),
-      fontSize = 11,
+      fontSize = text_size(11),
       fontWeight = "bold",
       color = settings.text_color,
       maxLines = 1,
@@ -494,11 +504,11 @@ end
 local function status_row(key)
   local glyph = key == "status.waiting" and "hourglass-empty" or "alert-circle"
   return ui.row({ key = "status", gap = 6, align = "center", justify = "center" }, {
-    ui.glyph({ key = "status-glyph", name = glyph, size = 13, color = settings.muted_text_color }),
+    ui.glyph({ key = "status-glyph", name = glyph, size = text_size(13), color = settings.muted_text_color }),
     ui.label({
       key = "status-text",
       text = noctalia.tr(key),
-      fontSize = 12,
+      fontSize = text_size(12),
       color = settings.muted_text_color,
     }),
   })
@@ -511,7 +521,7 @@ local function header()
     ui.label({
       key = "header-title",
       text = settings.title,
-      fontSize = 18,
+      fontSize = text_size(18),
       fontWeight = "light",
       color = settings.text_color,
       flexGrow = 1,
@@ -544,7 +554,7 @@ local function network_card(stats)
       ui.label({
         key = "network-down-label",
         text = noctalia.tr("labels.download"),
-        fontSize = 11,
+        fontSize = text_size(11),
         color = settings.muted_text_color,
         flexGrow = 1,
         maxLines = 1,
@@ -552,7 +562,7 @@ local function network_card(stats)
       ui.label({
         key = "network-down-value",
         text = down ~= nil and format.format_speed(down, units) or DASH,
-        fontSize = 11,
+        fontSize = text_size(11),
         fontWeight = "bold",
         color = value_color(down ~= nil),
         maxLines = 1,
@@ -570,7 +580,7 @@ local function network_card(stats)
       ui.label({
         key = "network-up-label",
         text = noctalia.tr("labels.upload"),
-        fontSize = 11,
+        fontSize = text_size(11),
         color = settings.muted_text_color,
         flexGrow = 1,
         maxLines = 1,
@@ -578,7 +588,7 @@ local function network_card(stats)
       ui.label({
         key = "network-up-value",
         text = up ~= nil and format.format_speed(up, units) or DASH,
-        fontSize = 11,
+        fontSize = text_size(11),
         fontWeight = "bold",
         color = value_color(up ~= nil),
         maxLines = 1,
@@ -648,7 +658,7 @@ local function ram_card(stats)
       ui.label({
         key = "ram-summary-label",
         text = summary,
-        fontSize = 11,
+        fontSize = text_size(11),
         color = settings.muted_text_color,
         flexGrow = 1,
         maxLines = 1,
@@ -656,9 +666,9 @@ local function ram_card(stats)
       ui.label({
         key = "ram-pct",
         text = percent ~= nil and format.pct(percent) or DASH,
-        width = 42,
+        width = text_size(42),
         textAlign = "end",
-        fontSize = 11,
+        fontSize = text_size(11),
         fontWeight = "bold",
         color = percent ~= nil and settings.accent_color or settings.muted_text_color,
         maxLines = 1,
@@ -676,10 +686,10 @@ local function details_button()
     key = "gpu-details-toggle",
     text = gpu_expanded and noctalia.tr("gpu.less") or noctalia.tr("gpu.more"),
     glyph = gpu_expanded and "chevron-up" or "chevron-down",
-    glyphSize = 10,
-    fontSize = 10,
+    glyphSize = text_size(10),
+    fontSize = text_size(10),
     variant = "ghost",
-    height = 22,
+    height = text_size(22),
     onClick = "toggleGpuDetails",
   })
 end
@@ -689,14 +699,14 @@ local function detail_cell(key, label, value)
     ui.label({
       key = key .. "-label",
       text = label,
-      fontSize = 11,
+      fontSize = text_size(11),
       color = settings.muted_text_color,
       maxLines = 1,
     }),
     ui.label({
       key = key .. "-value",
       text = value,
-      fontSize = 11,
+      fontSize = text_size(11),
       fontWeight = "bold",
       color = settings.text_color,
       maxLines = 1,
@@ -756,7 +766,7 @@ local function gpu_card(stats)
       ui.label({
         key = "gpu-unavailable",
         text = noctalia.tr("status.no_gpu"),
-        fontSize = 11,
+        fontSize = text_size(11),
         color = settings.muted_text_color,
       }),
     })
@@ -795,7 +805,7 @@ local function vram_card(stats)
       ui.label({
         key = "vram-unavailable",
         text = noctalia.tr("status.no_gpu"),
-        fontSize = 11,
+        fontSize = text_size(11),
         color = settings.muted_text_color,
       }),
     })
@@ -823,7 +833,7 @@ local function vram_card(stats)
       ui.label({
         key = "vram-summary-label",
         text = summary,
-        fontSize = 11,
+        fontSize = text_size(11),
         color = settings.muted_text_color,
         flexGrow = 1,
         maxLines = 1,
@@ -831,9 +841,9 @@ local function vram_card(stats)
       ui.label({
         key = "vram-pct",
         text = percent ~= nil and format.pct(percent) or DASH,
-        width = 42,
+        width = text_size(42),
         textAlign = "end",
-        fontSize = 11,
+        fontSize = text_size(11),
         fontWeight = "bold",
         color = percent ~= nil and settings.accent_color or settings.muted_text_color,
         maxLines = 1,
@@ -890,16 +900,16 @@ local function disks_card(stats)
       table.insert(usage_children, ui.glyph({
         key = key .. "-alert",
         name = "alert-triangle",
-        size = 12,
+        size = text_size(12),
         color = settings.critical_color,
       }))
     end
     table.insert(usage_children, ui.label({
       key = key .. "-pct",
       text = percent ~= nil and format.pct(percent) or DASH,
-      width = 42,
+      width = text_size(42),
       textAlign = "end",
-      fontSize = 11,
+      fontSize = text_size(11),
       fontWeight = "bold",
       color = warning and settings.critical_color
         or (percent ~= nil and settings.accent_color or settings.muted_text_color),
@@ -911,7 +921,7 @@ local function disks_card(stats)
         ui.label({
           key = key .. "-name",
           text = name,
-          fontSize = 11,
+          fontSize = text_size(11),
           color = settings.muted_text_color,
           flexGrow = 1,
           maxLines = 1,
@@ -920,7 +930,7 @@ local function disks_card(stats)
         ui.label({
           key = key .. "-size",
           text = sizes,
-          fontSize = 11,
+          fontSize = text_size(11),
           fontWeight = "bold",
           color = warning and settings.critical_color or settings.text_color,
           maxLines = 1,

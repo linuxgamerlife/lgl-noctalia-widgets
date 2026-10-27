@@ -119,6 +119,13 @@ entry = "card.luau"
   default         = false
 
   [[desktop_widget.setting]]
+  key             = "show_scaling"
+  type            = "bool"
+  label_key       = "settings.show_scaling.label"
+  description_key = "settings.show_scaling.description"
+  default         = false
+
+  [[desktop_widget.setting]]
   key             = "show_sections"
   type            = "bool"
   label_key       = "settings.show_sections.label"
@@ -343,7 +350,18 @@ entry = "card.luau"
   min             = 4.0
   max             = 16.0
   step            = 0.5
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "text_scale"
+  type            = "double"
+  label_key       = "settings.text_scale.label"
+  description_key = "settings.text_scale.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 2.0
+  step            = 0.05
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "temp_warm"
@@ -400,7 +418,7 @@ entry = "card.luau"
   label_key       = "settings.chart_scale_mode.label"
   description_key = "settings.chart_scale_mode.description"
   default         = "auto"
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
   options = [
     { value = "auto",  label_key = "settings.chart_scale_mode.option.auto" },
     { value = "fixed", label_key = "settings.chart_scale_mode.option.fixed" },
@@ -415,7 +433,7 @@ entry = "card.luau"
   min             = 12
   max             = 48
   step            = 2
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "cpu_chart_scale"
@@ -426,7 +444,7 @@ entry = "card.luau"
   min             = 1
   max             = 100
   step            = 1
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "gpu_chart_height"
@@ -437,7 +455,7 @@ entry = "card.luau"
   min             = 12
   max             = 48
   step            = 2
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "gpu_chart_scale"
@@ -448,7 +466,7 @@ entry = "card.luau"
   min             = 1
   max             = 100
   step            = 1
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "network_chart_height"
@@ -459,7 +477,7 @@ entry = "card.luau"
   min             = 16
   max             = 80
   step            = 2
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "network_scale_kbps"
@@ -471,7 +489,7 @@ entry = "card.luau"
   max             = 1024
   step            = 1
   advanced        = true
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "network_line_width"
@@ -483,7 +501,7 @@ entry = "card.luau"
   max             = 4.0
   step            = 0.1
   advanced        = true
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "network_fill_opacity"
@@ -506,7 +524,7 @@ entry = "card.luau"
   max             = 4.0
   step            = 0.1
   advanced        = true
-  visible_when    = { key = "show_styling", values = ["true"] }
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "divider_color"
@@ -526,8 +544,8 @@ entry = "card.luau"
   max             = 120
   step            = 1
   advanced        = true
+  visible_when    = { key = "show_scaling", values = ["true"] }
 
   # Host panel surface. DesktopWidget consumes these keys; the card reads them
   # only to keep lint's declared-key contract and to add an inset when the panel
   # is off. The card never draws a second outer surface.
-  visible_when    = { key = "show_styling", values = ["true"] }

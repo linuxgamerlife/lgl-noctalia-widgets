@@ -102,21 +102,21 @@ Changing `cpu_fan_number` takes effect on the next sample.
 
 The card settings are grouped in the plugin README:
 
-- sections: `title`, `show_card_settings`, `show_styling`, `show_sections`, `show_header`, `show_network`, `show_cpu`, `show_ram`,
+- sections: `title`, `show_card_settings`, `show_styling`, `show_scaling`, `show_sections`, `show_header`, `show_network`, `show_cpu`, `show_ram`,
   `show_gpu`, `show_vram`, `show_disks`, `show_cpu_fan`, `allow_gpu_details`
-- layout: `content_width`, `card_gap`, `card_padding`, `card_radius`,
-  `bar_height`, `cpu_chart_height`, `cpu_chart_scale`, `gpu_chart_height`, `gpu_chart_scale`,
-  `network_chart_height`, `network_line_width`, `network_fill_opacity`,
-  `network_scale_kbps`, `divider_width`, `history_points`
+- layout: `content_width`, `card_gap`, `card_padding`, `card_radius`
+- scaling: `text_scale`, `bar_height`, `chart_scale_mode`, `cpu_chart_height`, `cpu_chart_scale`,
+  `gpu_chart_height`, `gpu_chart_scale`, `network_chart_height`, `network_scale_kbps`,
+  `network_line_width`, `divider_width`, `history_points`
 - colours: `accent_color`, `text_color`, `muted_text_color`,
   `card_fill_color`, `card_fill_opacity`, `card_border_color`,
   `card_border_width`, `track_color`, `track_opacity`, `temp_warm_color`,
-  `critical_color`, `divider_color`
+  `critical_color`, `network_fill_opacity`, `divider_color`
 - safety: `temp_warm`, `temp_hot`, `disk_warning`
 - host surface: `background`, `background_color`, `background_opacity`,
   `background_radius`, `background_padding`
 
-Noctalia v5.3.0 renders the desktop-widget inspector as a single column and has no manifest field for columns, groups or sections. To keep that column usable, the host background controls are declared first, `show_card_settings` (default off) hides the card title/width/layout/fill/border controls, `show_styling` (default off) hides the colour/bar/temperature/chart/divider list and `show_sections` (default off) hides the nine section visibility toggles; the stored values stay active. **Background transparency** is the host panel's `background_opacity`, shown at the top of the Widget section and in the host's own Background section.
+Noctalia v5.3.0 renders the desktop-widget inspector as a single column and has no manifest field for columns, groups or sections. To keep that column usable, the host background controls are declared first, `show_card_settings` (default off) hides the card title/width/layout/fill/border controls, `show_styling` (default off) hides the colour/temperature/disk-warning list, `show_scaling` (default off) hides the text size, bar/divider dimensions and chart size/scale list, and `show_sections` (default off) hides the nine section visibility toggles; the stored values stay active. **Background transparency** is the host panel's `background_opacity`, shown at the top of the Widget section and in the host's own Background section.
 
 Every `double` that ranges 0–1 has an explicit `step` (`0.01` for the host
 opacity, `0.05` for the other opacities), so the sliders move continuously.
@@ -218,7 +218,8 @@ The mock covers:
   `/proc/stat`, disk refresh cadence and config changes.
 - `test_card.luau` — every section, CPU/GPU usage charts, solid bar fills,
   GPU details, stale state, no-GPU state, hidden sections, host-panel inset,
-  role tokens vs. hex, opacity/stroke/width settings and the settings callback.
+  role tokens vs. hex, text scaling (independent of bar/chart sizes),
+  opacity/stroke/width settings and the settings callback.
 - `test_integration.luau` — real service + real card, initial waiting state,
   live values, network and usage history cadence, stale handling and recovery.
 

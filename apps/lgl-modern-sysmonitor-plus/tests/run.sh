@@ -142,10 +142,11 @@ expected_prefix = [
     "background_padding",
     "show_card_settings",
     "show_styling",
+    "show_scaling",
     "show_sections",
 ]
 if desktop_keys[: len(expected_prefix)] != expected_prefix:
-    fail("desktop widget settings must start with the host background controls and show_styling")
+    fail("desktop widget settings must start with the host background controls and the show_* toggles")
 card_keys = {
     "title", "content_width", "card_gap", "card_padding", "card_radius",
     "card_fill_color", "card_fill_opacity", "card_border_color", "card_border_width",
@@ -159,11 +160,9 @@ for setting in desktop_settings:
 
 styling_keys = {
     "accent_color", "text_color", "muted_text_color",
-    "track_color", "track_opacity", "bar_height",
+    "track_color", "track_opacity",
     "temp_warm", "temp_hot", "temp_warm_color", "critical_color", "disk_warning",
-    "chart_scale_mode", "cpu_chart_height", "cpu_chart_scale", "gpu_chart_height", "gpu_chart_scale",
-    "network_chart_height", "network_line_width", "network_fill_opacity",
-    "network_scale_kbps", "divider_width", "divider_color", "history_points",
+    "network_fill_opacity", "divider_color",
 }
 for setting in desktop_settings:
     key = setting.get("key")
@@ -171,6 +170,19 @@ for setting in desktop_settings:
         visible = setting.get("visible_when", {})
         if visible.get("key") != "show_styling" or visible.get("values") != ["true"]:
             fail(f"styling setting {key!r} must be gated by show_styling")
+
+scaling_keys = {
+    "text_scale", "bar_height",
+    "chart_scale_mode", "cpu_chart_height", "cpu_chart_scale", "gpu_chart_height", "gpu_chart_scale",
+    "network_chart_height", "network_scale_kbps", "network_line_width",
+    "divider_width", "history_points",
+}
+for setting in desktop_settings:
+    key = setting.get("key")
+    if key in scaling_keys:
+        visible = setting.get("visible_when", {})
+        if visible.get("key") != "show_scaling" or visible.get("values") != ["true"]:
+            fail(f"scaling setting {key!r} must be gated by show_scaling")
 
 section_keys = {
     "show_header", "show_network", "show_cpu", "show_ram", "show_gpu",

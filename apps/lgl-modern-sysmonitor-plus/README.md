@@ -141,13 +141,14 @@ whatever the cards need.
 Noctalia v5.3.0 renders plugin widget settings in a single column and has no
 manifest field for columns, groups or sections. To keep that column usable, the
 host panel **background toggle, colour, opacity, radius and padding are the
-first rows** of the Widget section, followed by three collapsed groups, all
+first rows** of the Widget section, followed by four collapsed groups, all
 default off:
 
 - **Show card settings** — card title, content width, gap, padding, radius, fill
   and border.
-- **Show styling controls** — colours, bars, temperature thresholds, charts and
-  dividers.
+- **Show styling controls** — colours, temperature thresholds and disk warning.
+- **Show scaling controls** — text size, bar/divider dimensions, chart sizes and
+  scales.
 - **Show section toggles** — Show header/network/CPU/RAM/GPU/VRAM/disks/fan/
   details.
 
@@ -179,7 +180,7 @@ Requires LuaJIT and Python 3.11+ (for `tomllib`). The tests mock
 `noctalia.*`, `ui.*` and `desktopWidget.*`, so no Noctalia session is needed.
 They cover the formatters, the sampler (CPU/RAM/network deltas, AMD/Nvidia/host
 GPU, fans, disk grouping), the card (every section, solid bars, usage charts, GPU details,
-stale state, no-GPU state, role tokens vs. hex, host-panel padding) and a
+stale state, no-GPU state, role tokens vs. hex, text scaling, host-panel padding) and a
 service→card integration pass. Python then validates the manifest, catalog,
 translations, entries and repository layout.
 

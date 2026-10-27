@@ -72,15 +72,16 @@ shared by the service and the card.
 
 ### Card sections
 
-The inspector starts with the host background controls and three collapsed
-groups: **Show card settings**, **Show styling controls** and **Show section
-toggles**. Hidden values stay active; the toggles only control visibility in
-the editor.
+The inspector starts with the host background controls and four collapsed
+groups: **Show card settings**, **Show styling controls**, **Show scaling
+controls** and **Show section toggles**. Hidden values stay active; the toggles
+only control visibility in the editor.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
 | Show card settings | off | Reveal the card title, content width, gap, padding, radius, fill and border controls. Their values stay active while hidden. |
-| Show styling controls | off | Reveal the colour, bar, temperature, chart and divider controls. Their values stay active while hidden. |
+| Show styling controls | off | Reveal the colour, temperature and disk-warning controls. Their values stay active while hidden. |
+| Show scaling controls | off | Reveal the text size, bar/divider dimensions and chart size/scale controls. Their values stay active while hidden. |
 | Show section toggles | off | Reveal the nine section visibility controls below. Their values stay active while hidden. |
 | Card title | System Monitor | Header heading. |
 | Show header | on | Title and settings button. |
@@ -101,8 +102,21 @@ the editor.
 | Card gap | 10 px | Space between header/cards and between cards. |
 | Card padding | 10 px | Inner padding of each card. |
 | Card corner radius | 8 px | Inner-card radius. |
+
+### Scaling
+
+Revealed by **Show scaling controls**. Text size is independent of every other
+dimension, so larger labels do not make the bars or charts taller.
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| Text size | 1.0× | Multiplies every title, label and value font size (0.5–2.0), including the fixed label widths and inline glyphs. Bars and charts keep their own dimensions. |
 | Bar height | 8 px | Solid bar height (4–16). |
 | Divider thickness | 1 px | Header, GPU-details and disk dividers (0.5–4). |
+
+The chart scale mode, chart heights, per-chart scales, line width and history
+controls are also revealed by **Show scaling controls**; see the Charts table
+below. Chart fill opacity remains a styling control.
 
 ### Charts
 
@@ -111,6 +125,8 @@ auto-fit the largest visible sample; switch **Chart scale mode** to **Fixed** an
 lower the per-chart scale to exaggerate small changes (large samples clip at the
 top). RAM, VRAM and disks use solid bars like the temperature bar. All charts and
 percentage values use the accent colour; disk warnings use the critical colour.
+Everything in this table except **Chart fill opacity** is revealed by **Show
+scaling controls**.
 
 | Setting | Default | What it does |
 | --- | --- | --- |
