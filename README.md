@@ -73,7 +73,6 @@ colour or `ds4u` lightbar colour changes. See the
 | `uninstall.sh` | Remove from upstream Noctalia |
 | `remove-plugin-widgets.py` | Safely removes this plugin's desktop-widget instances from `settings.toml` |
 | `catalog.toml` | Noctalia source catalog (the repo can be added as a plugin source) |
-| `tests/` | LuaJIT tests with a mocked Noctalia API |
 
 ## Install
 
@@ -131,15 +130,6 @@ Full requirements, settings, protocol notes, IPC and troubleshooting are in
 The uninstall scripts disable the plugin, stop its service/daemon, remove its
 desktop-widget instances (with a timestamped settings backup), and clean its
 runtime and plugin data. Use `--yes` for non-interactive removal.
-
-## Tests
-
-```bash
-./tests/run.sh
-```
-
-Requires LuaJIT. The tests mock `noctalia.*` and `desktopWidget.*`, so no live
-Noctalia session is needed.
 
 ## Requirements
 
