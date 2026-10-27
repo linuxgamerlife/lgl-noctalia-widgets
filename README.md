@@ -48,7 +48,9 @@ installation instructions.
 
 ## Install
 
-Clone the monorepo:
+### Clone all apps
+
+Clone the complete monorepo if you want to keep or try multiple apps:
 
 ```bash
 git clone https://github.com/linuxgamerlife/lgl-noctalia-widgets.git
@@ -69,6 +71,64 @@ the appropriate script from the repository root, for example:
 The scripts link the selected plugin into the correct user data directory and
 honour `NOCTALIA_DATA_HOME` and `XDG_DATA_HOME`. Installation does not combine
 the apps; install only the ones you want.
+
+### Clone only one app
+
+Git cannot clone a subdirectory directly, but sparse checkout can fetch a
+lightweight working copy containing only the selected app. Start with:
+
+```bash
+git clone --depth 1 --filter=blob:none --sparse \
+  https://github.com/linuxgamerlife/lgl-noctalia-widgets.git
+cd lgl-noctalia-widgets
+```
+
+Then choose one app below. Run either the KWE installer or the upstream
+installer, not both.
+
+#### LGL AI Usage
+
+```bash
+git sparse-checkout set apps/lgl-ai-usage
+
+./apps/lgl-ai-usage/install-kwe.sh  # Noctalia KWE
+# OR
+./apps/lgl-ai-usage/install.sh      # Upstream Noctalia
+```
+
+#### LGL DualSense Battery
+
+```bash
+git sparse-checkout set apps/lgl-dualsense
+
+./apps/lgl-dualsense/install-kwe.sh  # Noctalia KWE
+# OR
+./apps/lgl-dualsense/install.sh      # Upstream Noctalia
+```
+
+#### LGL Modern SysMonitor Plus
+
+```bash
+git sparse-checkout set apps/lgl-modern-sysmonitor-plus
+
+./apps/lgl-modern-sysmonitor-plus/install-kwe.sh  # Noctalia KWE
+# OR
+./apps/lgl-modern-sysmonitor-plus/install.sh      # Upstream Noctalia
+```
+
+#### LGL Steam Controller Battery
+
+```bash
+git sparse-checkout set apps/lgl-steam-controller
+
+./apps/lgl-steam-controller/install-kwe.sh  # Noctalia KWE
+# OR
+./apps/lgl-steam-controller/install.sh      # Upstream Noctalia
+```
+
+The root README and repository metadata remain present in a sparse checkout,
+but the unselected app directories are not checked out. To include another app
+later, use `git sparse-checkout add apps/<app-directory>`.
 
 ---
 
