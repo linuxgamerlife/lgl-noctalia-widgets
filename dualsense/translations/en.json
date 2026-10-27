@@ -1,4 +1,7 @@
 {
+  "actions": {
+    "open_ds4u": "Open ds4u controller settings"
+  },
   "notification": {
     "low": {
       "title": "DualSense battery low",
@@ -68,7 +71,7 @@
       "label": "Show player indicator LEDs"
     },
     "show_profile": {
-      "description": "Show the active ds4u profile and lightbar swatch (click to cycle saved profiles).",
+      "description": "Show the active ds4u profile dropdown and lightbar swatch for direct profile selection.",
       "label": "Show ds4u profile"
     },
     "text_color": {

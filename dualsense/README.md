@@ -13,7 +13,7 @@ profile's `lightbar_brightness`. Charging pulses; low battery turns red.
 | Field | Value |
 | --- | --- |
 | ID | `deadYokai/dualsense` |
-| Version | `1.0.1` |
+| Version | `1.0.2` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 
@@ -148,7 +148,7 @@ notify_low    = true
 | `battery_low_color` | desktop widget | `#ed4c4c` | Low-battery fill, percentage and marker colour. Always wins when low. |
 | `text_color` | desktop widget | `on_surface` | Percentage, status text, marker and active player LEDs. |
 | `muted_text_color` | desktop widget | `on_surface_variant` | Percentage sign, profile label, model badge and inactive player LEDs. |
-| `show_profile` | desktop widget | `true` | Show the active `ds4u` profile pill (click to cycle saved profiles). |
+| `show_profile` | desktop widget | `true` | Show the active `ds4u` profile dropdown for direct profile selection. |
 | `show_player_leds` | desktop widget | `true` | Show the 5-segment DualSense player indicator LEDs. |
 | `show_model_badge` | desktop widget | `true` | Show a `DualSense Edge` label when a DualSense Edge controller is connected. |
 
@@ -163,11 +163,12 @@ notify_low    = true
    `54`) input reports directly, with fallbacks to Linux's `hid-playstation`
    `/sys/class/power_supply/ps-controller-battery*` and BlueZ `org.bluez.Battery1`.
 3. **Profile & Rumble Actions**:
-   - Clicking the profile row on the card cycles through saved profiles in
-     `~/.config/ds4u/profiles/` (via `SwitchProfile` IPC when `ds4u --daemon`
+   - Selecting a profile from the card dropdown switches directly among profiles
+     in `~/.config/ds4u/profiles/` (via `SwitchProfile` IPC when `ds4u --daemon`
      is running, or by updating `~/.config/ds4u/settings.json` and sending a
      DualSense HID output report with the profile's lightbar RGB and player LED
-     pattern).
+     pattern). The settings button beside the dropdown opens `ds4u`, where you
+     can create and edit profiles; saved profiles then appear in the dropdown.
    - Clicking the controller illustration rumbles the controller (`SetRumble`
      IPC or direct HID output report `0x02` / `0x31` with CRC-32).
 

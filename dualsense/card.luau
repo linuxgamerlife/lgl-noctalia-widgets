@@ -4,8 +4,8 @@
 -- By default the card mirrors the controller's ds4u lightbar color (or its
 -- connection link color: PlayStation blue on Bluetooth, green on USB-C, red
 -- when low). The controller line/body, lightbar accents and battery fill are
--- configurable. Charging pulses. Clicking the ds4u profile pill cycles saved
--- ds4u profiles; clicking the controller art rumbles the controller.
+-- configurable. Charging pulses. The profile selector switches directly among
+-- saved ds4u profiles; clicking the controller art rumbles the controller.
 
 local STALE_AFTER = 20 -- seconds without a daemon heartbeat
 
@@ -411,6 +411,21 @@ local function profile_row(s, is_fresh)
     return nil
   end
   local prof = type(s.profile) == "string" and s.profile ~= "" and s.profile or "Default"
+  local profiles = type(s.profiles) == "table" and s.profiles or { prof }
+  local options = {}
+  local selected_index = 0
+  for _, name in ipairs(profiles) do
+    if type(name) == "string" and name ~= "" then
+      if name == prof then
+        selected_index = #options
+      end
+      table.insert(options, name)
+    end
+  end
+  if #options == 0 then
+    options = { prof }
+    selected_index = 0
+  end
   local lb = active_lightbar_hex()
   local children = {
     ui.box({
@@ -420,11 +435,21 @@ local function profile_row(s, is_fresh)
       radius = 3.5,
       fill = lb,
     }),
-    ui.label({
-      key = "profile-name",
-      text = prof,
-      fontSize = 11,
-      color = settings.muted_text_color,
+    ui.select({
+      key = "profile-select",
+      options = options,
+      selectedIndex = selected_index,
+      width = 110,
+      controlSize = "small",
+      enabled = #options > 0,
+      onChange = "onProfileChanged",
+    }),
+    ui.button({
+      key = "profile-settings",
+      glyph = "settings",
+      tooltip = noctalia.tr("actions.open_ds4u"),
+      controlSize = "small",
+      onClick = "onOpenDs4u",
     }),
   }
   if s.ds4u_daemon == true then
@@ -441,7 +466,6 @@ local function profile_row(s, is_fresh)
     gap = 5,
     align = "center",
     justify = "center",
-    onClick = "onCycleProfile",
   }, children)
 end
 
@@ -557,9 +581,38 @@ function onCycleProfile()
   noctalia.state.set("action", { action = "cycle-profile", seq = action_seq })
 end
 
+function onProfileChanged(index, text)
+  local profile = type(text) == "string" and text or ""
+  if profile == "" then
+    local s = type(current_state) == "table" and current_state or {}
+    local profiles = type(s.profiles) == "table" and s.profiles or {}
+    profile = profiles[(tonumber(index) or -1) + 1] or ""
+  end
+  if profile == "" then
+    return
+  end
+  local current = type(current_state) == "table" and current_state.profile or ""
+  if profile == current then
+    return
+  end
+  action_seq = action_seq + 1
+  noctalia.state.set("action", {
+    action = "switch-profile",
+    profile = profile,
+    seq = action_seq,
+  })
+end
+
 function onBuzzController()
   action_seq = action_seq + 1
   noctalia.state.set("action", { action = "buzz", seq = action_seq })
+end
+
+function onOpenDs4u()
+  if type(noctalia.commandExists) == "function" and not noctalia.commandExists("ds4u") then
+    return
+  end
+  noctalia.runAsync("ds4u")
 end
 
 function onFrameTick(delta_ms)

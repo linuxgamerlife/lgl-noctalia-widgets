@@ -27,7 +27,7 @@ local function ctor(t)
     return { type = t, props = props or {}, children = children or {} }
   end
 end
-ui = { column=ctor("column"), row=ctor("row"), box=ctor("box"), label=ctor("label"), glyph=ctor("glyph"), image=ctor("image"), spacer=ctor("spacer") }
+ui = { column=ctor("column"), row=ctor("row"), box=ctor("box"), label=ctor("label"), glyph=ctor("glyph"), image=ctor("image"), spacer=ctor("spacer"), select=ctor("select"), button=ctor("button") }
 
 noctalia = {
   getenv = function() return "/tmp/opencode/mock-runtime" end,
@@ -84,12 +84,16 @@ local function find_text(t, text)
   if t.props.text == text then return t end
   for _, c in ipairs(t.children or {}) do local r = find_text(c, text); if r then return r end end
 end
+local function find_key(t, key)
+  if t.props.key == key then return t end
+  for _, c in ipairs(t.children or {}) do local r = find_key(c, key); if r then return r end end
+end
 assert(find_text(tree, "status.waiting"), "initial waiting state missing")
 
 stream_cb('{"battery_pct":15,"connected":true,"charging":false,"full":false,"provisional":false,"model":"dualsense","profile":"FPS","lightbar_color":"#a855f7","player_leds":1,"connection":"bluetooth","ts":' .. os.time() .. '}')
 assert(find_text(tree, "15"), "card did not receive the battery percentage")
 assert(find_text(tree, "status.low"), "card did not show the low state")
-assert(find_text(tree, "FPS"), "card did not show the ds4u profile")
+assert(find_key(tree, "profile-select").props.options[1] == "FPS", "card did not show the ds4u profile")
 assert(notifications == 1, "expected exactly one low notification")
 assert(shared.low_notified == true, "low notification flag not published")
 
@@ -98,9 +102,9 @@ assert(find_text(tree, "75"), "charging percentage missing")
 assert(find_text(tree, "status.charging_usb"), "charging USB status missing")
 assert(find_text(tree, "status.model_edge"), "DualSense Edge badge missing")
 
--- Verify card -> service action round-trip
+-- Verify profile selector -> service action round-trip
 async_cmds = {}
-onCycleProfile()
-assert(#async_cmds == 1 and string.find(async_cmds[1], "--cycle-profile", 1, true), "card click did not trigger daemon --cycle-profile")
+onProfileChanged("1", "FPS")
+assert(#async_cmds == 1 and string.find(async_cmds[1], "--switch-profile 'FPS'", 1, true), "profile selector did not switch to FPS")
 
 print("INTEGRATION TEST OK")

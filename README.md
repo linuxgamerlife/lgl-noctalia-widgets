@@ -10,7 +10,7 @@ management of [`ds4u` (DualSense 4 You)](https://git.yokai.digital/deadYokai/ds4
 | Field | Value |
 | --- | --- |
 | Plugin ID | `deadYokai/dualsense` |
-| Version | `1.0.1` |
+| Version | `1.0.2` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 
@@ -32,9 +32,9 @@ same v5 plugin API and is supported by the install scripts.
     active `ds4u` profile's lightbar RGB colour (`~/.config/ds4u/profiles/`).
   - Displays the 5-segment DualSense player indicator LED bar matching `ds4u`'s
     8 player LED patterns.
-  - Shows the active `ds4u` profile name on the card — **click the profile row**
-    to cycle through your saved `ds4u` profiles (via `ds4u` daemon IPC or direct
-    HID output reports).
+  - Shows an explicit profile dropdown on the card. Select any saved `ds4u`
+    profile to apply it via daemon IPC or direct HID output reports. The adjacent
+    settings button opens `ds4u` to create and edit controller profiles.
   - **Click the controller illustration** (or send the `buzz` IPC event) to
     rumble the DualSense controller.
 
