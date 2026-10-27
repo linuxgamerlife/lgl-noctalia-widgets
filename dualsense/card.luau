@@ -470,13 +470,26 @@ local function profile_row(s, is_fresh)
         color = settings.muted_text_color,
       }),
     }),
-    ui.button({
+    ui.box({
       key = "profile-settings",
-      glyph = "settings",
       tooltip = noctalia.tr("actions.open_ds4u"),
-      controlSize = "small",
-      opacity = settings.profile_settings_opacity,
+      width = 28,
+      height = 28,
+      radius = 6,
+      fill = "surface_container_high/" .. string.format("%.2f", settings.profile_settings_opacity),
+      border = "outline_variant/" .. string.format("%.2f", settings.profile_settings_opacity),
+      borderWidth = 1,
+      align = "center",
+      justify = "center",
       onClick = "onOpenDs4u",
+    }, {
+      ui.glyph({
+        key = "profile-settings-icon",
+        name = "settings",
+        size = 15,
+        color = settings.text_color,
+        opacity = 1.0,
+      }),
     }),
   }
   local header = ui.row({

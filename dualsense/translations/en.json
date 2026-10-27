@@ -63,8 +63,8 @@
       "label": "Low battery notification"
     },
     "profile_settings_opacity": {
-      "description": "Opacity of the ds4u settings button, including its background and cog icon.",
-      "label": "Profile settings button opacity"
+      "description": "Opacity of the ds4u settings button background. The cog icon remains fully opaque.",
+      "label": "Profile settings background opacity"
     },
     "show_model_badge": {
       "description": "Show a 'DualSense Edge' label when a DualSense Edge (054c:0df2) controller is connected.",
