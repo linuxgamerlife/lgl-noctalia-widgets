@@ -10,6 +10,7 @@ local config = {
   show_model_badge = true,
   illustration_color = "#e8ebef",
   controller_body_color = "#2c3035",
+  controller_body_opacity = 1.0,
   controller_stroke_width = 2.8,
   battery_color_mode = "lightbar",
   battery_fill_color = "#0080ff",
@@ -36,7 +37,7 @@ noctalia = {
   pluginDataDir = function() return "/tmp/opencode/plugin-data" end,
   readFile = function(p)
     if p == "assets/controller-template.svg" then
-      return "<svg>{{BODY}}|{{COLOR}}|{{LIGHTBAR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>"
+      return "<svg>{{BODY}}|{{BODY_OPACITY}}|{{COLOR}}|{{LIGHTBAR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>"
     end
     return nil
   end,

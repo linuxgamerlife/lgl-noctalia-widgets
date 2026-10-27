@@ -7,7 +7,7 @@
 
 id           = "deadYokai/dualsense"
 name         = "DualSense Battery"
-version      = "1.0.0"
+version      = "1.0.1"
 plugin_api   = 17
 author       = "deadYokai"
 license      = "MIT"
@@ -57,6 +57,16 @@ entry = "card.luau"
   label_key       = "settings.controller_body_color.label"
   description_key = "settings.controller_body_color.description"
   default         = "#2c3035"
+
+  [[desktop_widget.setting]]
+  key             = "controller_body_opacity"
+  type            = "double"
+  label_key       = "settings.controller_body_opacity.label"
+  description_key = "settings.controller_body_opacity.description"
+  default         = 1.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
 
   [[desktop_widget.setting]]
   key             = "controller_stroke_width"

@@ -22,6 +22,7 @@ local state = {
 local config = {
   illustration_color = "#ff8800",
   controller_body_color = "#112233",
+  controller_body_opacity = 0.4,
   controller_stroke_width = 4.0,
   battery_color_mode = "lightbar",
   battery_fill_color = "#33cc99",
@@ -56,7 +57,7 @@ noctalia = {
     watch = function(_, cb) watch_cb = cb end,
   },
   pluginDataDir = function() return "/tmp/opencode/plugin-data" end,
-  readFile = function() return "<svg>{{BODY}}|{{COLOR}}|{{LIGHTBAR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>" end,
+  readFile = function() return "<svg>{{BODY}}|{{BODY_OPACITY}}|{{COLOR}}|{{LIGHTBAR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>" end,
   writeFile = function(path, content) written = { path = path, content = content }; return true end,
   setUpdateInterval = function() end,
   log = function() end,
@@ -85,7 +86,7 @@ end
 
 assert(tree and tree.type == "column", "card tree missing")
 assert(
-  written and written.content == "<svg>#112233|#ff8800|#0080ff|4.00|2.50</svg>",
+  written and written.content == "<svg>#112233|0.40|#ff8800|#0080ff|4.00|2.50</svg>",
   "generated SVG wrong: " .. tostring(written and written.content)
 )
 assert(find_key(tree, "controller-art"), "controller art missing")

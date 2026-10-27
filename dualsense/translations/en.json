@@ -35,6 +35,10 @@
       "description": "Fill colour of the DualSense controller drawing's body.",
       "label": "Controller body colour"
     },
+    "controller_body_opacity": {
+      "description": "Opacity of the controller body fill, from 0 (transparent line art) to 1 (solid).",
+      "label": "Controller body opacity"
+    },
     "controller_stroke_width": {
       "description": "Thickness of the controller outline and touchpad/button edges (0.5–8).",
       "label": "Controller outline thickness"

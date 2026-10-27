@@ -12,6 +12,7 @@ local STALE_AFTER = 20 -- seconds without a daemon heartbeat
 local settings = {
   illustration_color = noctalia.getConfig("illustration_color") or "#e8ebef",
   controller_body_color = noctalia.getConfig("controller_body_color") or "#2c3035",
+  controller_body_opacity = tonumber(noctalia.getConfig("controller_body_opacity")) or 1.0,
   controller_stroke_width = tonumber(noctalia.getConfig("controller_stroke_width")) or 2.8,
   battery_color_mode = noctalia.getConfig("battery_color_mode") or "lightbar",
   battery_fill_color = noctalia.getConfig("battery_fill_color") or "#0080ff",
@@ -36,6 +37,11 @@ if settings.battery_fill_opacity < 0 then
   settings.battery_fill_opacity = 0
 elseif settings.battery_fill_opacity > 1 then
   settings.battery_fill_opacity = 1
+end
+if settings.controller_body_opacity < 0 then
+  settings.controller_body_opacity = 0
+elseif settings.controller_body_opacity > 1 then
+  settings.controller_body_opacity = 1
 end
 if settings.text_color == "" then
   settings.text_color = "on_surface"
@@ -145,13 +151,15 @@ local function controller_art()
   local stroke = settings.controller_stroke_width
   local stroke_text = string.format("%.2f", stroke)
   local grip_text = string.format("%.2f", stroke * 0.625)
+  local body_opacity_text = string.format("%.2f", settings.controller_body_opacity)
 
   local dir = noctalia.pluginDataDir()
   if not dir then
     return fallback
   end
   local path = dir .. "/dualsense-v1-" .. color_key(line) .. "-" .. color_key(body)
-    .. "-" .. color_key(lb) .. "-" .. color_key(stroke_text) .. ".svg"
+    .. "-" .. color_key(lb) .. "-" .. color_key(stroke_text)
+    .. "-" .. color_key(body_opacity_text) .. ".svg"
   if path == art_path then
     return path
   end
@@ -161,6 +169,7 @@ local function controller_art()
   end
 
   local svg = string.gsub(template, "{{BODY}}", body)
+  svg = string.gsub(svg, "{{BODY_OPACITY}}", body_opacity_text)
   svg = string.gsub(svg, "{{COLOR}}", line)
   svg = string.gsub(svg, "{{LIGHTBAR}}", lb)
   svg = string.gsub(svg, "{{STROKE_BODY}}", stroke_text)

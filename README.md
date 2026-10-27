@@ -10,7 +10,7 @@ management of [`ds4u` (DualSense 4 You)](https://git.yokai.digital/deadYokai/ds4
 | Field | Value |
 | --- | --- |
 | Plugin ID | `deadYokai/dualsense` |
-| Version | `1.0.0` |
+| Version | `1.0.1` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 
@@ -42,7 +42,7 @@ same v5 plugin API and is supported by the install scripts.
 
 The desktop widget exposes:
 
-- controller line colour, body colour and outline thickness
+- controller line colour, body colour, body opacity and outline thickness
 - battery fill mode: `ds4u` lightbar colour, connection colours (blue on
   Bluetooth, green on USB-C), or a custom colour
 - battery fill opacity (`0–1`) and a separate low-battery colour
@@ -83,6 +83,29 @@ From the repository root:
 
 Then enable **DualSense Battery** in **Settings → Plugins** if the installer
 did not, and add it from **Settings → Desktop → Toggle Editor**.
+
+For KWE, you can also enable the plugin from a terminal:
+
+```bash
+noctalia-kwe msg plugins enable deadYokai/dualsense
+noctalia-kwe msg plugins list | grep deadYokai/dualsense
+```
+
+The service must say `enabled` before widget actions or plugin IPC can work.
+Grant HID access before testing direct controller reads:
+
+```bash
+sudo tee /etc/udev/rules.d/70-dualsense.rules >/dev/null <<'EOF'
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", MODE="0664", GROUP="input", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0df2", MODE="0664", GROUP="input", TAG+="uaccess"
+EOF
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=hidraw
+```
+
+Unplug/replug USB controllers or reconnect Bluetooth after loading the rule.
+See the [complete setup and verification guide](dualsense/README.md#hidraw-permissions)
+for group membership, declarative configuration, `ds4u`, and IPC diagnostics.
 
 `install-kwe.sh` links the plugin into
 `~/.local/share/noctalia-kwe/plugins`; `install.sh` uses

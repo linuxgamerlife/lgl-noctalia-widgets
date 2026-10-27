@@ -67,7 +67,7 @@ LOCK_FILE = os.path.join(RUNTIME_DIR, "noctalia-dualsense-battery.lock")
 DS4U_SOCKET = os.path.join(RUNTIME_DIR, "ds4u.socket")
 CONFIG_HOME = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
 DS4U_CONFIG_DIR = os.path.join(CONFIG_HOME, "ds4u")
-DAEMON_VERSION = "1.0.0"
+DAEMON_VERSION = "1.0.1"
 
 PLAYER_LED_PATTERNS = (
     0b00000,
@@ -166,9 +166,25 @@ def read_ds4u_config(override_profile=None):
         try:
             with open(profile_file) as f:
                 p = json.load(f)
-            r = float(p.get("lightbar_r", 0.0)) * 255.0
-            g = float(p.get("lightbar_g", 0.5)) * 255.0
-            b = float(p.get("lightbar_b", 1.0)) * 255.0
+            # ds4u first converts profile RGB (0..1) to bytes, then scales each
+            # channel by lightbar_brightness (0..255) before sending it.
+            # Mirror the bytes seen by the physical controller, not merely the
+            # unscaled colour selected in the profile editor.
+            brightness = max(
+                0, min(255, int(float(p.get("lightbar_brightness", 255.0))))
+            )
+            r = (
+                max(0, min(255, int(float(p.get("lightbar_r", 0.0)) * 255.0)))
+                * brightness
+            ) // 255
+            g = (
+                max(0, min(255, int(float(p.get("lightbar_g", 0.5)) * 255.0)))
+                * brightness
+            ) // 255
+            b = (
+                max(0, min(255, int(float(p.get("lightbar_b", 1.0)) * 255.0)))
+                * brightness
+            ) // 255
             lightbar_color = rgb_to_hex(r, g, b)
             player_leds = max(0, min(7, int(p.get("player_leds", 1))))
             mic_muted = not bool(p.get("mic_enabled", False))

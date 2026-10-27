@@ -12,6 +12,9 @@ if ! command -v luajit >/dev/null 2>&1; then
     exit 1
 fi
 
+echo "==> test_daemon.py"
+python3 "$SCRIPT_DIR/test_daemon.py"
+
 for test in "$SCRIPT_DIR"/test_*.luau; do
     echo "==> $(basename "$test")"
     luajit "$test" "$PLUGIN_DIR"
