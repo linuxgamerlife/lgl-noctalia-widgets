@@ -52,6 +52,7 @@ ui = {
 
 noctalia = {
   getConfig = function(k) return config[k] end,
+  getenv = function(k) if k == "HOME" then return "/home/test" end end,
   tr = function(k) return k end,
   state = {
     get = function() return state end,
@@ -62,6 +63,7 @@ noctalia = {
   readFile = function() return "<svg>{{BODY}}|{{BODY_OPACITY}}|{{COLOR}}|{{LIGHTBAR}}|{{STROKE_BODY}}|{{STROKE_GRIP}}</svg>" end,
   writeFile = function(path, content) written = { path = path, content = content }; return true end,
   commandExists = function() return true end,
+  fileExists = function(path) return path == "/home/test/bin/ds4u" end,
   runAsync = function(cmd) async_cmd = cmd; return true end,
   setUpdateInterval = function() end,
   log = function() end,
@@ -99,10 +101,9 @@ assert(find_key(tree, "player-leds-row"), "player LEDs missing")
 assert(find_key(tree, "profile-row"), "profile row missing")
 assert(find_key(tree, "profile-select"), "profile selector missing")
 assert(find_key(tree, "profile-settings"), "profile settings button missing")
-assert(find_key(tree, "profile-select").props.options[2] == "FPS", "saved profile option missing")
 assert(find_key(tree, "ds4u-daemon-badge"), "ds4u daemon badge missing")
 assert(find_text(tree, "65"), "battery percentage missing")
-assert(find_key(tree, "profile-select").props.selectedIndex == 0, "active profile not selected")
+assert(find_key(tree, "profile-name").props.text == "Default", "active profile not shown")
 assert(find_text(tree, "status.connected"), "connected status missing")
 assert(find_text(tree, "65").props.color == "#abcdef", "primary text colour not applied")
 assert(find_text(tree, "%").props.color == "#123456", "secondary text colour not applied")
@@ -112,12 +113,16 @@ assert(find_key(tree, "battery-fill").props.opacity == 0.5, "fill opacity settin
 assert(frame_tick == false, "should not request frame ticks while idle")
 
 -- Test direct profile selection callback
-onProfileChanged("1", "FPS")
+onToggleProfileMenu()
+assert(find_key(tree, "profile-menu"), "profile menu did not open")
+assert(find_key(tree, "profile-option-2"), "saved profile option missing")
+find_key(tree, "profile-option-2").props.onClick()
 assert(last_action and last_action.action == "switch-profile", "profile selector did not publish switch action")
 assert(last_action.profile == "FPS", "profile selector published the wrong profile")
+assert(find_key(tree, "profile-menu") == nil, "profile menu did not close after selection")
 
 onOpenDs4u()
-assert(async_cmd == "ds4u", "profile settings button did not open ds4u")
+assert(string.find(async_cmd or "", "/home/test/bin/ds4u", 1, true), "profile settings button did not open ds4u")
 
 -- Test buzz click callback
 onBuzzController()

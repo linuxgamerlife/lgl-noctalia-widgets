@@ -93,7 +93,7 @@ assert(find_text(tree, "status.waiting"), "initial waiting state missing")
 stream_cb('{"battery_pct":15,"connected":true,"charging":false,"full":false,"provisional":false,"model":"dualsense","profile":"FPS","lightbar_color":"#a855f7","player_leds":1,"connection":"bluetooth","ts":' .. os.time() .. '}')
 assert(find_text(tree, "15"), "card did not receive the battery percentage")
 assert(find_text(tree, "status.low"), "card did not show the low state")
-assert(find_key(tree, "profile-select").props.options[1] == "FPS", "card did not show the ds4u profile")
+assert(find_key(tree, "profile-name").props.text == "FPS", "card did not show the ds4u profile")
 assert(notifications == 1, "expected exactly one low notification")
 assert(shared.low_notified == true, "low notification flag not published")
 

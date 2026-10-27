@@ -67,7 +67,7 @@ LOCK_FILE = os.path.join(RUNTIME_DIR, "noctalia-dualsense-battery.lock")
 DS4U_SOCKET = os.path.join(RUNTIME_DIR, "ds4u.socket")
 CONFIG_HOME = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
 DS4U_CONFIG_DIR = os.path.join(CONFIG_HOME, "ds4u")
-DAEMON_VERSION = "1.0.2"
+DAEMON_VERSION = "1.0.3"
 
 PLAYER_LED_PATTERNS = (
     0b00000,

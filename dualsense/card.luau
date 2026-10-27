@@ -94,6 +94,8 @@ local pulse = 1
 local pulse_phase = 0
 local frame_accum = 0
 local action_seq = 0
+local profile_menu_open = false
+local render
 
 local function resolve_color(value, fallback)
   if value == nil or value == "" then
@@ -427,7 +429,7 @@ local function profile_row(s, is_fresh)
     selected_index = 0
   end
   local lb = active_lightbar_hex()
-  local children = {
+  local header_children = {
     ui.box({
       key = "lightbar-dot",
       width = 7,
@@ -435,25 +437,51 @@ local function profile_row(s, is_fresh)
       radius = 3.5,
       fill = lb,
     }),
-    ui.select({
+    ui.row({
       key = "profile-select",
-      options = options,
-      selectedIndex = selected_index,
-      width = 110,
-      controlSize = "small",
-      enabled = #options > 0,
-      onChange = "onProfileChanged",
+      width = 104,
+      height = 24,
+      padding = 6,
+      gap = 4,
+      align = "center",
+      radius = 5,
+      fill = "surface_container_high/0.9",
+      border = "outline_variant",
+      borderWidth = 1,
+      onClick = "onToggleProfileMenu",
+    }, {
+      ui.label({
+        key = "profile-name",
+        text = options[selected_index + 1] or prof,
+        fontSize = 11,
+        color = settings.text_color,
+        flexGrow = 1,
+      }),
+      ui.glyph({
+        key = "profile-chevron",
+        name = profile_menu_open and "chevron-up" or "chevron-down",
+        size = 11,
+        color = settings.muted_text_color,
+      }),
     }),
-    ui.button({
+    ui.box({
       key = "profile-settings",
-      glyph = "settings",
       tooltip = noctalia.tr("actions.open_ds4u"),
-      controlSize = "small",
+      width = 24,
+      height = 24,
+      radius = 5,
+      fill = "surface_container_high/0.9",
+      border = "outline_variant",
+      borderWidth = 1,
+      align = "center",
+      justify = "center",
       onClick = "onOpenDs4u",
+    }, {
+      ui.glyph({ name = "settings", size = 14, color = settings.text_color }),
     }),
   }
   if s.ds4u_daemon == true then
-    table.insert(children, ui.glyph({
+    table.insert(header_children, ui.glyph({
       key = "ds4u-daemon-badge",
       name = "bolt",
       size = 10,
@@ -461,15 +489,50 @@ local function profile_row(s, is_fresh)
       opacity = 0.85,
     }))
   end
-  return ui.row({
+  local header = ui.row({
     key = "profile-row",
     gap = 5,
     align = "center",
     justify = "center",
-  }, children)
+  }, header_children)
+
+  local children = { header }
+  if profile_menu_open then
+    local option_nodes = {}
+    for i, name in ipairs(options) do
+      local option_name = name
+      table.insert(option_nodes, ui.row({
+        key = "profile-option-" .. i,
+        width = 104,
+        height = 22,
+        padding = 6,
+        align = "center",
+        radius = 4,
+        fill = option_name == prof and "primary_container/0.8" or "surface_container_high/0.95",
+        onClick = function()
+          profile_menu_open = false
+          onProfileChanged(tostring(i - 1), option_name)
+          render()
+        end,
+      }, {
+        ui.label({
+          text = option_name,
+          fontSize = 11,
+          color = option_name == prof and "on_primary_container" or settings.text_color,
+        }),
+      }))
+    end
+    table.insert(children, ui.column({
+      key = "profile-menu",
+      gap = 2,
+      align = "center",
+    }, option_nodes))
+  end
+
+  return ui.column({ key = "profile-control", gap = 2, align = "center" }, children)
 end
 
-local function render()
+render = function()
   local s = type(current_state) == "table" and current_state or {}
   local mode, connected, charging, pct, known, is_fresh = mode_of()
   local off = mode == "disconnected"
@@ -603,16 +666,35 @@ function onProfileChanged(index, text)
   })
 end
 
+function onToggleProfileMenu()
+  profile_menu_open = not profile_menu_open
+  render()
+end
+
 function onBuzzController()
   action_seq = action_seq + 1
   noctalia.state.set("action", { action = "buzz", seq = action_seq })
 end
 
 function onOpenDs4u()
-  if type(noctalia.commandExists) == "function" and not noctalia.commandExists("ds4u") then
-    return
+  local home = type(noctalia.getenv) == "function" and noctalia.getenv("HOME") or ""
+  local candidates = {
+    home ~= "" and home .. "/bin/ds4u" or "",
+    home ~= "" and home .. "/.local/bin/ds4u" or "",
+    "/usr/local/bin/ds4u",
+    "/usr/bin/ds4u",
+  }
+  if type(noctalia.fileExists) == "function" then
+    for _, path in ipairs(candidates) do
+      if path ~= "" and noctalia.fileExists(path) then
+        noctalia.runAsync(string.format("%q", path))
+        return
+      end
+    end
   end
-  noctalia.runAsync("ds4u")
+  if type(noctalia.commandExists) ~= "function" or noctalia.commandExists("ds4u") then
+    noctalia.runAsync("ds4u")
+  end
 end
 
 function onFrameTick(delta_ms)
