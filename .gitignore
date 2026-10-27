@@ -1,0 +1,17 @@
+# Operating-system and editor files
+.DS_Store
+*~
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local test and generated output
+test-results/
+plugin-data/
+*.bak
+*.bak.*
+*.zip
