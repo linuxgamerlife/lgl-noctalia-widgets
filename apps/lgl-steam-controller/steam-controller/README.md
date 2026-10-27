@@ -1,4 +1,4 @@
-# Steam Controller Battery — Noctalia plugin
+# LGL Steam Controller Battery — Technical Reference
 
 A Noctalia desktop widget for the Steam Controller 2 ("Triton") that shows the
 battery level, charging state, connection type and wireless link quality. It is
@@ -55,7 +55,7 @@ From the app directory (`apps/lgl-steam-controller`):
 ```
 
 `install-kwe.sh` links into `~/.local/share/noctalia-kwe/plugins`.
-`install.sh` links into `~/.local/share/noctalia/plugins`. Both scripts honor
+`install.sh` links into `~/.local/share/noctalia/plugins`. Both scripts honour
 `NOCTALIA_DATA_HOME` and `XDG_DATA_HOME`.
 
 Manual install for upstream Noctalia:
@@ -284,7 +284,7 @@ Each script:
 - removes the runtime state/lock files
 - removes the installed plugin link and the plugin's per-plugin data directory
 
-Pass `--yes` for a non-interactive removal. The scripts honor
+Pass `--yes` for a non-interactive removal. The scripts honour
 `NOCTALIA_DATA_HOME`, `NOCTALIA_STATE_HOME`, `XDG_DATA_HOME`,
 `XDG_STATE_HOME` and `XDG_RUNTIME_DIR`.
 
@@ -302,7 +302,10 @@ rm -f "${XDG_RUNTIME_DIR:-/tmp}/noctalia-sc-battery.json" \
 Disabling the plugin in Noctalia is enough to stop the service; the scripts
 also clean the widget instances and leftover files.
 
-## License
+## Credits and License
 
-MIT — same as the Plasma widget. The controller illustration is drawn from
-scratch, not Valve artwork.
+Based on Jahrek's Steam Controller Plasma widget and adapted by LGL for
+Noctalia and Noctalia KWE. The controller illustration is drawn from scratch
+and is not Valve artwork.
+
+MIT — see [LICENSE](LICENSE).

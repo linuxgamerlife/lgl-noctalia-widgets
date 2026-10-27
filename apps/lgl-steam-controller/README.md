@@ -1,12 +1,25 @@
-# Steam Controller Battery — Noctalia plugin
+<div align="center">
 
-A Noctalia v5 desktop widget and headless service that shows the battery level,
-charging state, connection type and wireless link quality of the Steam
-Controller 2 ("Triton").
+# LGL Steam Controller Battery
 
-This is the standalone Noctalia repository, split out of the
+**Steam Controller 2 battery, charging, connection, and signal state for Noctalia.**
+
+[![Version](https://img.shields.io/badge/version-2.3.0-purple)](steam-controller/plugin.toml)
+[![Plugin API](https://img.shields.io/badge/Noctalia_API-17-blue)](steam-controller/plugin.toml)
+[![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
+
+</div>
+
+---
+
+## Overview
+
+LGL Steam Controller Battery is a Noctalia v5 desktop widget and headless
+service adapted from Jahrek's
 [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget).
-The Plasma widget lives in that repository; this one contains the Noctalia port.
+It shows the battery level, charging state, connection type, and wireless link
+quality of the Steam Controller 2 ("Triton"), with additional Noctalia-native
+theming and configuration.
 
 | Field | Value |
 | --- | --- |
@@ -14,10 +27,11 @@ The Plasma widget lives in that repository; this one contains the Noctalia port.
 | Version | `2.3.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
+| License | MIT |
 
 Tested live on KineticWE's `noctalia-kwe` v5.3.0. Upstream Noctalia uses the
 same v5 plugin API and is supported by the install scripts, but has not been
-tested on the author's machine.
+tested on LGL's hardware.
 
 ## Configuration
 
@@ -34,7 +48,7 @@ live Noctalia theme; the controller art regenerates when the resolved palette
 colour changes. See the
 [full settings table](steam-controller/README.md#settings).
 
-## Layout
+## Project Layout
 
 | Path | What it is |
 | --- | --- |
@@ -64,13 +78,13 @@ installer did not, and add it from **Settings → Desktop → Toggle Editor**.
 
 `install-kwe.sh` links the plugin into
 `~/.local/share/noctalia-kwe/plugins`; `install.sh` uses
-`~/.local/share/noctalia/plugins`. Both honor `NOCTALIA_DATA_HOME` and
+`~/.local/share/noctalia/plugins`. Both honour `NOCTALIA_DATA_HOME` and
 `XDG_DATA_HOME`.
 
 Full requirements, settings, protocol notes, IPC and troubleshooting are in
 [`steam-controller/README.md`](steam-controller/README.md).
 
-## Remove
+## Uninstall
 
 ```bash
 ./uninstall-kwe.sh   # KWE
@@ -96,7 +110,11 @@ Noctalia session is needed.
 - Python 3 (standard library only)
 - Permission to read the controller's `/dev/hidraw*` nodes
 
-## License
+## Credits and License
 
-MIT — see [LICENSE](LICENSE). The controller illustration is drawn from scratch,
-not Valve artwork.
+Based on Jahrek's
+[Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget).
+LGL adapted and extended it for Noctalia and Noctalia KWE. The controller
+illustration is drawn from scratch and is not Valve artwork.
+
+MIT — see [LICENSE](LICENSE).

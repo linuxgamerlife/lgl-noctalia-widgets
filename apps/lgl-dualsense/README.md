@@ -1,11 +1,25 @@
-# DualSense Battery — Noctalia plugin
+<div align="center">
 
-A Noctalia v5 desktop widget and headless service for the PlayStation 5
-DualSense (`054c:0ce6`) and DualSense Edge (`054c:0df2`) controllers, combining
-the desktop card architecture of
-[`lgl-steam-controller-noctalia-widget`](https://github.com/jahrekza/steam-controller-plasma-widget)
-with the DualSense HID protocol, artwork, lightbar/player-LED state and profile
-management of [`ds4u` (DualSense 4 You)](https://git.yokai.digital/deadYokai/ds4u).
+# LGL DualSense Battery
+
+**DualSense battery, lightbar, player LEDs, and profiles in a Noctalia desktop widget.**
+
+[![Version](https://img.shields.io/badge/version-1.0.10-purple)](dualsense/plugin.toml)
+[![Plugin API](https://img.shields.io/badge/Noctalia_API-17-blue)](dualsense/plugin.toml)
+[![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
+
+</div>
+
+---
+
+## Overview
+
+LGL DualSense Battery is a Noctalia v5 desktop widget and headless service for
+the PlayStation 5 DualSense (`054c:0ce6`) and DualSense Edge (`054c:0df2`). It
+combines the desktop-card approach inspired by Jahrek's
+[Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget)
+with DualSense HID handling, artwork, lightbar and player-LED state, and profile
+management informed by [ds4u](https://git.yokai.digital/deadYokai/ds4u).
 
 | Field | Value |
 | --- | --- |
@@ -13,6 +27,7 @@ management of [`ds4u` (DualSense 4 You)](https://git.yokai.digital/deadYokai/ds4
 | Version | `1.0.10` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
+| License | MIT |
 
 Tested live on KineticWE's `noctalia-kwe` v5.3.0. Upstream Noctalia uses the
 same v5 plugin API and is supported by the install scripts.
@@ -62,7 +77,7 @@ live Noctalia theme; the controller art regenerates when the resolved palette
 colour or `ds4u` lightbar colour changes. See the
 [full settings table](dualsense/README.md#settings).
 
-## Layout
+## Project Layout
 
 | Path | What it is |
 | --- | --- |
@@ -114,13 +129,13 @@ for group membership, widget configuration, `ds4u`, and IPC diagnostics.
 
 `install-kwe.sh` links the plugin into
 `~/.local/share/noctalia-kwe/plugins`; `install.sh` uses
-`~/.local/share/noctalia/plugins`. Both honor `NOCTALIA_DATA_HOME` and
+`~/.local/share/noctalia/plugins`. Both honour `NOCTALIA_DATA_HOME` and
 `XDG_DATA_HOME`.
 
 Full requirements, settings, protocol notes, IPC and troubleshooting are in
 [`dualsense/README.md`](dualsense/README.md).
 
-## Remove
+## Uninstall
 
 ```bash
 ./uninstall-kwe.sh   # KWE
@@ -139,6 +154,11 @@ runtime and plugin data. Use `--yes` for non-interactive removal.
   `/dev/hidraw*` nodes. See the beginner-friendly
   [udev setup and removal guide](dualsense/README.md#give-your-user-controller-access-udev).
 
-## License
+## Credits and License
+
+Thanks to Jahrek for the original Steam Controller Plasma widget that inspired
+the card approach, and to deadYokai for the DualSense protocol and profile work
+in [ds4u](https://git.yokai.digital/deadYokai/ds4u). LGL adapted and integrated
+these ideas for Noctalia and Noctalia KWE.
 
 MIT — see [LICENSE](LICENSE).

@@ -1,4 +1,4 @@
-# DualSense Battery — Noctalia plugin
+# LGL DualSense Battery — Technical Reference
 
 A Noctalia desktop widget for Sony DualSense (`054c:0ce6`) and DualSense Edge
 (`054c:0df2`) controllers that shows the battery level, charging state,
@@ -318,6 +318,10 @@ controller is connected, `ds4u --daemon` has created
 direct Python command exits `0` on success and `1` when neither path can control
 the device.
 
-## License
+## Credits and License
+
+Thanks to Jahrek for the Steam Controller Plasma widget that inspired the card
+approach, and to deadYokai for the DualSense work in `ds4u`. LGL adapted and
+integrated these ideas for Noctalia and Noctalia KWE.
 
 MIT — see [LICENSE](LICENSE).

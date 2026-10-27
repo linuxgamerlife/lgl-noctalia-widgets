@@ -1,41 +1,98 @@
+<div align="center">
+
 # LGL Noctalia Widgets
 
-LGL ports and adaptations of KDE Plasma widgets for
-[Noctalia Shell](https://github.com/noctalia-dev/noctalia-shell) and
-KineticWE's `noctalia-kwe` fork. These are not simple mirrors: the original
-widgets have been converted to Noctalia's plugin APIs, modified for LGL's use,
-and extended and packaged for others who want to use them.
+**KDE Plasma widgets, rebuilt and improved for Noctalia Shell and Noctalia KWE.**
 
-Each app is maintained independently within this monorepo and includes its own
-installer, plugin catalog, detailed documentation, and license. The original
-projects and authors are credited in [Origins and thanks](#origins-and-thanks).
+[![Apps](https://img.shields.io/badge/apps-4-purple)](#apps)
+[![Noctalia](https://img.shields.io/badge/Noctalia-v5-blue)](https://github.com/noctalia-dev/noctalia-shell)
+[![Noctalia KWE](https://img.shields.io/badge/noctalia--kwe-v5.3.0-blue)](#install)
+[![Language](https://img.shields.io/badge/Luau-plugins-00A2FF)](#how-the-ports-work)
+[![Support on Ko-fi](https://img.shields.io/badge/Support_on-Ko--fi-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/linuxgamerlife)
+
+</div>
+
+---
+
+## Overview
+
+LGL Noctalia Widgets is a collection of KDE Plasma widget ports and related
+adaptations for [Noctalia Shell](https://github.com/noctalia-dev/noctalia-shell)
+and KineticWE's `noctalia-kwe` fork.
+
+These are not simple mirrors. Each app has been converted to Noctalia's Luau
+plugin APIs, adapted for LGL's desktop, improved where useful, and packaged so
+other Noctalia users can install it easily.
+
+- Native Noctalia v5 services, desktop widgets, bar widgets, and panels
+- Separate installers for upstream Noctalia and Noctalia KWE
+- Theme-aware colours and Noctalia host-panel integration
+- Self-contained documentation, tests where available, and uninstall tools
+- Original projects, authors, and licences retained and credited
+
+---
 
 ## Apps
 
-| App | Plugin ID | Description | License |
-| --- | --- | --- | --- |
-| [LGL AI Usage](apps/lgl-ai-usage/) | `lukk17/ai-usage` | AI limits, spend, and account balances[^ai-usage] | GPL-3.0-or-later |
-| [LGL DualSense Battery](apps/lgl-dualsense/) | `deadYokai/dualsense` | DualSense battery, lightbar, and profile controls[^dualsense] | MIT |
-| [LGL Modern SysMonitor Plus](apps/lgl-modern-sysmonitor-plus/) | `unsaidspeech/modern-sysmonitor-plus` | CPU, GPU, memory, disk, and network monitoring[^sysmonitor] | GPL-2.0-or-later |
-| [LGL Steam Controller Battery](apps/lgl-steam-controller/) | `jahrek/steam-controller` | Steam Controller battery and wireless status[^steam-controller] | MIT |
+| App | What it does | Plugin API | Licence |
+|---|---|---:|---|
+| [**LGL AI Usage**](apps/lgl-ai-usage/) | Shows AI limits, spend, balances, and local OpenCode statistics in desktop, bar, and panel views[^ai-usage] | 24 | GPL-3.0-or-later |
+| [**LGL DualSense Battery**](apps/lgl-dualsense/) | Shows DualSense battery and connection state with lightbar, player LED, and optional `ds4u` profile controls[^dualsense] | 17 | MIT |
+| [**LGL Modern SysMonitor Plus**](apps/lgl-modern-sysmonitor-plus/) | Monitors CPU, GPU, memory, disks, fans, temperatures, and network activity[^sysmonitor] | 22 | GPL-2.0-or-later |
+| [**LGL Steam Controller Battery**](apps/lgl-steam-controller/) | Shows Steam Controller 2 battery, charging, connection, and wireless signal state[^steam-controller] | 17 | MIT |
 
-## Installation
+Open an app's README for its requirements, settings, hardware notes, and full
+installation instructions.
 
-Each app has separate installers for upstream Noctalia and `noctalia-kwe`.
-Run the appropriate installer from the repository root, for example:
+---
+
+## Install
+
+Clone the monorepo:
 
 ```bash
-# Upstream Noctalia
-./apps/lgl-ai-usage/install.sh
-
-# KineticWE noctalia-kwe
-./apps/lgl-ai-usage/install-kwe.sh
+git clone https://github.com/linuxgamerlife/lgl-noctalia-widgets.git
+cd lgl-noctalia-widgets
 ```
 
-See the app's README for its requirements, settings, and complete installation
-instructions.
+Each app has one installer for Noctalia KWE and one for upstream Noctalia. Run
+the appropriate script from the repository root, for example:
 
-## Repository layout
+```bash
+# KineticWE's noctalia-kwe fork
+./apps/lgl-ai-usage/install-kwe.sh
+
+# Upstream Noctalia
+./apps/lgl-ai-usage/install.sh
+```
+
+The scripts link the selected plugin into the correct user data directory and
+honour `NOCTALIA_DATA_HOME` and `XDG_DATA_HOME`. Installation does not combine
+the apps; install only the ones you want.
+
+---
+
+## How the Ports Work
+
+The original KDE widgets use technologies such as QML, Plasma APIs, KWallet,
+and KDE-specific data engines. The LGL ports replace those pieces with Noctalia
+v5 equivalents:
+
+| KDE / Plasma | LGL Noctalia ports |
+|---|---|
+| QML widget interface | Luau `ui.*` trees |
+| Plasma data sources | Headless Noctalia services and Linux system interfaces |
+| Plasma desktop placement | Noctalia desktop-widget entries |
+| Panel popup | Noctalia bar-widget and panel entries where applicable |
+| KDE palette roles | Live Noctalia palette roles with optional overrides |
+| KWallet | Secret Service through `secret-tool` where credentials are needed |
+
+Every port keeps its own technical documentation because the supported
+hardware, services, dependencies, and upstream licence differ.
+
+---
+
+## Project Layout
 
 ```text
 apps/
@@ -45,16 +102,33 @@ apps/
 └── lgl-steam-controller/
 ```
 
-The apps have different licenses. Refer to the `LICENSE` file within each app
-directory for the terms that apply to that app.
+Each app directory contains its plugin payload, catalog entry, installers,
+uninstallers, app-level README, licence, and tests when available. The nested
+README inside each plugin payload is the detailed technical reference.
 
-## Origins and thanks
+---
+
+## Origins and Thanks
 
 Many thanks to the original authors whose work made these ports possible. LGL's
-versions preserve the applicable upstream licenses and document the changes and
-Noctalia-specific implementation in each app's README.
+versions retain the applicable upstream licences and document the Noctalia-
+specific implementation and improvements in each app's README.
 
 [^ai-usage]: Based on the [AI Usage KDE Plasma widget](https://github.com/lukk17/ai-usage-widget) by Łukasz Sarna.
-[^dualsense]: Uses ideas from Jahrek's [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget) and DualSense protocol and profile work from deadYokai's [ds4u](https://git.yokai.digital/deadYokai/ds4u).
+[^dualsense]: Uses the desktop-card approach inspired by Jahrek's [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget), with DualSense protocol and profile work informed by deadYokai's [ds4u](https://git.yokai.digital/deadYokai/ds4u).
 [^sysmonitor]: Based on [Modern SysMonitor Plus](https://github.com/UnsaidSpeech/modern-sysmonitor-plus) by UnsaidSpeech, itself based on the original Modern SysMonitor by Joao Gabriel Medeiros.
 [^steam-controller]: Based on Jahrek's [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget).
+
+---
+
+## Licences
+
+The apps use different licences. Refer to the `LICENSE` file in each app
+directory for the terms that apply to that app. No single repository-wide
+licence overrides those individual terms.
+
+---
+
+<div align="center">
+Made for <a href="https://github.com/noctalia-dev/noctalia-shell">Noctalia</a> · adapted by <a href="https://www.youtube.com/@linuxgamerlife">LinuxGamerLife</a>
+</div>

@@ -1,14 +1,25 @@
-# Modern SysMonitor Plus — Noctalia plugin
+<div align="center">
 
-A Noctalia v5 desktop widget and headless poller that shows CPU, GPU, RAM,
-VRAM, network and physical-disk activity in the solid-bar and live-chart style
-of the Modern SysMonitor Plus Plasma widget.
+# LGL Modern SysMonitor Plus
 
-This is the standalone Noctalia port of
-[Modern SysMonitor Plus](https://github.com/UnsaidSpeech/modern-sysmonitor-plus),
-a KDE Plasma 6 widget. The Plasma widget stays in its repository; this one
-contains the Noctalia port. The original Modern SysMonitor design and code are
-by Joao Gabriel Medeiros; the Plus changes are by UnsaidSpeech.
+**CPU, GPU, memory, disk, fan, temperature, and network monitoring for Noctalia.**
+
+[![Version](https://img.shields.io/badge/version-1.0.0-purple)](modern-sysmonitor-plus/plugin.toml)
+[![Plugin API](https://img.shields.io/badge/Noctalia_API-22-blue)](modern-sysmonitor-plus/plugin.toml)
+[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-yellow)](LICENSE)
+
+</div>
+
+---
+
+## Overview
+
+LGL Modern SysMonitor Plus is a Noctalia v5 desktop widget and headless poller
+adapted from the KDE Plasma 6 widget
+[Modern SysMonitor Plus](https://github.com/UnsaidSpeech/modern-sysmonitor-plus).
+It shows CPU, GPU, RAM, VRAM, network, and physical-disk activity with solid
+bars and live charts. The original Modern SysMonitor design and code are by
+Joao Gabriel Medeiros; the Plus changes are by UnsaidSpeech.
 
 | Field | Value |
 | --- | --- |
@@ -81,7 +92,7 @@ surface the user sees. The inner cards are translucent content surfaces, not a
 second outer panel. With **Host panel background** off, the card adds a 6 px
 content inset and draws no outer fill.
 
-## Layout
+## Project Layout
 
 | Path | What it is |
 | --- | --- |
@@ -147,7 +158,7 @@ keys as the first rows.
 If you need a different layout, that is a shell-side change to the widget
 inspector, not something a plugin manifest can request.
 
-## Remove
+## Uninstall
 
 ```bash
 ./uninstall-kwe.sh   # KWE
@@ -210,7 +221,10 @@ translations, entries and repository layout.
 - A GPU with no probe is shown as **No GPU detected** instead of zeros, so an
   unknown GPU is never mistaken for an idle one.
 
-## License
+## Credits and License
 
-GPL-2.0-or-later — see [LICENSE](LICENSE). Based on Modern SysMonitor Plus by
-UnsaidSpeech and the original Modern SysMonitor by Joao Gabriel Medeiros.
+Based on Modern SysMonitor Plus by UnsaidSpeech and the original Modern
+SysMonitor by Joao Gabriel Medeiros. LGL adapted and extended the widget for
+Noctalia and Noctalia KWE.
+
+GPL-2.0-or-later — see [LICENSE](LICENSE).

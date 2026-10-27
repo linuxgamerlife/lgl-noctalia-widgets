@@ -1,4 +1,4 @@
-# Modern SysMonitor Plus
+# LGL Modern SysMonitor Plus — Technical Reference
 
 Noctalia v5 plugin with a headless sampler (`poller` service) and a desktop
 card (`card` widget entry). The service reads the sources the KDE widget used,
@@ -241,7 +241,10 @@ tile width minus twice the panel padding, or turn the host panel off. The port
 does not scroll inside a fixed-height tile like the KDE widget did; resize the
 tile height instead.
 
-## License
+## Credits and License
 
-GPL-2.0-or-later — see [LICENSE](LICENSE). Based on Modern SysMonitor Plus by
-UnsaidSpeech and the original Modern SysMonitor by Joao Gabriel Medeiros.
+Based on Modern SysMonitor Plus by UnsaidSpeech and the original Modern
+SysMonitor by Joao Gabriel Medeiros. LGL adapted and extended it for Noctalia
+and Noctalia KWE.
+
+GPL-2.0-or-later — see [LICENSE](LICENSE).

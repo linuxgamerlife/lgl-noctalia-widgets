@@ -1,4 +1,4 @@
-# AI Usage
+# LGL AI Usage — Technical Reference
 
 Noctalia v5 plugin with a headless `poller` service, a desktop card, a compact
 bar widget and a panel. The service checks every account on a timer and publishes
@@ -237,7 +237,9 @@ Noctalia has no wallet unlock API.
 **Local model stats are unavailable.** Install the `opencode` CLI and make sure
 it can read this machine's OpenCode database; quota checks still work.
 
-## License
+## Credits and License
 
-GPL-3.0-or-later — see [LICENSE](LICENSE). The layout is a Noctalia port of the
-GPL-3.0 AI Usage Plasma widget by Łukasz Sarna.
+Based on the GPL-3.0 AI Usage Plasma widget by Łukasz Sarna and adapted by LGL
+for Noctalia and Noctalia KWE.
+
+GPL-3.0-or-later — see [LICENSE](LICENSE).

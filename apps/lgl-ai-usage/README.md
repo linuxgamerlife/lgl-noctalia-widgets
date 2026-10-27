@@ -1,11 +1,24 @@
-# AI Usage — Noctalia plugin
+<div align="center">
 
-A Noctalia v5 desktop widget, bar capsule and panel that shows AI limits, spend
-and balance for several services and accounts in one place.
+# LGL AI Usage
 
-This is the standalone Noctalia port of the
-[AI Usage KDE Plasma widget](https://github.com/lukk17/ai-usage-widget). The
-Plasma widget stays in that repository; this one contains the Noctalia port.
+**AI limits, spend, and balances in a Noctalia desktop widget, bar widget, and panel.**
+
+[![Version](https://img.shields.io/badge/version-1.0.0-purple)](ai-usage/plugin.toml)
+[![Plugin API](https://img.shields.io/badge/Noctalia_API-24-blue)](ai-usage/plugin.toml)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-yellow)](LICENSE)
+
+</div>
+
+---
+
+## Overview
+
+LGL AI Usage is a Noctalia v5 port and adaptation of the
+[AI Usage KDE Plasma widget](https://github.com/lukk17/ai-usage-widget) by
+Łukasz Sarna. It shows AI limits, spend, and balances for several services and
+accounts in one place, with additional Noctalia-native desktop, bar, and panel
+views.
 
 | Field | Value |
 | --- | --- |
@@ -39,7 +52,7 @@ directories.
 | — | Local OpenCode Go per-model stats (`opencode stats`) |
 | — | Optional account-section surface, dividers, bar height and width controls |
 
-## Layout
+## Project Layout
 
 | Path | What it is |
 | --- | --- |
@@ -98,7 +111,7 @@ Open the panel directly:
 noctalia-kwe msg panel-toggle lukk17/ai-usage:panel   # or: noctalia msg ...
 ```
 
-## Remove
+## Uninstall
 
 ```bash
 ./uninstall-kwe.sh   # KWE
@@ -140,6 +153,9 @@ Requires LuaJIT. The tests mock `noctalia.*`, `ui.*`, `desktopWidget.*`,
 - Some provider endpoints and local formats are undocumented; they can change
   without notice and produce a per-account error.
 
-## License
+## Credits and License
+
+Based on the [AI Usage KDE Plasma widget](https://github.com/lukk17/ai-usage-widget)
+by Łukasz Sarna. LGL adapted and extended it for Noctalia and Noctalia KWE.
 
 GPL-3.0-or-later — see [LICENSE](LICENSE).
