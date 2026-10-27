@@ -96,6 +96,16 @@ local config = {
   background_padding = 14,
 }
 
+local function count_command(commands, fragment)
+  local count = 0
+  for _, command in ipairs(commands) do
+    if command:find(fragment, 1, true) then
+      count = count + 1
+    end
+  end
+  return count
+end
+
 local ctx = mock.new({
   config = config,
   files = files,
@@ -126,7 +136,7 @@ assert(mock.find(tree, "gpu-usage-value").props.text == "37%", "GPU usage missin
 assert(mock.find(tree, "gpu-temp-value").props.text == "61 °C", "GPU temperature missing")
 assert(mock.find(tree, "disk-1-name").props.text == "NVMe Drive", "disk model missing")
 assert(mock.find(tree, "disk-1-pct").props.text == "50%", "disk usage missing")
-assert(#ctx.commands == 1 and ctx.commands[1]:find("df -kPT", 1, true), "df was not sampled")
+assert(count_command(ctx.commands, "df -kPT") == 1, "df was not sampled")
 
 -- Second sample: 80% CPU and the first network rate. The card gains one point.
 files["/proc/stat"] = "cpu  200 0 200 850 0 0 0 0\n"
@@ -142,7 +152,7 @@ assert(mock.find(tree, "cpu-usage-value").props.text == "80%", "CPU sample did n
 assert(mock.find(tree, "network-down-value").props.text == "2.0 KB/s", "download rate did not reach the card")
 assert(mock.find(tree, "network-up-value").props.text == "2.0 KB/s", "upload rate did not reach the card")
 assert(#mock.find(tree, "network-down-graph").props.values == 1, "first network history point")
-assert(#ctx.commands == 1, "disk must not be sampled again within ten seconds")
+assert(count_command(ctx.commands, "df -kPT") == 1, "disk must not be sampled again within ten seconds")
 
 -- Third sample: a second network point, still without another df call.
 files["/proc/stat"] = "cpu  300 0 300 900 0 0 0 0\n"
@@ -156,7 +166,7 @@ service_update()
 tree = ctx.desktop_tree
 assert(mock.find(tree, "cpu-usage-value").props.text == "80%", "third CPU sample")
 assert(#mock.find(tree, "network-down-graph").props.values == 2, "second network history point")
-assert(#ctx.commands == 1, "disk refresh cadence changed")
+assert(count_command(ctx.commands, "df -kPT") == 1, "disk refresh cadence changed")
 
 -- A stale copy delivered to the card blanks the values and says it is waiting.
 local stale = {}

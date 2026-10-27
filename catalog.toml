@@ -13,3 +13,4 @@ description  = "CPU, GPU, RAM, VRAM, network and physical-disk monitoring with s
 deprecated   = false
 plugin_api   = 22
 tags         = ["system", "monitor", "hardware", "desktop"]
+dependencies = ["pciutils"]

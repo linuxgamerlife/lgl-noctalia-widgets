@@ -7,6 +7,16 @@ local function close(actual, expected, epsilon, label)
     ("%s: expected %.4f, got %.4f"):format(label, expected, actual))
 end
 
+local function count_command(commands, fragment)
+  local count = 0
+  for _, command in ipairs(commands) do
+    if command:find(fragment, 1, true) then
+      count = count + 1
+    end
+  end
+  return count
+end
+
 local function disk_by_key(disks, key)
   for _, disk in ipairs(disks or {}) do
     if disk.key == key then
@@ -18,6 +28,7 @@ end
 local function base_files()
   return {
     ["/proc/stat"] = "cpu  100 0 100 800 0 0 0 0\n",
+    ["/proc/cpuinfo"] = "model name\t: AMD Ryzen 9 9950X3D 16-Core Processor\n",
     ["/proc/meminfo"] = "MemTotal:       16777216 kB\nMemAvailable:    8388608 kB\n",
     ["/proc/net/dev"] = table.concat({
       "Inter-|   Receive                                                |  Transmit",
@@ -35,6 +46,7 @@ local function base_files()
     ["/sys/class/hwmon/hwmon1/name"] = "amdgpu\n",
     ["/sys/class/hwmon/hwmon1/fan1_input"] = "1500\n",
 
+    ["/sys/class/drm/card0/device/uevent"] = "DRIVER=amdgpu\nPCI_SLOT_NAME=0000:03:00.0\n",
     ["/sys/class/drm/card0/device/vendor"] = "0x1002\n",
     ["/sys/class/drm/card0/device/gpu_busy_percent"] = "37\n",
     ["/sys/class/drm/card0/device/mem_info_vram_total"] = "8589934592\n",
@@ -116,6 +128,7 @@ local ctx = mock.new({
   files = base_files(),
   dirs = base_dirs(),
   df_stdout = df_stdout,
+  lspci_stdout = "03:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Navi 48 [Radeon RX 9070/9070 XT/9070 GRE] [1002:7550] (rev c0)\n",
   now_ms = 1000000,
 })
 
@@ -128,6 +141,8 @@ local service_config = onConfigChanged
 local stats = ctx.state.stats
 assert(stats ~= nil, "service did not publish stats")
 assert(stats.seq == 1, "first sequence should be 1")
+assert(stats.cpu.name == "AMD Ryzen 9 9950X3D", "cleaned CPU name")
+assert(stats.gpu.name == "AMD Radeon RX 9070/9070 XT/9070 GRE", "AMD GPU name from lspci")
 assert(stats.cpu.usage == nil, "first CPU sample must wait for a delta")
 close(stats.cpu.temp_c, 60, 0.001, "CPU temperature is the hottest package sensor")
 close(stats.cpu.fan_rpm, 1200, 0.001, "automatic CPU fan")
@@ -169,7 +184,7 @@ assert(sdb.name == "LVM Disk", "LVM model")
 close(sdb.used_gb, 1000000 / 1024 / 1024, 0.001, "LVM used")
 close(sdb.total_gb, 4000000 / 1024 / 1024, 0.001, "LVM total")
 assert(sdb.temp_c == nil, "LVM disk has no temperature sensor")
-assert(#ctx.commands == 1 and ctx.commands[1]:find("df -kPT", 1, true), "df was not sampled once")
+assert(count_command(ctx.commands, "df -kPT") == 1, "df was not sampled once")
 
 -- Second sample: 250 total ticks with 50 idle -> 80% busy. 2048 bytes in one
 -- second -> 2048 B/s each way.
@@ -186,7 +201,7 @@ stats = ctx.state.stats
 close(stats.cpu.usage, 80, 0.001, "CPU after second sample")
 close(stats.net.down_bps, 2048, 0.5, "download rate")
 close(stats.net.up_bps, 2048, 0.5, "upload rate")
-assert(#ctx.commands == 1, "disk must not be sampled again before 10 seconds")
+assert(count_command(ctx.commands, "df -kPT") == 1, "disk must not be sampled again before 10 seconds")
 
 -- A setting change is applied in place; an explicit fan number selects fan2 on
 -- the board chip, and the update interval is pushed to the host.
@@ -218,10 +233,10 @@ assert(ctx.state.stats.cpu.usage == nil, "malformed CPU sample should be nil")
 
 -- Disk sampling resumes after ten seconds and keeps the previous cache if df
 -- fails.
-local before = #ctx.commands
+local before = count_command(ctx.commands, "df -kPT")
 ctx.advance(11000)
 service_update()
-assert(#ctx.commands == before + 1, "disk sample did not resume after ten seconds")
+assert(count_command(ctx.commands, "df -kPT") == before + 1, "disk sample did not resume after ten seconds")
 
 -- Nvidia through nvidia-smi, including the short-query fallback.
 local nvidia_ctx = mock.new({

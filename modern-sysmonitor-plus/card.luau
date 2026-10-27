@@ -349,7 +349,7 @@ local function surface(key, children)
   }, children)
 end
 
-local function section_header(key, glyph, label, extra)
+local function section_header(key, glyph, label, extra, model)
   local children = {
     ui.glyph({ key = key .. "-glyph", name = glyph, size = 14, color = settings.accent_color }),
     ui.label({
@@ -361,8 +361,20 @@ local function section_header(key, glyph, label, extra)
       maxLines = 1,
     }),
   }
-  if extra then
+  if model ~= nil and model ~= "" then
+    table.insert(children, ui.label({
+      key = key .. "-model",
+      text = model,
+      fontSize = 10,
+      color = settings.muted_text_color,
+      maxLines = 1,
+      flexGrow = 1,
+      maxWidth = math.max(80, settings.content_width - 2 * settings.card_padding - 100),
+    }))
+  elseif extra then
     table.insert(children, ui.spacer({ key = key .. "-spacer", flexGrow = 1 }))
+  end
+  if extra then
     table.insert(children, extra)
   end
   return ui.row({ key = key, gap = 6, align = "center" }, children)
@@ -593,7 +605,7 @@ local function cpu_card(stats)
   local temp = tonumber(cpu.temp_c)
 
   local children = {
-    section_header("cpu-header", "cpu", noctalia.tr("labels.cpu")),
+    section_header("cpu-header", "cpu", noctalia.tr("labels.cpu"), nil, cpu.name),
     usage_row("cpu-usage", usage, cpu_history, usage ~= nil, settings.cpu_chart_height, settings.cpu_chart_scale),
     temp_row("cpu-temp", temp, temp ~= nil),
   }
@@ -752,8 +764,12 @@ local function gpu_card(stats)
 
   local usage = tonumber(gpu.usage)
   local temp = tonumber(gpu.temp_c)
+  local model = gpu.name
+  if model ~= nil and gpu.vram_total_gb ~= nil then
+    model = model .. " " .. format.format_size_gb(gpu.vram_total_gb, units)
+  end
   local children = {
-    section_header("gpu-header", "device-desktop", noctalia.tr("labels.gpu"), details_button()),
+    section_header("gpu-header", "device-desktop", noctalia.tr("labels.gpu"), details_button(), model),
     usage_row("gpu-usage", usage, gpu_history, usage ~= nil, settings.gpu_chart_height, settings.gpu_chart_scale),
     temp_row("gpu-temp", temp, temp ~= nil),
   }

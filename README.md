@@ -37,6 +37,7 @@ app directories.
 | Nvidia `nvidia-smi` | `poller`: full query, then a short query if the driver rejects extra fields |
 | (no Intel path) | Host `noctalia.systemStats()` GPU probe as a final fallback |
 | VRAM card | `poller`: AMD sysfs or Nvidia memory fields |
+| Hardware names | CPU from `/proc/cpuinfo`; AMD GPU model from `lspci -nn` and its VRAM; Nvidia name/memory from `nvidia-smi`; shown beside the CPU/GPU titles |
 | GPU “More” details | `ui.button` toggle: junction/memory temperature, clocks, fan, power |
 | Disks card (`os.statvfs` + hwmon) | `poller`: `df -kPT`, grouped by physical disk; NVMe/drivetemp temperature |
 | Custom glassmorphic background | Noctalia host panel (`background`, colour, opacity, radius, padding), plus translucent inner cards |
@@ -180,6 +181,7 @@ translations, entries and repository layout.
 - Other GPUs (for example Intel) use the host probe, so Noctalia's system
   monitor must be enabled (`[system.monitor].enabled`, on by default)
 - No Python, no helper daemon, no accounts or secrets
+- Optional `lspci` (pciutils) for AMD GPU model names; without it the GPU title shows just "GPU"
 
 ## Limitations
 

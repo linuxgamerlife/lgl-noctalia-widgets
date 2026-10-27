@@ -8,9 +8,9 @@ local M = {}
 
 local GIB = 1024 * 1024 * 1024
 
-local NVIDIA_FULL = "utilization.gpu,temperature.gpu,memory.used,memory.total,"
+local NVIDIA_FULL = "name,utilization.gpu,temperature.gpu,memory.used,memory.total,"
   .. "clocks.gr,clocks.mem,fan.speed,power.draw,power.limit"
-local NVIDIA_SHORT = "utilization.gpu,temperature.gpu,memory.used,memory.total"
+local NVIDIA_SHORT = "name,utilization.gpu,temperature.gpu,memory.used,memory.total"
 
 local function trim(text)
   if type(text) ~= "string" then
@@ -53,6 +53,14 @@ function M.read_amd()
     vram_total_gb = total / GIB,
     vram_pct = total > 0 and (used / total * 100) or 0,
   }
+
+  local uevent = hwmon.read_text(best .. "/uevent")
+  if uevent then
+    local slot = uevent:match("PCI_SLOT_NAME=([^\n]+)")
+    if slot then
+      gpu.pci_slot = slot:match("(%x%x:%x%x%.%x)$") or slot
+    end
+  end
 
   local base = hwmon.first_hwmon(best)
   if base == nil then
@@ -148,14 +156,20 @@ function M.parse_nvidia(stdout)
   for part in line:gmatch("([^,]+)") do
     parts[#parts + 1] = trim(part)
   end
-  if #parts < 4 then
+  local offset = 0
+  local name = nil
+  if parts[1] ~= nil and tonumber(parts[1]) == nil then
+    name = parts[1]
+    offset = 1
+  end
+  if #parts < 4 + offset then
     return nil
   end
 
-  local usage = tonumber(parts[1])
-  local temp = tonumber(parts[2])
-  local used_mib = tonumber(parts[3])
-  local total_mib = tonumber(parts[4])
+  local usage = tonumber(parts[1 + offset])
+  local temp = tonumber(parts[2 + offset])
+  local used_mib = tonumber(parts[3 + offset])
+  local total_mib = tonumber(parts[4 + offset])
   if usage == nil or temp == nil or used_mib == nil or total_mib == nil then
     return nil
   end
@@ -163,6 +177,7 @@ function M.parse_nvidia(stdout)
   local gpu = {
     present = true,
     vendor = "nvidia",
+    name = name,
     usage = usage,
     temp_c = temp,
     vram_used_gb = used_mib / 1024,
@@ -170,12 +185,12 @@ function M.parse_nvidia(stdout)
     vram_pct = total_mib > 0 and (used_mib / total_mib * 100) or 0,
   }
 
-  if #parts >= 9 then
-    gpu.clock_mhz = tonumber(parts[5])
-    gpu.mem_clock_mhz = tonumber(parts[6])
-    gpu.fan_pct = tonumber(parts[7])
-    gpu.power_w = tonumber(parts[8])
-    gpu.power_cap_w = tonumber(parts[9])
+  if #parts >= 9 + offset then
+    gpu.clock_mhz = tonumber(parts[5 + offset])
+    gpu.mem_clock_mhz = tonumber(parts[6 + offset])
+    gpu.fan_pct = tonumber(parts[7 + offset])
+    gpu.power_w = tonumber(parts[8 + offset])
+    gpu.power_cap_w = tonumber(parts[9 + offset])
   end
 
   return gpu

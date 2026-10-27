@@ -10,15 +10,18 @@ external daemon. The card order is **CPU, GPU, VRAM, RAM, disks, network**.
 
 | Metric | Source | Notes |
 | --- | --- | --- |
+| CPU name | `/proc/cpuinfo`, `model name` | Cleaned of "(R)/(TM)", trailing "-Core Processor", "Processor" and "w/ Radeon … Graphics"; shown beside the **CPU** title. |
 | CPU usage | `/proc/stat`, first `cpu` line | Busy time from the delta between samples, 0–100%. The first sample primes the delta and publishes `nil`, so the card shows `—` for one interval. |
 | CPU temperature | `hwmon` and thermal zones | Hottest valid `coretemp` / `k10temp` / `zenpower` / `cpu_thermal` / `soc_thermal` sensor, then any non-GPU hwmon temperature, then `x86_pkg_temp` / CPU / package thermal zones. Absent when no sensor exists. |
 | CPU fan | `hwmon` `fan<N>_input` | With **CPU fan number** 0, a fan whose label contains “cpu” is used. With 1–16, `fan<N>` on the motherboard chip with the most fan inputs is used, matching `sensors`. A known fan that reads 0 RPM is shown as 0. |
 | RAM | `/proc/meminfo` | `MemTotal − MemAvailable`, falling back to `MemFree + Buffers + Cached`; published in 1024-based GB. |
 | Network | `/proc/net/dev` | Receive/transmit deltas across every interface except `lo`. Uses `noctalia.nowMs()` for sub-second rate accuracy. |
+| GPU name | `lspci -nn` for AMD, `nvidia-smi` for Nvidia | AMD's marketing name comes from the PCI product string; the card appends the VRAM total (for example "AMD Radeon RX 9070/9070 XT/9070 GRE 16 GB"). Shown beside the **GPU** title. |
 | GPU usage / temperature / VRAM | AMD `sysfs`, then `nvidia-smi`, then the host probe | AMD: the largest-VRAM `card*` with `gpu_busy_percent` and `mem_info_vram_total`; hwmon `temp*_label` (`edge`, `junction`, `mem`), `freq*_label` (`sclk`, `mclk`), `fan1_input`, `pwm1`, `power1_*`. Nvidia: `nvidia-smi --query-gpu=…`; if the driver rejects the full field list, a short usage/temp/VRAM query is retried. The host's `noctalia.systemStats()` GPU probe is the final fallback for Intel or NVML-only setups. |
 | Disks | `df -kPT` plus sysfs | Every 10 s. Physical filesystems are grouped by physical disk; btrfs subvolumes and repeated mounts of the same source are counted once. LUKS/LVM/RAID devices follow their first slave, as the KDE widget did. Model from `/sys/class/block/<disk>/device/model`; temperature from the disk's own hwmon (NVMe, or SATA with `drivetemp`). |
 
-Missing sensors are published as `nil`, not `0`. The card renders `—` for
+`lspci` (pciutils) is optional; without it an AMD GPU has no marketing name
+and the title shows just **GPU**. Missing sensors are published as `nil`, not `0`. The card renders `—` for
 unknown values and an explicit **No GPU detected** line when no GPU probe is
 available.
 

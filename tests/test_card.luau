@@ -6,12 +6,13 @@ local GIB = 1024 * 1024 * 1024
 local state = {
   ts = os.time(),
   seq = 1,
-  cpu = { usage = 42.5, temp_c = 90, fan_rpm = 1500 },
+  cpu = { name = "AMD Ryzen 9 9950X3D", usage = 42.5, temp_c = 90, fan_rpm = 1500 },
   ram = { used_gb = 8.5, total_gb = 32, pct = 26.5 },
   net = { down_bps = 2048, up_bps = 512 },
   gpu = {
     present = true,
     vendor = "amd",
+    name = "AMD Radeon RX 9070/9070 XT/9070 GRE",
     usage = 37.4,
     temp_c = 61.2,
     vram_used_gb = 2,
@@ -99,12 +100,13 @@ local function fresh_state()
   return {
     ts = os.time(),
     seq = 1,
-    cpu = { usage = 42.5, temp_c = 90, fan_rpm = 1500 },
+    cpu = { name = "AMD Ryzen 9 9950X3D", usage = 42.5, temp_c = 90, fan_rpm = 1500 },
     ram = { used_gb = 8.5, total_gb = 32, pct = 26.5 },
     net = { down_bps = 2048, up_bps = 512 },
     gpu = {
       present = true,
       vendor = "amd",
+      name = "AMD Radeon RX 9070/9070 XT/9070 GRE",
       usage = 37.4,
       temp_c = 61.2,
       vram_used_gb = 2,
@@ -159,6 +161,8 @@ assert_eq(tree.props.border, nil, "card must not draw an outer border")
 
 -- Header and divider.
 assert_eq(find("header-title").props.text, "Lab Rig", "title")
+assert_eq(find("cpu-header-model").props.text, "AMD Ryzen 9 9950X3D", "CPU hardware name")
+assert_eq(find("gpu-header-model").props.text, "AMD Radeon RX 9070/9070 XT/9070 GRE 8 GB", "GPU hardware name and VRAM")
 assert_eq(find("header-title").props.color, "#abcdef", "title colour")
 assert_eq(find("header-settings").props.glyph, "settings", "settings glyph")
 assert_eq(find("header-settings").props.onClick, "openSettings", "settings callback")

@@ -22,8 +22,10 @@ local ASYNC_TIMEOUT_MS = 30000
 
 local update_interval = 2
 local cpu_fan_number = 0
+local cpu_name = nil
 local sampler_state = sampler.new()
 local seq = 0
+local pci_names = {}
 
 local cached_disks = nil
 local disks_pending = false
@@ -62,6 +64,7 @@ local function normalize_gpu(gpu)
   return {
     present = true,
     vendor = gpu.vendor,
+    name = gpu.name,
     usage = format.round(gpu.usage, 1),
     temp_c = format.round(gpu.temp_c, 1),
     vram_used_gb = format.round(gpu.vram_used_gb, 1),
@@ -85,6 +88,7 @@ local function publish(sample, gpu)
     ts = os.time(),
     seq = seq,
     cpu = {
+      name = cpu_name,
       usage = format.round(sample.cpu_usage, 1),
       temp_c = format.round(sample.cpu_temp_c, 1),
       fan_rpm = format.round(sample.cpu_fan_rpm, 0),
@@ -101,6 +105,68 @@ local function publish(sample, gpu)
     gpu = normalize_gpu(gpu),
     disks = cached_disks or {},
   })
+end
+
+-- AMD does not expose a marketing name in sysfs. `lspci` carries the PCI
+-- product string, so map it once at startup and attach it to the selected AMD
+-- card. If pciutils is missing the name stays nil and the card shows "GPU".
+local function parse_pci_names(text)
+  local map = {}
+  if type(text) ~= "string" then
+    return map
+  end
+  for line in text:gmatch("[^\n]+") do
+    local slot, desc = line:match("^(%x%x:%x%x%.%x)%s+[^:]+:%s+(.+)$")
+    if slot ~= nil and desc ~= nil then
+      local full = desc
+      desc = desc:gsub("%s*%[%x%x%x%x:%x%x%x%x%]%s*%(rev %x+%)%s*$", "")
+      desc = desc:gsub("%s*%[%x%x%x%x:%x%x%x%x%]%s*$", "")
+      local product = desc:match(".*%[([^%]]+)%]")
+      if product ~= nil and product ~= "AMD/ATI" and product ~= "AMD"
+        and not product:match("^%x%x%x%x:%x%x%x%x$")
+      then
+        desc = product
+      else
+        desc = desc:gsub("^.-%]%s*", "")
+      end
+
+      local prefix = nil
+      if full:find("NVIDIA", 1, true) then
+        prefix = "NVIDIA"
+      elseif full:find("Intel", 1, true) then
+        prefix = "Intel"
+      elseif full:find("AMD", 1, true) or full:find("ATI", 1, true) then
+        prefix = "AMD"
+      end
+      if prefix ~= nil and not desc:match("^" .. prefix) then
+        if prefix == "AMD" and desc:match("^Radeon") then
+          desc = "AMD " .. desc
+        else
+          desc = prefix .. " " .. desc
+        end
+      end
+      desc = desc:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+      if desc ~= "" then
+        map[slot] = desc
+      end
+    end
+  end
+  return map
+end
+
+local function request_pci_names()
+  return noctalia.runAsync("lspci -nn 2>/dev/null", function(result)
+    if result and result.exitCode == 0 then
+      pci_names = parse_pci_names(result.stdout or "")
+    end
+  end)
+end
+
+local function attach_pci_name(gpu)
+  if type(gpu) == "table" and gpu.pci_slot and pci_names[gpu.pci_slot] then
+    gpu.name = pci_names[gpu.pci_slot]
+  end
+  return gpu
 end
 
 local function request_disks(now)
@@ -160,7 +226,7 @@ end
 local function current_gpu(now)
   local amd = gpu_reader.read_amd()
   if amd ~= nil then
-    return amd
+    return attach_pci_name(amd)
   end
 
   if nvidia_cached ~= nil and now - nvidia_cached_at <= NVIDIA_CACHE_MS then
@@ -212,7 +278,9 @@ function onConfigChanged()
 end
 
 load_settings()
+cpu_name = sampler.cpu_name()
 has_nvidia_smi = type(noctalia.commandExists) == "function"
   and noctalia.commandExists("nvidia-smi") == true
+request_pci_names()
 noctalia.setUpdateInterval(update_interval * 1000)
 poll()

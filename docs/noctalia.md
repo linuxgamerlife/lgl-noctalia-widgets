@@ -132,7 +132,7 @@ The service publishes `stats` once per update interval:
 ```text
 {
   ts, seq,
-  cpu = { usage, temp_c, fan_rpm },
+  cpu = { name, usage, temp_c, fan_rpm },
   ram = { used_gb, total_gb, pct },
   net = { down_bps, up_bps },
   gpu = { present, vendor, usage, temp_c, vram_*, temp_junction, temp_mem,
@@ -158,6 +158,9 @@ No notifications are sent; the KDE widget had none.
 
 ## Sampling and performance
 
+- The CPU name is read once from `/proc/cpuinfo`; the AMD GPU name comes from a
+  one-shot `lspci -nn` query. Nvidia names come from `nvidia-smi`. `lspci` is
+  optional (pciutils); without it the AMD GPU title shows just "GPU".
 - CPU, RAM, network and temperatures are read synchronously from `/proc` and
   `/sys`. They are small text files and the sampler runs once per update
   interval (2 s by default).

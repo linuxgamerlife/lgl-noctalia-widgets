@@ -25,6 +25,32 @@ function M.new()
   }
 end
 
+-- A cleaned CPU marketing name from /proc/cpuinfo. The raw strings often end
+-- in "16-Core Processor" or "w/ Radeon ... Graphics"; strip those so the section
+-- header stays readable.
+function M.cpu_name()
+  local raw = noctalia.readFile("/proc/cpuinfo")
+  if type(raw) ~= "string" then
+    return nil
+  end
+  local name = raw:match("model name%s*:%s*([^\n]+)")
+  if not name then
+    return nil
+  end
+  name = name:gsub("%s+", " ")
+  name = name:gsub("%(R%)", ""):gsub("%(TM%)", ""):gsub("%(tm%)", "")
+  name = name:gsub("%s+%d+%-Core Processor$", "")
+  name = name:gsub("%s+Processor$", "")
+  name = name:gsub("%s+CPU$", "")
+  name = name:gsub("%s+w/ Radeon .*$", "")
+  name = name:gsub("%s+with Radeon Graphics$", "")
+  name = name:gsub("^%s+", ""):gsub("%s+$", "")
+  if name == "" then
+    return nil
+  end
+  return name
+end
+
 local function read_cpu_ticks()
   local raw = noctalia.readFile("/proc/stat")
   if type(raw) ~= "string" then
