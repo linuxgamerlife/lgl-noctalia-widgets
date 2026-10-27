@@ -22,13 +22,46 @@ profile's `lightbar_brightness`. Charging pulses; low battery turns red.
 - Noctalia Shell with plugin API 17 or newer, including KineticWE's
   `noctalia-kwe` build of Noctalia v5
 - Python 3 (standard library only — no pip packages)
-- Optional: [`ds4u`](https://git.yokai.digital/deadYokai/ds4u) for profile
-  management and background daemon effects
+- Optional: [`ds4u`](https://git.yokai.digital/deadYokai/ds4u); see
+  [Why ds4u is optional](#why-ds4u-is-optional)
 - Permission to access the DualSense `/dev/hidraw*` nodes (setup below)
 
-### hidraw permissions
+### Why ds4u is optional
 
-Install one udev rule covering the standard and Edge controller:
+The widget does **not** require ds4u just to show battery, charging and
+connection state. Without ds4u, the bundled Python monitor can read the
+controller directly and can send basic rumble/lightbar commands.
+
+Install ds4u if you want its controller-management features:
+
+- a graphical editor for creating profiles
+- profile switching from the widget dropdown
+- lightbar brightness, player LEDs, trigger, gyro, remapping and haptic settings
+- animated lightbar effects
+- one long-running controller daemon shared by ds4u and this widget
+
+When `ds4u --daemon` is running, the widget talks to its Unix socket instead of
+competing with it for controller reports. Without ds4u, the profile dropdown
+normally contains only `Default`, and the cog cannot open the ds4u profile
+editor. In both modes, the user running ds4u/Noctalia needs permission to access
+the controller's hidraw device.
+
+### Give your user controller access (udev)
+
+#### What this is for
+
+Linux exposes the controller's low-level USB/Bluetooth reports as a file named
+`/dev/hidrawN` (for example `/dev/hidraw0`). That file is protected so ordinary
+applications cannot automatically read every USB device. The udev rule below
+identifies only Sony DualSense and DualSense Edge controllers and grants the
+active desktop user read/write access.
+
+You normally do this **once**. It is needed whether the controller is read
+directly by the widget or by ds4u.
+
+#### 1. Install the rule
+
+Copy and paste this complete block into a terminal:
 
 ```bash
 sudo tee /etc/udev/rules.d/70-dualsense.rules >/dev/null <<'EOF'
@@ -40,29 +73,102 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger --subsystem-match=hidraw
 ```
 
-Then unplug/replug a USB controller or disconnect/reconnect Bluetooth. On a
-normal local graphical login, `TAG+="uaccess"` grants the active user access.
-If your session does not apply ACLs, add your user to `input`, then log out and
-back in completely:
+The two product IDs are:
+
+- `054c:0ce6` — DualSense
+- `054c:0df2` — DualSense Edge
+
+`TAG+="uaccess"` asks systemd/udev to grant access to the user currently logged
+in at the local graphical seat. `GROUP="input"` provides a fallback for systems
+that do not apply those per-user ACLs.
+
+#### 2. Reconnect the controller
+
+Rules are applied when a device appears. After installing the rule:
+
+- USB: unplug the cable, then reconnect it.
+- Bluetooth: disconnect the controller, then reconnect it.
+
+Merely reloading the rule does not always change permissions on an already-open
+device.
+
+#### 3. Verify access
+
+Keep the controller connected and run this complete block. It searches sysfs
+for Sony's vendor/product IDs, prints the matching `/dev/hidrawN` path, then
+checks whether your current user can read and write it:
+
+```bash
+controller_node=""
+for sysfs in /sys/class/hidraw/hidraw*; do
+  if grep -qiE '^HID_ID=.*054C.*(0CE6|0DF2)' "$sysfs/device/uevent" 2>/dev/null; then
+    controller_node="/dev/${sysfs##*/}"
+    echo "DualSense node: $controller_node"
+    ls -l "$controller_node"
+  fi
+done
+
+if [ -z "$controller_node" ]; then
+  echo "No DualSense hidraw node found"
+elif [ -r "$controller_node" ] && [ -w "$controller_node" ]; then
+  echo "hidraw access OK"
+else
+  echo "Controller found, but your user does not have read/write access"
+fi
+```
+
+Success looks like:
+
+```text
+DualSense node: /dev/hidraw0
+hidraw access OK
+```
+
+The number may be different and can change after reconnecting. That is normal.
+
+If the controller is found but access fails, first log out of the desktop and
+back in so the seat ACL is recreated. If it still fails, use the `input` group
+fallback, then log out and back in again:
 
 ```bash
 sudo usermod -aG input "$USER"
 ```
 
-Find and verify the matching node (the Sony vendor ID is `054c`):
+You can inspect the exact ACL with `getfacl /dev/hidrawN`, replacing `N` with
+the number printed by the verification block. The `getfacl` command is optional
+and may require your distribution's `acl` package.
+
+If no DualSense node is found, first check whether Linux sees the controller:
 
 ```bash
-for node in /dev/hidraw*; do
-  udevadm info --query=property --name="$node" 2>/dev/null |
-    grep -qiE 'HID_ID=.*054C.*(0CE6|0DF2)' && ls -l "$node"
-done
-getfacl /dev/hidrawN       # replace N with the node printed above
-test -r /dev/hidrawN && test -w /dev/hidrawN && echo "hidraw access OK"
+# USB (either command may print the controller)
+lsusb -d 054c:0ce6
+lsusb -d 054c:0df2
+
+# Bluetooth
+bluetoothctl devices Connected
 ```
 
-If no node is printed, confirm the controller is connected with `lsusb` (USB)
-or `bluetoothctl devices Connected` (Bluetooth). Do not use `MODE="0666"` as a
-workaround; fix the active-seat ACL or `input` group membership instead.
+Do not change the rule to `MODE="0666"`. That would let every local user and
+process control the device. Fix the active-seat ACL or group membership instead.
+
+#### Remove the udev rule
+
+To undo the rule:
+
+```bash
+sudo rm /etc/udev/rules.d/70-dualsense.rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=hidraw
+```
+
+Reconnect the controller afterward so the old permissions are discarded. If
+you also added yourself to `input` solely for this plugin, you may remove that
+membership, then log out and back in:
+
+```bash
+sudo gpasswd -d "$USER" input
+```
 
 ## Install
 
@@ -88,50 +194,23 @@ Editor**, add **DualSense Battery**, position it, and leave the editor. Configur
 the card from its widget settings. Restart Noctalia once if the plugin was
 installed while the shell was already running and the entry does not appear.
 
-### Declarative config
+### Configure the widget
 
-The UI is the recommended configuration method. For a declarative setup, exit
-Noctalia first so it does not overwrite the file, then back up and edit:
+You do **not** need to edit a TOML file.
 
-- KWE: `~/.local/state/noctalia-kwe/settings.toml`
-- upstream: `~/.local/state/noctalia/settings.toml`
+1. Open **Noctalia Settings → Desktop → Toggle Editor**.
+2. Add **DualSense Battery** if it is not already on the desktop.
+3. Select the widget in the editor and use its settings panel to change colours,
+   opacity, profile controls and visibility options.
+4. Leave the editor when positioning is complete.
+5. Open **Noctalia Settings → Plugins → DualSense Battery** for shared settings
+   such as the low-battery threshold and notification toggle.
 
-Use an actual connector from `wlr-randr` (for example `DP-1`) as `output`, and
-use a widget key such as `dualsense` only once. Merge these tables into the
-existing file; do not replace unrelated settings.
-
-```toml
-[desktop_widgets]
-enabled = true
-
-[desktop_widgets.widget.dualsense]
-type       = "deadYokai/dualsense:card"
-output     = "DP-1"
-cx         = 1400.0
-cy         = 200.0
-box_width  = 0.0
-box_height = 0.0
-
-[desktop_widgets.widget.dualsense.settings]
-illustration_color      = "#e8ebef"
-controller_body_color   = "#2c3035"
-controller_body_opacity = 1.0            # 0 = line art only, 1 = solid body
-controller_stroke_width = 2.8
-profile_settings_opacity = 0.65           # cog background only; icon stays solid
-battery_color_mode      = "lightbar"     # lightbar | connection | custom
-battery_fill_color      = "#0080ff"      # used when mode = custom
-battery_fill_opacity    = 1.0            # 0 = transparent, 1 = solid
-battery_low_color       = "#ed4c4c"
-text_color              = "on_surface"
-muted_text_color        = "on_surface_variant"
-show_profile            = true
-show_player_leds        = true
-show_model_badge        = true
-
-[plugin_settings."deadYokai/dualsense"]
-low_threshold = 20
-notify_low    = true
-```
+Noctalia saves these choices automatically. Its generated settings file is at
+`~/.local/state/noctalia-kwe/settings.toml` for KWE or
+`~/.local/state/noctalia/settings.toml` upstream. Those paths are useful for
+backups and troubleshooting; manual editing is not required and is discouraged
+while Noctalia is running because the shell may overwrite the file.
 
 ## Settings
 

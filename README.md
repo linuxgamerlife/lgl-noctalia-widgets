@@ -38,6 +38,11 @@ same v5 plugin API and is supported by the install scripts.
   - **Click the controller illustration** (or send the `buzz` IPC event) to
     rumble the DualSense controller.
 
+`ds4u` is optional: battery, charging and connection monitoring work through
+the bundled Python HID reader without it. Install ds4u for its graphical profile
+editor, remapping/trigger/gyro/haptic controls, animated effects and shared
+controller daemon. See [Why ds4u is optional](dualsense/README.md#why-ds4u-is-optional).
+
 ## Configuration
 
 The desktop widget exposes:
@@ -105,8 +110,8 @@ sudo udevadm trigger --subsystem-match=hidraw
 ```
 
 Unplug/replug USB controllers or reconnect Bluetooth after loading the rule.
-See the [complete setup and verification guide](dualsense/README.md#hidraw-permissions)
-for group membership, declarative configuration, `ds4u`, and IPC diagnostics.
+See the [complete setup and verification guide](dualsense/README.md#give-your-user-controller-access-udev)
+for group membership, widget configuration, `ds4u`, and IPC diagnostics.
 
 `install-kwe.sh` links the plugin into
 `~/.local/share/noctalia-kwe/plugins`; `install.sh` uses
@@ -140,8 +145,9 @@ Noctalia session is needed.
 
 - Noctalia Shell with plugin API 17 or newer (upstream or `noctalia-kwe`)
 - Python 3 (standard library only)
-- Permission to read the DualSense `/dev/hidraw*` nodes (or `ds4u --daemon` /
-  kernel `hid-playstation` power_supply)
+- Permission for the widget or `ds4u --daemon` to access the DualSense
+  `/dev/hidraw*` nodes. See the beginner-friendly
+  [udev setup and removal guide](dualsense/README.md#give-your-user-controller-access-udev).
 
 ## License
 
