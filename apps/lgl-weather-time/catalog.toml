@@ -1,0 +1,16 @@
+# Index for using this directory as a Noctalia plugin source:
+#   noctalia msg plugins source add weather-time path /path/to/lgl-noctalia-widgets/apps/lgl-weather-time
+# The per-plugin plugin.toml stays authoritative.
+
+[[plugin]]
+id           = "linuxgamerlife/weather-time"
+name         = "Weather & Time"
+version      = "0.1.0"
+author       = "LinuxGamerLife"
+license      = "GPL-3.0-or-later"
+icon         = "weather-cloud-sun"
+description  = "Location-aware clock, current conditions and forecast with optional full-bleed starfield, grass and rain/snow effects. Privacy-first: no automatic IP geolocation."
+deprecated   = false
+plugin_api   = 24
+tags         = ["weather", "clock", "time", "location", "desktop", "bar", "panel"]
+dependencies = []

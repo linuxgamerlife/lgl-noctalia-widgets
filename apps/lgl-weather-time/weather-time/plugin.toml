@@ -1,0 +1,547 @@
+# Weather & Time for Noctalia Shell.
+#
+# A headless service owns location, HTTP, cache and scene assets; the desktop
+# card, bar widget and setup panel render the published state. The card uses
+# generated SVG scenes behind real UI text for a full-bleed weather effect
+# without a z-index API.
+
+id          = "linuxgamerlife/weather-time"
+name        = "Weather & Time"
+version     = "0.1.0"
+plugin_api  = 24
+author      = "LinuxGamerLife"
+license     = "GPL-3.0-or-later"
+icon        = "weather-cloud-sun"
+description = "Location-aware clock, current conditions and forecast with optional full-bleed starfield, grass and rain/snow effects. Privacy-first: no automatic IP geolocation."
+tags        = ["weather", "clock", "time", "location", "desktop", "bar", "panel"]
+dependencies = []
+
+# ── Plugin-level settings ──────────────────────────────────────────────────
+
+[[setting]]
+key             = "refresh_minutes"
+type            = "select"
+label_key       = "settings.refresh_minutes.label"
+description_key = "settings.refresh_minutes.description"
+default         = "15"
+options = [
+  { value = "5",   label_key = "settings.refresh_minutes.option.5m" },
+  { value = "10",  label_key = "settings.refresh_minutes.option.10m" },
+  { value = "15",  label_key = "settings.refresh_minutes.option.15m" },
+  { value = "30",  label_key = "settings.refresh_minutes.option.30m" },
+  { value = "60",  label_key = "settings.refresh_minutes.option.1h" },
+  { value = "120", label_key = "settings.refresh_minutes.option.2h" },
+]
+
+[[setting]]
+key             = "units"
+type            = "select"
+label_key       = "settings.units.label"
+description_key = "settings.units.description"
+default         = "auto"
+options = [
+  { value = "auto",     label_key = "settings.units.option.auto" },
+  { value = "metric",   label_key = "settings.units.option.metric" },
+  { value = "imperial", label_key = "settings.units.option.imperial" },
+]
+
+[[setting]]
+key             = "clock_source"
+type            = "select"
+label_key       = "settings.clock_source.label"
+description_key = "settings.clock_source.description"
+default         = "auto"
+options = [
+  { value = "auto",     label_key = "settings.clock_source.option.auto" },
+  { value = "system",   label_key = "settings.clock_source.option.system" },
+  { value = "location", label_key = "settings.clock_source.option.location" },
+]
+
+[[setting]]
+key             = "clock_format"
+type            = "select"
+label_key       = "settings.clock_format.label"
+description_key = "settings.clock_format.description"
+default         = "auto"
+options = [
+  { value = "auto", label_key = "settings.clock_format.option.auto" },
+  { value = "24h",  label_key = "settings.clock_format.option.24h" },
+  { value = "12h",  label_key = "settings.clock_format.option.12h" },
+]
+
+[[setting]]
+key             = "show_seconds"
+type            = "bool"
+label_key       = "settings.show_seconds.label"
+description_key = "settings.show_seconds.description"
+default         = false
+
+[[setting]]
+key             = "date_style"
+type            = "select"
+label_key       = "settings.date_style.label"
+description_key = "settings.date_style.description"
+default         = "auto"
+options = [
+  { value = "auto",    label_key = "settings.date_style.option.auto" },
+  { value = "weekday", label_key = "settings.date_style.option.weekday" },
+  { value = "short",   label_key = "settings.date_style.option.short" },
+  { value = "hidden",  label_key = "settings.date_style.option.hidden" },
+]
+
+[[setting]]
+key             = "secondary_timezone"
+type            = "string"
+label_key       = "settings.secondary_timezone.label"
+description_key = "settings.secondary_timezone.description"
+default         = ""
+
+[[setting]]
+key             = "secondary_label"
+type            = "string"
+label_key       = "settings.secondary_label.label"
+description_key = "settings.secondary_label.description"
+default         = "Home"
+
+[[setting]]
+key             = "scene"
+type            = "select"
+label_key       = "settings.scene.label"
+description_key = "settings.scene.description"
+default         = "auto"
+options = [
+  { value = "auto",    label_key = "settings.scene.option.auto" },
+  { value = "off",     label_key = "settings.scene.option.off" },
+  { value = "clear",   label_key = "settings.scene.option.clear" },
+  { value = "cloudy",  label_key = "settings.scene.option.cloudy" },
+  { value = "rain",    label_key = "settings.scene.option.rain" },
+  { value = "snow",    label_key = "settings.scene.option.snow" },
+  { value = "thunder", label_key = "settings.scene.option.thunder" },
+  { value = "fog",     label_key = "settings.scene.option.fog" },
+]
+
+[[setting]]
+key             = "scene_theme"
+type            = "select"
+label_key       = "settings.scene_theme.label"
+description_key = "settings.scene_theme.description"
+default         = "auto"
+options = [
+  { value = "auto",  label_key = "settings.scene_theme.option.auto" },
+  { value = "night", label_key = "settings.scene_theme.option.night" },
+  { value = "day",   label_key = "settings.scene_theme.option.day" },
+]
+
+[[setting]]
+key             = "animate_effects"
+type            = "bool"
+label_key       = "settings.animate_effects.label"
+description_key = "settings.animate_effects.description"
+default         = true
+
+# ── Service ────────────────────────────────────────────────────────────────
+
+[[service]]
+id    = "fetcher"
+entry = "service.luau"
+
+# ── Desktop card ───────────────────────────────────────────────────────────
+
+[[desktop_widget]]
+id    = "card"
+entry = "card.luau"
+
+  [[desktop_widget.setting]]
+  key             = "background"
+  type            = "bool"
+  label_key       = "settings.background.label"
+  description_key = "settings.background.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "background_color"
+  type            = "color"
+  label_key       = "settings.background_color.label"
+  description_key = "settings.background_color.description"
+  default         = "surface"
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_opacity"
+  type            = "double"
+  label_key       = "settings.background_opacity.label"
+  description_key = "settings.background_opacity.description"
+  default         = 0.8
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_radius"
+  type            = "int"
+  label_key       = "settings.background_radius.label"
+  description_key = "settings.background_radius.description"
+  default         = 12
+  min             = 0
+  max             = 48
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_padding"
+  type            = "int"
+  label_key       = "settings.background_padding.label"
+  description_key = "settings.background_padding.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_card_settings"
+  type            = "bool"
+  label_key       = "settings.show_card_settings.label"
+  description_key = "settings.show_card_settings.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_styling"
+  type            = "bool"
+  label_key       = "settings.show_styling.label"
+  description_key = "settings.show_styling.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_scaling"
+  type            = "bool"
+  label_key       = "settings.show_scaling.label"
+  description_key = "settings.show_scaling.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_sections"
+  type            = "bool"
+  label_key       = "settings.show_sections.label"
+  description_key = "settings.show_sections.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_scene"
+  type            = "bool"
+  label_key       = "settings.show_scene.label"
+  description_key = "settings.show_scene.description"
+  default         = true
+
+  # Content / layout
+  [[desktop_widget.setting]]
+  key             = "title"
+  type            = "string"
+  label_key       = "settings.title.label"
+  description_key = "settings.title.description"
+  default         = "Weather & Time"
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "content_width"
+  type            = "int"
+  label_key       = "settings.content_width.label"
+  description_key = "settings.content_width.description"
+  default         = 380
+  min             = 260
+  max             = 900
+  step            = 4
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_gap"
+  type            = "int"
+  label_key       = "settings.card_gap.label"
+  description_key = "settings.card_gap.description"
+  default         = 8
+  min             = 0
+  max             = 32
+  step            = 1
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_padding"
+  type            = "int"
+  label_key       = "settings.card_padding.label"
+  description_key = "settings.card_padding.description"
+  default         = 16
+  min             = 8
+  max             = 32
+  step            = 1
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_radius"
+  type            = "int"
+  label_key       = "settings.card_radius.label"
+  description_key = "settings.card_radius.description"
+  default         = 14
+  min             = 0
+  max             = 48
+  step            = 1
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_fill_color"
+  type            = "color"
+  label_key       = "settings.card_fill_color.label"
+  description_key = "settings.card_fill_color.description"
+  default         = "surface_variant"
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_fill_opacity"
+  type            = "double"
+  label_key       = "settings.card_fill_opacity.label"
+  description_key = "settings.card_fill_opacity.description"
+  default         = 0.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_border_color"
+  type            = "color"
+  label_key       = "settings.card_border_color.label"
+  description_key = "settings.card_border_color.description"
+  default         = "outline"
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_border_width"
+  type            = "double"
+  label_key       = "settings.card_border_width.label"
+  description_key = "settings.card_border_width.description"
+  default         = 0.0
+  min             = 0.0
+  max             = 4.0
+  step            = 0.1
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  # Sections
+  [[desktop_widget.setting]]
+  key             = "show_header"
+  type            = "bool"
+  label_key       = "settings.show_header.label"
+  description_key = "settings.show_header.description"
+  default         = false
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_date"
+  type            = "bool"
+  label_key       = "settings.show_date.label"
+  description_key = "settings.show_date.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_condition_text"
+  type            = "bool"
+  label_key       = "settings.show_condition_text.label"
+  description_key = "settings.show_condition_text.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_forecast"
+  type            = "bool"
+  label_key       = "settings.show_forecast.label"
+  description_key = "settings.show_forecast.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "forecast_days"
+  type            = "select"
+  label_key       = "settings.forecast_days.label"
+  description_key = "settings.forecast_days.description"
+  default         = "3"
+  visible_when    = { key = "show_sections", values = ["true"] }
+  options = [
+    { value = "3", label_key = "settings.forecast_days.option.3" },
+    { value = "5", label_key = "settings.forecast_days.option.5" },
+    { value = "7", label_key = "settings.forecast_days.option.7" },
+  ]
+
+  [[desktop_widget.setting]]
+  key             = "show_details"
+  type            = "bool"
+  label_key       = "settings.show_details.label"
+  description_key = "settings.show_details.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_location"
+  type            = "bool"
+  label_key       = "settings.show_location.label"
+  description_key = "settings.show_location.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_updated"
+  type            = "bool"
+  label_key       = "settings.show_updated.label"
+  description_key = "settings.show_updated.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_attribution"
+  type            = "bool"
+  label_key       = "settings.show_attribution.label"
+  description_key = "settings.show_attribution.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "compact_layout"
+  type            = "bool"
+  label_key       = "settings.compact_layout.label"
+  description_key = "settings.compact_layout.description"
+  default         = false
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  # Styling
+  [[desktop_widget.setting]]
+  key             = "text_color"
+  type            = "color"
+  label_key       = "settings.text_color.label"
+  description_key = "settings.text_color.description"
+  default         = "on_surface"
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "muted_text_color"
+  type            = "color"
+  label_key       = "settings.muted_text_color.label"
+  description_key = "settings.muted_text_color.description"
+  default         = "on_surface_variant"
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "weather_color"
+  type            = "color"
+  label_key       = "settings.weather_color.label"
+  description_key = "settings.weather_color.description"
+  default         = "primary"
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "divider_color"
+  type            = "color"
+  label_key       = "settings.divider_color.label"
+  description_key = "settings.divider_color.description"
+  default         = "outline"
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "divider_width"
+  type            = "double"
+  label_key       = "settings.divider_width.label"
+  description_key = "settings.divider_width.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 4.0
+  step            = 0.1
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "scene_auto_text"
+  type            = "bool"
+  label_key       = "settings.scene_auto_text.label"
+  description_key = "settings.scene_auto_text.description"
+  default         = true
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  # Scaling
+  [[desktop_widget.setting]]
+  key             = "text_scale"
+  type            = "double"
+  label_key       = "settings.text_scale.label"
+  description_key = "settings.text_scale.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 2.0
+  step            = 0.05
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "clock_size"
+  type            = "int"
+  label_key       = "settings.clock_size.label"
+  description_key = "settings.clock_size.description"
+  default         = 64
+  min             = 28
+  max             = 96
+  step            = 1
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "forecast_glyph_size"
+  type            = "int"
+  label_key       = "settings.forecast_glyph_size.label"
+  description_key = "settings.forecast_glyph_size.description"
+  default         = 20
+  min             = 12
+  max             = 36
+  step             = 1
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+# ── Bar widget ─────────────────────────────────────────────────────────────
+
+[[widget]]
+id    = "bar"
+entry = "bar.luau"
+
+  [[widget.setting]]
+  key             = "mode"
+  type            = "select"
+  label_key       = "settings.mode.label"
+  description_key = "settings.mode.description"
+  default         = "weather"
+  options = [
+    { value = "weather", label_key = "settings.mode.option.weather" },
+    { value = "time",    label_key = "settings.mode.option.time" },
+    { value = "both",    label_key = "settings.mode.option.both" },
+  ]
+
+  [[widget.setting]]
+  key             = "show_temperature"
+  type            = "bool"
+  label_key       = "settings.show_temperature.label"
+  description_key = "settings.show_temperature.description"
+  default         = true
+
+  [[widget.setting]]
+  key             = "show_condition"
+  type            = "bool"
+  label_key       = "settings.show_condition.label"
+  description_key = "settings.show_condition.description"
+  default         = false
+
+  [[widget.setting]]
+  key             = "glyph"
+  type            = "glyph"
+  label_key       = "settings.glyph.label"
+  description_key = "settings.glyph.description"
+  default         = "weather-cloud"
+
+# ── Setup panel ────────────────────────────────────────────────────────────
+
+[[panel]]
+id        = "setup"
+entry     = "panel.luau"
+width     = 440
+height    = 680
+placement = "floating"
+position  = "center"

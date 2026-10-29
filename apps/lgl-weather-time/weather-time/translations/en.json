@@ -1,0 +1,373 @@
+{
+  "meta": {
+    "name": "Weather & Time"
+  },
+  "conditions": {
+    "clear": "Clear",
+    "mainly_clear": "Mainly clear",
+    "partly_cloudy": "Partly cloudy",
+    "overcast": "Overcast",
+    "fog": "Fog",
+    "drizzle": "Drizzle",
+    "rain": "Rain",
+    "freezing_rain": "Freezing rain",
+    "snow": "Snow",
+    "showers": "Showers",
+    "snow_showers": "Snow showers",
+    "thunderstorm": "Thunderstorm",
+    "thunderstorm_hail": "Thunderstorm with hail",
+    "unknown": "Unknown"
+  },
+  "labels": {
+    "unknown": "—",
+    "local_time": "Local time",
+    "secondary": "Home",
+    "feels": "Feels",
+    "wind": "Wind",
+    "humidity": "Humidity",
+    "precipitation": "Precip",
+    "no_location": "No location"
+  },
+  "status": {
+    "waiting": "Waiting for the service",
+    "no_weather": "No weather data",
+    "set_location": "Set a location",
+    "error": "Weather unavailable",
+    "loading": "Loading weather…",
+    "cached": "Cached weather — refresh failed",
+    "stale": "Cached weather",
+    "updated": "Updated {age}",
+    "refreshing": "Refreshing weather now",
+    "error_offline": "Offline or unreachable",
+    "error_parse": "Weather response could not be read",
+    "error_timeout": "Weather request timed out",
+    "error_http": "Weather service returned HTTP {status}",
+    "error_http_generic": "Weather service error",
+    "error_request": "Weather request could not start",
+    "error_generic": "Weather unavailable"
+  },
+  "age": {
+    "now": "just now",
+    "minutes": "{n} min ago",
+    "hours": "{n} h ago",
+    "days": "{n} d ago"
+  },
+  "units": {
+    "celsius": "°C",
+    "fahrenheit": "°F",
+    "kmh": "km/h",
+    "mph": "mph",
+    "mm": "mm",
+    "in": "in"
+  },
+  "actions": {
+    "set_location": "Set location"
+  },
+  "source": {
+    "search": "City search",
+    "noctalia": "Imported from Noctalia",
+    "manual": "Manual"
+  },
+  "panel": {
+    "location": "Location",
+    "forget": "Forget location",
+    "refresh": "Refresh now",
+    "search_title": "Search for a place",
+    "search_placeholder": "City, for example London",
+    "search": "Search",
+    "searching": "Searching…",
+    "clear": "Clear",
+    "search_empty": "Type a city name first",
+    "search_failed": "City search failed",
+    "search_no_results": "No matching places",
+    "manual_title": "Manual coordinates",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "label": "Label (optional)",
+    "save_location": "Save location",
+    "manual_hint": "Coordinates are rounded to two decimal places before they are sent to Open-Meteo.",
+    "noctalia_title": "Import from Noctalia",
+    "noctalia_note": "Only manual coordinates or an address you typed in Noctalia are imported. IP-based auto-locate is never reused.",
+    "use_noctalia_coords": "Use manual coordinates",
+    "use_noctalia_address": "Look up address",
+    "no_location": "No location is set. The clock still works.",
+    "save_failed": "Could not save the location: {error}",
+    "location_saved": "Location saved",
+    "invalid_coords": "Enter a latitude between -90 and 90 and a longitude between -180 and 180",
+    "location_forgotten": "Location and cached weather removed",
+    "noctalia_auto": "Noctalia is set to auto-locate. Use a manual location here so this widget never reuses IP-derived coordinates.",
+    "noctalia_missing": "No manual coordinates are set in Noctalia",
+    "noctalia_address_missing": "No address is set in Noctalia",
+    "status": "Status and privacy",
+    "cache_age": "Last successful update: {age}",
+    "privacy": "Only rounded coordinates and your IP are sent to Open-Meteo. No automatic IP lookup, no history, no analytics."
+  },
+  "settings": {
+    "refresh_minutes": {
+      "label": "Refresh weather",
+      "description": "How often to request a new forecast. Open-Meteo is polled politely; failures back off up to one hour.",
+      "option": {
+        "5m": "Every 5 minutes",
+        "10m": "Every 10 minutes",
+        "15m": "Every 15 minutes",
+        "30m": "Every 30 minutes",
+        "1h": "Every hour",
+        "2h": "Every 2 hours"
+      }
+    },
+    "units": {
+      "label": "Units",
+      "description": "Auto follows Noctalia's weather unit when it is readable, otherwise metric. The published state always stays metric.",
+      "option": {
+        "auto": "Auto",
+        "metric": "Metric (°C, km/h)",
+        "imperial": "Imperial (°F, mph)"
+      }
+    },
+    "clock_source": {
+      "label": "Clock source",
+      "description": "Auto uses the weather location's timezone when available and falls back to system time. System always uses local time. Location uses the weather timezone even when it differs from the system.",
+      "option": {
+        "auto": "Auto — location, then system",
+        "system": "System local time",
+        "location": "Weather location time"
+      }
+    },
+    "clock_format": {
+      "label": "Clock format",
+      "description": "Auto follows Noctalia's time format. 24h and 12h force a specific format.",
+      "option": {
+        "auto": "Auto",
+        "24h": "24-hour",
+        "12h": "12-hour"
+      }
+    },
+    "show_seconds": {
+      "label": "Show seconds",
+      "description": "Show seconds in the clock and bar widget. The card redraws once per second instead of once per minute."
+    },
+    "date_style": {
+      "label": "Date style",
+      "description": "Auto follows Noctalia's date format. Weekday shows only the weekday, short shows a compact date, hidden removes the date.",
+      "option": {
+        "auto": "Auto",
+        "weekday": "Weekday only",
+        "short": "Short date",
+        "hidden": "Hidden"
+      }
+    },
+    "secondary_timezone": {
+      "label": "Secondary timezone",
+      "description": "Optional IANA timezone shown under the clock, for example Europe/Berlin. Leave empty to hide it."
+    },
+    "secondary_label": {
+      "label": "Secondary timezone label",
+      "description": "Label shown before the secondary time, for example Home or Work."
+    },
+    "scene": {
+      "label": "Weather scene",
+      "description": "Auto follows the current condition. Off uses the plain themed card. A fixed scene keeps the same scenery regardless of the forecast.",
+      "option": {
+        "auto": "Auto — follow weather",
+        "off": "Off — plain card",
+        "clear": "Clear sky",
+        "cloudy": "Cloudy",
+        "rain": "Rain",
+        "snow": "Snow",
+        "thunder": "Thunderstorm",
+        "fog": "Fog"
+      }
+    },
+    "scene_theme": {
+      "label": "Scene time of day",
+      "description": "Auto uses day/night from the forecast. Night and Day force the scene palette.",
+      "option": {
+        "auto": "Auto",
+        "night": "Night",
+        "day": "Day"
+      }
+    },
+    "animate_effects": {
+      "label": "Animate effects",
+      "description": "Animate rain, snow and lightning frames. Clear, cloudy and fog scenes are static."
+    },
+    "background": {
+      "label": "Host panel background",
+      "description": "Let Noctalia draw its surface behind the card. The scene still draws inside the card; turn this off to place the card directly on the wallpaper."
+    },
+    "background_color": {
+      "label": "Panel colour",
+      "description": "Host panel fill colour. Accepts a hex colour or palette role. Handled by Noctalia, not the plugin."
+    },
+    "background_opacity": {
+      "label": "Panel opacity",
+      "description": "Host panel opacity, applied live by Noctalia."
+    },
+    "background_radius": {
+      "label": "Panel corner radius",
+      "description": "Host panel corner radius in logical px."
+    },
+    "background_padding": {
+      "label": "Panel padding",
+      "description": "Space between the host panel edge and the card content in logical px."
+    },
+    "show_card_settings": {
+      "label": "Show card settings",
+      "description": "Reveal the title, width, layout, fill and border controls. Current values stay active while hidden."
+    },
+    "show_styling": {
+      "label": "Show styling controls",
+      "description": "Reveal the colour, divider and automatic scene text controls. Current values stay active while hidden."
+    },
+    "show_scaling": {
+      "label": "Show scaling controls",
+      "description": "Reveal the text scale, clock size and forecast glyph size controls. Current values stay active while hidden."
+    },
+    "show_sections": {
+      "label": "Show section toggles",
+      "description": "Reveal the header, date, condition, forecast, details, location, update, attribution and compact-layout controls. Current values stay active while hidden."
+    },
+    "show_scene": {
+      "label": "Show background scene",
+      "description": "Draw the full-bleed weather scene. Turn off to keep only the clock, text and weather glyphs on a plain transparent or themed card."
+    },
+    "title": {
+      "label": "Card title",
+      "description": "Heading shown when the optional header is enabled."
+    },
+    "content_width": {
+      "label": "Content width",
+      "description": "Width of the card content in logical px. Match this to the tile width for a tight fit."
+    },
+    "card_gap": {
+      "label": "Card gap",
+      "description": "Space between the optional header and the scene. Inner content spacing stays fixed so the scene height remains stable."
+    },
+    "card_padding": {
+      "label": "Card padding",
+      "description": "Inner padding between the card edge and the clock/weather content."
+    },
+    "card_radius": {
+      "label": "Card corner radius",
+      "description": "Corner radius of the scene image and plain card surface."
+    },
+    "card_fill_color": {
+      "label": "Plain card fill",
+      "description": "Fill used when the weather scene is off. Accepts a hex colour or palette role."
+    },
+    "card_fill_opacity": {
+      "label": "Plain card fill opacity",
+      "description": "Opacity of the plain card fill, from 0 to 1."
+    },
+    "card_border_color": {
+      "label": "Plain card border",
+      "description": "Border used when the weather scene is off. Accepts a hex colour or palette role."
+    },
+    "card_border_width": {
+      "label": "Plain card border width",
+      "description": "Border thickness of the plain card in logical px."
+    },
+    "show_header": {
+      "label": "Show header",
+      "description": "Show the title and refresh/settings buttons above the scene."
+    },
+    "show_date": {
+      "label": "Show date",
+      "description": "Show the date under the clock."
+    },
+    "show_condition_text": {
+      "label": "Show condition text",
+      "description": "Show the condition description next to the temperature. The glyph is always shown."
+    },
+    "show_forecast": {
+      "label": "Show forecast",
+      "description": "Show the next-day forecast strip under the current conditions."
+    },
+    "forecast_days": {
+      "label": "Forecast days",
+      "description": "Number of forecast rows to show after today.",
+      "option": {
+        "3": "3 days",
+        "5": "5 days",
+        "7": "7 days"
+      }
+    },
+    "show_details": {
+      "label": "Show details",
+      "description": "Show feels-like, wind, humidity and precipitation under the forecast."
+    },
+    "show_location": {
+      "label": "Show location",
+      "description": "Show the location label in the footer."
+    },
+    "show_updated": {
+      "label": "Show update age",
+      "description": "Show how long ago the forecast was fetched."
+    },
+    "show_attribution": {
+      "label": "Show attribution",
+      "description": "Show the Open-Meteo credit in the footer. Weather data is provided by Open-Meteo under CC BY 4.0."
+    },
+    "compact_layout": {
+      "label": "Compact layout",
+      "description": "Reduce padding and clock size, hide the details row, hide the timezone/secondary clock and hide footer labels. Use this for short desktop tiles so the clock and forecast never overlap."
+    },
+    "text_color": {
+      "label": "Primary text colour",
+      "description": "Clock, temperature and values. Accepts a hex colour or palette role. A custom value applies over the scene too; at the default on_surface role the scene uses its light default."
+    },
+    "muted_text_color": {
+      "label": "Secondary text colour",
+      "description": "Dates, labels, units and footers. Accepts a hex colour or palette role. A custom value applies over the scene too; at the default on_surface_variant role the scene uses its light default."
+    },
+    "divider_color": {
+      "label": "Divider colour",
+      "description": "Divider under the current conditions. Accepts a hex colour or palette role."
+    },
+    "divider_width": {
+      "label": "Divider thickness",
+      "description": "Thickness of the content divider in logical px."
+    },
+    "scene_auto_text": {
+      "label": "Automatic scene text",
+      "description": "Use light scene defaults for colours that are still at their default palette roles. Any explicit colour value wins in both scene and text-only mode."
+    },
+    "text_scale": {
+      "label": "Text size",
+      "description": "Multiplies every label, date, condition and footer font size without changing the clock size."
+    },
+    "clock_size": {
+      "label": "Clock size",
+      "description": "Clock font size in logical px before text scaling (28–96)."
+    },
+    "forecast_glyph_size": {
+      "label": "Forecast glyph size",
+      "description": "Weather glyph size in the forecast strip (12–36)."
+    },
+    "mode": {
+      "label": "Bar mode",
+      "description": "Show weather, the clock, or both in the bar widget.",
+      "option": {
+        "weather": "Weather",
+        "time": "Clock",
+        "both": "Weather and clock"
+      }
+    },
+    "show_temperature": {
+      "label": "Show temperature",
+      "description": "Show the current temperature beside the bar glyph."
+    },
+    "show_condition": {
+      "label": "Show condition",
+      "description": "Show the condition text in the bar widget."
+    },
+    "glyph": {
+      "label": "Fallback glyph",
+      "description": "Glyph used before weather data is available."
+    },
+    "weather_color": {
+      "label": "Weather icon colour",
+      "description": "Weather glyphs and forecast glyphs. Accepts a hex colour or palette role. A custom value applies over the scene too; the automatic scene default is only used while this stays at the primary role."
+    }
+  }
+}
