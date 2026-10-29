@@ -4,7 +4,7 @@
 
 **KDE Plasma widgets, rebuilt and improved for Noctalia Shell and Noctalia KWE.**
 
-[![Apps](https://img.shields.io/badge/apps-4-purple)](#apps)
+[![Apps](https://img.shields.io/badge/apps-5-purple)](#apps)
 [![Noctalia](https://img.shields.io/badge/Noctalia-v5-blue)](https://github.com/noctalia-dev/noctalia-shell)
 [![Noctalia KWE](https://img.shields.io/badge/noctalia--kwe-v5.3.0-blue)](#install)
 [![Language](https://img.shields.io/badge/Luau-plugins-00A2FF)](#how-the-ports-work)
@@ -40,6 +40,7 @@ other Noctalia users can install it easily.
 | [**LGL DualSense Battery**](apps/lgl-dualsense/) | Shows DualSense battery and connection state with live input visualisation, lightbar, player LED, and optional `ds4u` profile controls[^dualsense] | 17 | MIT |
 | [**LGL Modern SysMonitor Plus**](apps/lgl-modern-sysmonitor-plus/) | Monitors CPU, GPU, memory, disks, fans, temperatures, and network activity[^sysmonitor] | 22 | GPL-2.0-or-later |
 | [**LGL Steam Controller Battery**](apps/lgl-steam-controller/) | Shows Steam Controller 2 battery, charging, connection, wireless signal and live input state[^steam-controller] | 17 | MIT |
+| [**LGL Weather & Time**](apps/lgl-weather-time/) | Shows a location-aware clock, current conditions and forecast with a full-bleed procedural weather scene, plus privacy-first location handling[^weather-time] | 24 | GPL-3.0-or-later |
 
 Open an app's README for its requirements, settings, hardware notes, and full
 installation instructions.
@@ -126,6 +127,16 @@ git sparse-checkout set apps/lgl-steam-controller
 ./apps/lgl-steam-controller/install.sh      # Upstream Noctalia
 ```
 
+#### LGL Weather & Time
+
+```bash
+git sparse-checkout set apps/lgl-weather-time
+
+./apps/lgl-weather-time/install-kwe.sh  # Noctalia KWE
+# OR
+./apps/lgl-weather-time/install.sh      # Upstream Noctalia
+```
+
 The root README and repository metadata remain present in a sparse checkout,
 but the unselected app directories are not checked out. To include another app
 later, use `git sparse-checkout add apps/<app-directory>`.
@@ -159,7 +170,8 @@ apps/
 ├── lgl-ai-usage/
 ├── lgl-dualsense/
 ├── lgl-modern-sysmonitor-plus/
-└── lgl-steam-controller/
+├── lgl-steam-controller/
+└── lgl-weather-time/
 ```
 
 Each app directory contains its plugin payload, catalog entry, installers,
@@ -178,6 +190,7 @@ specific implementation and improvements in each app's README.
 [^dualsense]: Uses the desktop-card approach inspired by Jahrek's [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget), with DualSense protocol and profile work informed by deadYokai's [ds4u](https://git.yokai.digital/deadYokai/ds4u).
 [^sysmonitor]: Based on Modern SysMonitor Plus by UnsaidSpeech, itself based on [Modern SysMonitor](https://github.com/joaogabrielmedeiros/kde_plasma_widgets) by Joao Gabriel Medeiros.
 [^steam-controller]: Based on Jahrek's [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget).
+[^weather-time]: Weather data by [Open-Meteo](https://open-meteo.com/) under [CC BY 4.0](https://open-meteo.com/en/license). The widget draws its own procedural scene and does not reuse Noctalia's IP-based auto-location.
 
 ---
 
