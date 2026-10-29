@@ -189,7 +189,7 @@
     },
     "animate_effects": {
       "label": "Animate effects",
-      "description": "Animate rain, snow and lightning frames. Clear, cloudy and fog scenes are static."
+      "description": "Animate the scene frames: rain, snow and lightning at 180 ms; stars, clouds and fog at a 420 ms ambient cadence."
     },
     "background": {
       "label": "Host panel background",
@@ -334,7 +334,11 @@
     },
     "text_scale": {
       "label": "Text size",
-      "description": "Multiplies every label, date, condition and footer font size without changing the clock size."
+      "description": "Global text multiplier for the clock, temperature and all labels. Use Small text size below to adjust dates, labels and footers independently."
+    },
+    "small_text_scale": {
+      "label": "Small text size",
+      "description": "Extra multiplier for dates, the timezone label, condition text, high/low, forecast labels, details and footer text. The clock and temperature stay controlled by Text size and Clock size."
     },
     "clock_size": {
       "label": "Clock size",

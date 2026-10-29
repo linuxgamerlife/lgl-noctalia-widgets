@@ -67,11 +67,12 @@ Open-Meteo.
 | --- | --- |
 | Large clock over a night scene | Real `ui.label` text over a generated SVG scene |
 | Starfield, grass silhouette | Deterministic procedural SVG stars and two grass layers |
-| Rain / snow / lightning | Six-frame SVG loops, 180 ms per frame |
-| Sun or moon | Scene palette and `is_day` from the forecast |
+| Stars / clouds / fog | Six-frame ambient loops at 420 ms: twinkle, drift and fog breathing |
+| Rain / snow / lightning | Six-frame SVG loops at 180 ms |
+| Sun or moon | Scene palette and `is_day` from the forecast; shown on clear scenes |
 | Current condition, temperature, high/low | Current Open-Meteo data, WMO code mapping |
 | Three-day forecast | Next 3/5/7 days, excluding today |
-| Location-bound time | IANA timezone returned by Open-Meteo, with system fallback |
+| Location-bound time | IANA timezone returned by Open-Meteo, with system fallback; timezone shown on the date line |
 | Host-panel glass | Noctalia host panel plus optional plain inner surface |
 | Theme colours | Palette roles for the plain card; automatic light text over scenes |
 | Settings | Plugin-level behaviour, per-card display and styling |
@@ -123,7 +124,7 @@ Desktop card:
   attribution, compact layout;
 - primary/muted/weather-icon/divider colours, with explicit overrides applying over the scene too;
 - a per-card **Show background scene** toggle for text-and-icons-only mode;
-- text scale, clock size, forecast glyph size.
+- text scale, small-text scale, clock size, forecast glyph size.
 
 **Text-only mode:** turn off **Show background scene** to keep the clock,
 weather glyphs and text without the generated image. The plain card has no fill

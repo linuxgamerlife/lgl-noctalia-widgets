@@ -136,7 +136,7 @@ local function ensure_scene()
   scene_info = {
     variant = variant,
     frames = paths,
-    interval_ms = scene.INTERVAL_MS,
+    interval_ms = scene.interval_ms(variant),
   }
 end
 

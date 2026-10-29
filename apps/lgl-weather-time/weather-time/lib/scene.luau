@@ -10,12 +10,7 @@ local M = {}
 M.WIDTH = 800
 M.HEIGHT = 460
 M.INTERVAL_MS = 180
-
-local ANIMATED = {
-  rain = true,
-  snow = true,
-  thunder = true,
-}
+M.AMBIENT_INTERVAL_MS = 420
 
 local COLORS = {
   clear_day = { top = "#1b4a6e", mid = "#3a7ba4", bottom = "#15334c", star = "#eaf5ff", ground = "#031018" },
@@ -88,12 +83,14 @@ local function stars(colors, variant, frame)
   local night = variant:match("_night") ~= nil
   local count = night and 110 or 0
   local random = rng(hash(variant) + frame * 7919)
+  local total = M.frame_count(variant)
+  local phase = (frame / total) * 2 * math.pi
   local out = {}
   for index = 1, count do
     local x = random() * M.WIDTH
     local y = random() * M.HEIGHT * 0.62
     local radius = 0.35 + random() * 1.25
-    local twinkle = 0.45 + random() * 0.5 + 0.08 * math.sin((frame + index) * 1.7)
+    local twinkle = 0.45 + random() * 0.5 + 0.10 * math.sin(phase + index * 0.9)
     if twinkle > 1 then
       twinkle = 1
     end
@@ -138,11 +135,13 @@ local function clouds(colors, variant, frame)
   local random = rng(hash(variant) + 33)
   local out = { '<g filter="url(#soft)">' }
   local count = variant:match("fog") and 3 or 4
+  local total = M.frame_count(variant)
+  local phase = (frame / total) * 2 * math.pi
   for index = 1, count do
     local base_x = random() * M.WIDTH
     local base_y = 42 + random() * 100
-    local drift = (frame * 7 + index * 13) % 60
-    local x = (base_x + drift) % (M.WIDTH + 180) - 90
+    local drift = math.sin(phase + index * 1.3) * 18
+    local x = base_x + drift
     local thunder = variant:match("thunder") ~= nil
     local rain = variant:match("rain") ~= nil
     local foggy = variant:match("fog") ~= nil
@@ -213,8 +212,10 @@ end
 
 local function fog(frame)
   local out = { '<g fill="#dbe6ec">' }
+  local total = M.frame_count(variant)
+  local phase = (frame / total) * 2 * math.pi
   for index = 1, 5 do
-    local y = 130 + index * 44 + math.sin((frame + index) * 0.8) * 5
+    local y = 130 + index * 44 + math.sin(phase + index) * 5
     local opacity = 0.05 + (index % 2) * 0.025
     out[#out + 1] = string.format(
       '<rect x="-40" y="%s" width="880" height="28" rx="14" opacity="%s"/>',
@@ -264,9 +265,18 @@ function M.variant(category, is_day)
   return safe .. (is_day and "_day" or "_night")
 end
 
-function M.frame_count(variant)
+function M.frame_count(_variant)
+  -- Every scene animates: stars twinkle, clouds drift, fog breathes and
+  -- precipitation falls. The card chooses a slower cadence for ambient scenes.
+  return 6
+end
+
+function M.interval_ms(variant)
   local category = variant:match("^[^_]+")
-  return ANIMATED[category] and 6 or 1
+  if category == "rain" or category == "snow" or category == "thunder" then
+    return M.INTERVAL_MS
+  end
+  return M.AMBIENT_INTERVAL_MS
 end
 
 function M.svg(variant, frame)

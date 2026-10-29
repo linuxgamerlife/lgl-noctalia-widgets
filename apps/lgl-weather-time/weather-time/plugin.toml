@@ -218,7 +218,7 @@ entry = "card.luau"
   type            = "bool"
   label_key       = "settings.show_scaling.label"
   description_key = "settings.show_scaling.description"
-  default         = false
+  default         = true
 
   [[desktop_widget.setting]]
   key             = "show_sections"
@@ -469,6 +469,17 @@ entry = "card.luau"
   type            = "double"
   label_key       = "settings.text_scale.label"
   description_key = "settings.text_scale.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 2.0
+  step            = 0.05
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "small_text_scale"
+  type            = "double"
+  label_key       = "settings.small_text_scale.label"
+  description_key = "settings.small_text_scale.description"
   default         = 1.0
   min             = 0.5
   max             = 2.0

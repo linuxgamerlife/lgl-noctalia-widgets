@@ -105,6 +105,7 @@ function M.card()
     scene_auto_text = bool("scene_auto_text", true),
 
     text_scale = number("text_scale", 1, 0.5, 2),
+    small_text_scale = number("small_text_scale", 1, 0.5, 2),
     clock_size = integer("clock_size", 64, 28, 96),
     forecast_glyph_size = integer("forecast_glyph_size", 20, 12, 36),
 

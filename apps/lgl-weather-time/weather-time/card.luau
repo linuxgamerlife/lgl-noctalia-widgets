@@ -66,6 +66,12 @@ local function text_size(value)
   return math.max(1, math.floor(value * cfg.text_scale + 0.5))
 end
 
+-- Labels, dates, forecast text and footers have their own multiplier so the
+-- clock and temperature can stay large while the small print is made readable.
+local function small_text_size(value)
+  return math.max(1, math.floor(value * cfg.text_scale * cfg.small_text_scale + 0.5))
+end
+
 local function layout_padding()
   if cfg.compact_layout then
     return math.min(cfg.card_padding, 10)
@@ -114,15 +120,15 @@ end
 
 local function layout_main_height()
   local clock_px = layout_clock_px()
-  local date_h = (cfg.show_date and service_cfg.date_style ~= "hidden")
-      and text_size(cfg.compact_layout and 10 or 11) or 0
-  local zone_h = (not cfg.compact_layout) and text_size(9) or 0
+  local show_date = cfg.show_date and service_cfg.date_style ~= "hidden"
+  local date_h = (show_date or not cfg.compact_layout)
+      and small_text_size(cfg.compact_layout and 10 or 11) or 0
   local secondary_h = (not cfg.compact_layout and service_cfg.secondary_timezone ~= "")
-      and text_size(10) or 0
-  local clock_h = clock_px + 4 + date_h + zone_h + secondary_h
+      and small_text_size(10) or 0
+  local clock_h = clock_px + 4 + date_h + secondary_h
   local weather_h = text_size(layout_weather_temp())
-    + (cfg.show_condition_text and text_size(cfg.compact_layout and 10 or 12) or 0)
-    + text_size(cfg.compact_layout and 9 or 11)
+    + (cfg.show_condition_text and small_text_size(cfg.compact_layout and 10 or 12) or 0)
+    + small_text_size(cfg.compact_layout and 9 or 11)
     + 6
   return math.max(clock_h, weather_h)
 end
@@ -338,10 +344,10 @@ local function setup_button(colors)
   return ui.button({
     key = "setup",
     text = tr("actions.set_location", "Set location"),
-    fontSize = text_size(11),
+    fontSize = small_text_size(11),
     variant = "secondary",
     controlSize = "sm",
-    height = text_size(26),
+    height = small_text_size(26),
     onClick = "openSetup",
   })
 end
@@ -356,7 +362,7 @@ local function weather_column(model, colors)
       table.insert(children, ui.label({
         key = "weather-status",
         text = status_text(model) or tr("status.no_weather", "No weather data"),
-        fontSize = text_size(11),
+        fontSize = small_text_size(11),
         color = colors.muted,
         maxLines = 2,
         textAlign = "right",
@@ -383,7 +389,7 @@ local function weather_column(model, colors)
         key = "weather-temp",
         text = value,
         fontSize = text_size(layout_weather_temp()),
-        fontWeight = "semibold",
+        fontWeight = "regular",
         color = colors.text,
         maxLines = 1,
       }),
@@ -393,7 +399,7 @@ local function weather_column(model, colors)
     table.insert(children, ui.label({
       key = "weather-condition",
       text = condition_text(model),
-      fontSize = text_size(cfg.compact_layout and 10 or 12),
+      fontSize = small_text_size(cfg.compact_layout and 10 or 12),
       color = colors.muted,
       maxLines = 1,
       textAlign = "right",
@@ -402,7 +408,7 @@ local function weather_column(model, colors)
   table.insert(children, ui.label({
     key = "weather-high-low",
     text = high_low(model),
-    fontSize = text_size(cfg.compact_layout and 9 or 11),
+    fontSize = small_text_size(cfg.compact_layout and 9 or 11),
     color = colors.muted,
     maxLines = 1,
     textAlign = "right",
@@ -423,18 +429,31 @@ local function clock_column(model, colors)
       key = "clock",
       text = clock_text(tz),
       fontSize = layout_clock_px(),
-      fontWeight = "light",
+      fontWeight = "regular",
       color = colors.text,
       maxLines = 1,
       maxWidth = math.max(120, math.floor(cfg.content_width * 0.55)),
     }),
   }
+  local zone = nil
+  if model ~= nil then
+    if type(model.timezone_abbreviation) == "string" and model.timezone_abbreviation ~= "" then
+      zone = model.timezone_abbreviation
+    elseif type(model.timezone) == "string" and model.timezone ~= "" then
+      zone = model.timezone
+    end
+  end
   local value = date_text(tz)
+  if value ~= nil and zone ~= nil then
+    value = value .. "  ·  " .. zone
+  elseif value == nil and not cfg.compact_layout then
+    value = zone
+  end
   if value ~= nil then
     table.insert(children, ui.label({
       key = "date",
       text = value,
-      fontSize = text_size(cfg.compact_layout and 10 or 11),
+      fontSize = small_text_size(cfg.compact_layout and 10 or 11),
       color = colors.muted,
       maxLines = 1,
     }))
@@ -445,26 +464,11 @@ local function clock_column(model, colors)
       table.insert(children, ui.label({
         key = "secondary",
         text = secondary,
-        fontSize = text_size(10),
+        fontSize = small_text_size(10),
         color = colors.muted,
         maxLines = 1,
       }))
     end
-    local zone = nil
-    if model ~= nil then
-      if type(model.timezone_abbreviation) == "string" and model.timezone_abbreviation ~= "" then
-        zone = model.timezone_abbreviation
-      elseif type(model.timezone) == "string" and model.timezone ~= "" then
-        zone = model.timezone
-      end
-    end
-    table.insert(children, ui.label({
-      key = "timezone",
-      text = zone or tr("labels.local_time", "Local time"),
-      fontSize = text_size(9),
-      color = colors.muted,
-      maxLines = 1,
-    }))
   end
   return ui.column({
     key = "clock-column",
@@ -490,7 +494,7 @@ local function forecast_row(model, colors)
         ui.label({
           key = "forecast-day-" .. tostring(index),
           text = forecast_weekday(day, tz, model),
-          fontSize = text_size(cfg.compact_layout and 9 or 10),
+          fontSize = small_text_size(cfg.compact_layout and 9 or 10),
           fontWeight = "semibold",
           color = colors.muted,
           maxLines = 1,
@@ -510,7 +514,7 @@ local function forecast_row(model, colors)
         text = (low ~= nil and high ~= nil)
           and string.format("%d/%d°", math.floor(low + 0.5), math.floor(high + 0.5))
           or format.DASH,
-        fontSize = text_size(cfg.compact_layout and 9 or 10),
+        fontSize = small_text_size(cfg.compact_layout and 9 or 10),
         color = colors.text,
         maxLines = 1,
         textAlign = "center",
@@ -531,8 +535,8 @@ end
 
 local function detail_cell(key, label, value, colors)
   return ui.row({ key = key, gap = 4, align = "center" }, {
-    ui.label({ key = key .. "-label", text = label, fontSize = text_size(9), color = colors.muted, maxLines = 1 }),
-    ui.label({ key = key .. "-value", text = value, fontSize = text_size(10), fontWeight = "semibold", color = colors.text, maxLines = 1 }),
+    ui.label({ key = key .. "-label", text = label, fontSize = small_text_size(9), color = colors.muted, maxLines = 1 }),
+    ui.label({ key = key .. "-value", text = value, fontSize = small_text_size(10), fontWeight = "semibold", color = colors.text, maxLines = 1 }),
   })
 end
 
@@ -572,7 +576,7 @@ local function footer(model, colors)
       table.insert(children, ui.label({
         key = "footer-location",
         text = label,
-        fontSize = text_size(9),
+        fontSize = small_text_size(9),
         color = colors.muted,
         flexGrow = 1,
         maxLines = 1,
@@ -586,7 +590,7 @@ local function footer(model, colors)
       table.insert(children, ui.label({
         key = "footer-updated",
         text = age,
-        fontSize = text_size(9),
+        fontSize = small_text_size(9),
         color = status ~= nil and colors.warning or colors.muted,
         maxLines = 1,
       }))
@@ -594,7 +598,7 @@ local function footer(model, colors)
       table.insert(children, ui.label({
         key = "footer-status",
         text = status,
-        fontSize = text_size(9),
+        fontSize = small_text_size(9),
         color = colors.warning,
         maxLines = 1,
       }))
@@ -603,7 +607,7 @@ local function footer(model, colors)
       table.insert(children, ui.label({
         key = "footer-attribution",
         text = "Open-Meteo",
-        fontSize = text_size(8),
+        fontSize = small_text_size(8),
         color = colors.muted,
         maxLines = 1,
       }))
@@ -674,12 +678,12 @@ local function content_height(model)
     and model ~= nil and type(model.forecast) == "table" and #model.forecast > 1
   local forecast_h = 0
   if has_forecast then
-    forecast_h = text_size(cfg.compact_layout and 9 or 10)
+    forecast_h = small_text_size(cfg.compact_layout and 9 or 10)
       + text_size(layout_forecast_glyph())
-      + text_size(cfg.compact_layout and 9 or 10)
+      + small_text_size(cfg.compact_layout and 9 or 10)
       + 4
   end
-  local details_h = has_details and (text_size(10) + 4) or 0
+  local details_h = has_details and (small_text_size(10) + 4) or 0
   local footer_h = text_size(cfg.compact_layout and 18 or 22)
   local separator_h = (has_forecast or has_details) and 1 or 0
   local child_count = 2 -- main + footer
@@ -708,7 +712,7 @@ local function header(colors)
       key = "header-title",
       text = cfg.title,
       fontSize = text_size(16),
-      fontWeight = "light",
+      fontWeight = "regular",
       color = colors.text,
       flexGrow = 1,
       maxLines = 1,
@@ -849,12 +853,14 @@ local function ingest(value)
   end
   current_scene = next_scene
   local animated = scene_active() and service_cfg.animate_effects and #current_scene.frames > 1
-  noctalia.setUpdateInterval(animated and 200 or 1000)
+  local interval = tonumber(current_scene and current_scene.interval_ms) or 180
+  noctalia.setUpdateInterval(animated and math.max(100, interval) or 1000)
   last_key = nil
   render()
 end
 
-noctalia.setUpdateInterval(scene_active() and service_cfg.animate_effects and 200 or 1000)
+local initial_interval = tonumber(current_scene and current_scene.interval_ms) or 180
+noctalia.setUpdateInterval(scene_active() and service_cfg.animate_effects and math.max(100, initial_interval) or 1000)
 if current ~= nil then
   ingest(current)
 else
