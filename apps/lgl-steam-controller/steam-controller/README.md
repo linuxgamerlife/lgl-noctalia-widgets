@@ -17,7 +17,7 @@ battery fill can instead use a custom colour with adjustable opacity.
 | Field | Value |
 | --- | --- |
 | ID | `jahrek/steam-controller` |
-| Version | `2.3.0` |
+| Version | `2.4.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 
@@ -127,6 +127,11 @@ battery_fill_opacity    = 1.0            # 0 = transparent, 1 = solid
 battery_low_color       = "#ed4c4c"
 text_color              = "on_surface"
 muted_text_color        = "on_surface_variant"
+show_battery_bar        = true
+show_percentage         = true
+show_status             = true
+show_live_inputs        = true
+input_highlight_color   = "primary"
 show_signal             = true
 signal_style            = "bars"         # bars | bars_dbm | dbm
 
@@ -153,8 +158,18 @@ entries are per-widget presentation settings.
 | `battery_low_color` | desktop widget | `#ed4c4c` | Low-battery fill, percentage, weak-signal meter and marker colour. Always wins when low. |
 | `text_color` | desktop widget | `on_surface` | Percentage, status text, marker and active signal bars. |
 | `muted_text_color` | desktop widget | `on_surface_variant` | Percentage sign, `via` line, dBm label and inactive signal bars. |
+| `show_battery_bar` | desktop widget | `true` | Show the vertical battery bar. When off, the bar is hidden and the controller content is centred. |
+| `show_percentage` | desktop widget | `true` | Show the battery percentage below the controller. |
+| `show_status` | desktop widget | `true` | Show the connection, charging and low-battery status line below the controller. |
+| `show_live_inputs` | desktop widget | `true` | Overlay live button presses, stick movement, trigger pulls and touchpad points on the controller. |
+| `input_highlight_color` | desktop widget | `primary` | Highlight colour for the live input overlay. Accepts a hex value or any Noctalia palette role. |
 | `show_signal` | desktop widget | `true` | Show the wireless link meter for a controller connected through the puck. |
 | `signal_style` | desktop widget | `bars` | `bars`, `bars_dbm`, or `dbm`. |
+
+With `show_battery_bar = false`, the battery graphic is omitted and the
+controller, percentage and status column is centred in the card. The percentage
+and status line can be hidden independently with `show_percentage` and
+`show_status`.
 
 The desktop widget also gets Noctalia's standard background settings
 (`background`, `background_color`, `background_opacity`, `background_radius`,
@@ -179,6 +194,8 @@ The desktop widget also gets Noctalia's standard background settings
 - `text_color` and `muted_text_color` control the percentage/status/marker and
   the secondary text (`%`, `via` line, dBm, inactive bars). They are passed
   straight to the UI, so a role token follows a live theme change.
+- `input_highlight_color` controls the live input overlay and accepts hex values
+  or palette role tokens just like the other colour settings.
 
 The battery and text colour settings accept hex values or palette role tokens.
 
@@ -201,6 +218,9 @@ follow the theme; `battery_low_color` also accepts a role token such as
 - Report `0x43` carries the live battery percentage in byte `[2]` and the
   charging flag in byte `[1]`.
 - Report `0x7b` byte `[9]` carries the signed dBm value of the pad ↔ puck link.
+- Reports `0x42`, `0x45` and `0x47` carry the Triton input state: buttons,
+  stick axes, triggers and touchpad coordinates/pressure. The daemon publishes a
+  compact `input` object for the live overlay at up to 30 Hz.
 - Over Bluetooth the pad exposes a standard Battery Service, so the daemon reads
   the live percentage through BlueZ (`busctl`).
 - The puck is asked (feature report `0xB4`) whether the pad is on its charging
@@ -213,6 +233,18 @@ follow the theme; `battery_low_color` also accepts a role token such as
   process before starting a new one.
 - A debug copy of the current state is written to
   `$XDG_RUNTIME_DIR/noctalia-sc-battery.json`.
+
+### Live input visualisation
+
+The card overlays button presses, the D-pad, A/B/X/Y, bumpers, both sticks,
+L2/R2 analog bars, and both touchpads (click plus touch position) on the
+controller drawing. It reads the Triton input reports at about 30 Hz and only
+redraws when the input changes.
+
+`show_live_inputs = false` disables the overlay. `input_highlight_color` sets
+the highlight colour and accepts any Noctalia palette role or a hex value. Live
+input requires the Steam Controller 2 ("Triton"); the original Steam Controller
+uses a different HID protocol.
 
 ## IPC
 

@@ -37,9 +37,9 @@ other Noctalia users can install it easily.
 | App | What it does | Plugin API | Licence |
 |---|---|---:|---|
 | [**LGL AI Usage**](apps/lgl-ai-usage/) | Shows AI limits, spend, balances, and local OpenCode statistics in desktop, bar, and panel views[^ai-usage] | 24 | GPL-3.0-or-later |
-| [**LGL DualSense Battery**](apps/lgl-dualsense/) | Shows DualSense battery and connection state with lightbar, player LED, and optional `ds4u` profile controls[^dualsense] | 17 | MIT |
+| [**LGL DualSense Battery**](apps/lgl-dualsense/) | Shows DualSense battery and connection state with live input visualisation, lightbar, player LED, and optional `ds4u` profile controls[^dualsense] | 17 | MIT |
 | [**LGL Modern SysMonitor Plus**](apps/lgl-modern-sysmonitor-plus/) | Monitors CPU, GPU, memory, disks, fans, temperatures, and network activity[^sysmonitor] | 22 | GPL-2.0-or-later |
-| [**LGL Steam Controller Battery**](apps/lgl-steam-controller/) | Shows Steam Controller 2 battery, charging, connection, and wireless signal state[^steam-controller] | 17 | MIT |
+| [**LGL Steam Controller Battery**](apps/lgl-steam-controller/) | Shows Steam Controller 2 battery, charging, connection, wireless signal and live input state[^steam-controller] | 17 | MIT |
 
 Open an app's README for its requirements, settings, hardware notes, and full
 installation instructions.

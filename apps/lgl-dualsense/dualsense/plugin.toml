@@ -7,12 +7,12 @@
 
 id           = "deadYokai/dualsense"
 name         = "DualSense Battery"
-version      = "1.0.10"
+version      = "1.1.0"
 plugin_api   = 17
 author       = "deadYokai"
 license      = "MIT"
 icon         = "device-gamepad-2"
-description  = "Battery level, charging state, lightbar sync and ds4u profile controls for DualSense and DualSense Edge controllers."
+description  = "Battery level, charging state, lightbar sync, live input visualisation and ds4u profile controls for DualSense and DualSense Edge controllers."
 tags         = ["gaming", "hardware", "battery", "dualsense", "desktop"]
 dependencies = ["python3"]
 
@@ -79,6 +79,35 @@ entry = "card.luau"
   step            = 0.1
 
   [[desktop_widget.setting]]
+  key             = "lightbar_color_mode"
+  type            = "select"
+  label_key       = "settings.lightbar_color_mode.label"
+  description_key = "settings.lightbar_color_mode.description"
+  default         = "ds4u"
+  options = [
+    { value = "ds4u",   label_key = "settings.lightbar_color_mode.option.ds4u" },
+    { value = "custom", label_key = "settings.lightbar_color_mode.option.custom" },
+  ]
+
+  [[desktop_widget.setting]]
+  key             = "lightbar_color"
+  type            = "color"
+  label_key       = "settings.lightbar_color.label"
+  description_key = "settings.lightbar_color.description"
+  default         = "#0080ff"
+  visible_when    = { key = "lightbar_color_mode", values = ["custom"] }
+
+  [[desktop_widget.setting]]
+  key             = "lightbar_width"
+  type            = "double"
+  label_key       = "settings.lightbar_width.label"
+  description_key = "settings.lightbar_width.description"
+  default         = 3.0
+  min             = 0.5
+  max             = 8.0
+  step            = 0.1
+
+  [[desktop_widget.setting]]
   key             = "profile_settings_opacity"
   type            = "double"
   label_key       = "settings.profile_settings_opacity.label"
@@ -138,6 +167,42 @@ entry = "card.luau"
   label_key       = "settings.muted_text_color.label"
   description_key = "settings.muted_text_color.description"
   default         = "on_surface_variant"
+
+  [[desktop_widget.setting]]
+  key             = "show_battery_bar"
+  type            = "bool"
+  label_key       = "settings.show_battery_bar.label"
+  description_key = "settings.show_battery_bar.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_percentage"
+  type            = "bool"
+  label_key       = "settings.show_percentage.label"
+  description_key = "settings.show_percentage.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_status"
+  type            = "bool"
+  label_key       = "settings.show_status.label"
+  description_key = "settings.show_status.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_live_inputs"
+  type            = "bool"
+  label_key       = "settings.show_live_inputs.label"
+  description_key = "settings.show_live_inputs.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "input_highlight_color"
+  type            = "color"
+  label_key       = "settings.input_highlight_color.label"
+  description_key = "settings.input_highlight_color.description"
+  default         = "primary"
+  visible_when    = { key = "show_live_inputs", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_profile"

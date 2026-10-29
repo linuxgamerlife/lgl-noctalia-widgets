@@ -3,9 +3,11 @@
 --
 -- By default the card mirrors the controller's ds4u lightbar color (or its
 -- connection link color: PlayStation blue on Bluetooth, green on USB-C, red
--- when low). The controller line/body, lightbar accents and battery fill are
--- configurable. Charging pulses. The profile selector switches directly among
--- saved ds4u profiles; clicking the controller art rumbles the controller.
+-- when low). The controller line/body, the touchpad lightbar accents (ds4u
+-- colour or a custom colour/palette role, with an adjustable thickness), the
+-- battery fill and the live input overlay are configurable. Charging pulses.
+-- The profile selector switches directly among saved ds4u profiles; clicking
+-- the controller art rumbles the controller.
 
 local STALE_AFTER = 20 -- seconds without a daemon heartbeat
 
@@ -14,6 +16,10 @@ local settings = {
   controller_body_color = noctalia.getConfig("controller_body_color") or "#2c3035",
   controller_body_opacity = tonumber(noctalia.getConfig("controller_body_opacity")) or 1.0,
   controller_stroke_width = tonumber(noctalia.getConfig("controller_stroke_width")) or 2.8,
+  lightbar_color_mode = noctalia.getConfig("lightbar_color_mode") or "ds4u",
+  lightbar_color = noctalia.getConfig("lightbar_color") or "#0080ff",
+  lightbar_width = tonumber(noctalia.getConfig("lightbar_width")) or 3.0,
+  input_highlight_color = noctalia.getConfig("input_highlight_color") or "primary",
   profile_settings_opacity = tonumber(noctalia.getConfig("profile_settings_opacity")) or 0.65,
   battery_color_mode = noctalia.getConfig("battery_color_mode") or "lightbar",
   battery_fill_color = noctalia.getConfig("battery_fill_color") or "#0080ff",
@@ -21,6 +27,10 @@ local settings = {
   battery_low_color = noctalia.getConfig("battery_low_color") or "#ed4c4c",
   text_color = noctalia.getConfig("text_color") or "on_surface",
   muted_text_color = noctalia.getConfig("muted_text_color") or "on_surface_variant",
+  show_battery_bar = noctalia.getConfig("show_battery_bar"),
+  show_percentage = noctalia.getConfig("show_percentage"),
+  show_status = noctalia.getConfig("show_status"),
+  show_live_inputs = noctalia.getConfig("show_live_inputs"),
   show_profile = noctalia.getConfig("show_profile"),
   show_player_leds = noctalia.getConfig("show_player_leds"),
   show_model_badge = noctalia.getConfig("show_model_badge"),
@@ -60,6 +70,29 @@ if settings.controller_stroke_width < 0.5 then
 elseif settings.controller_stroke_width > 8 then
   settings.controller_stroke_width = 8
 end
+if settings.lightbar_color_mode ~= "custom" then
+  settings.lightbar_color_mode = "ds4u"
+end
+if settings.lightbar_color == "" then
+  settings.lightbar_color = "#0080ff"
+end
+if settings.lightbar_width < 0.5 then
+  settings.lightbar_width = 0.5
+elseif settings.lightbar_width > 8 then
+  settings.lightbar_width = 8
+end
+if settings.show_battery_bar == nil then
+  settings.show_battery_bar = true
+end
+if settings.show_percentage == nil then
+  settings.show_percentage = true
+end
+if settings.show_status == nil then
+  settings.show_status = true
+end
+if settings.show_live_inputs == nil then
+  settings.show_live_inputs = true
+end
 if settings.show_profile == nil then
   settings.show_profile = true
 end
@@ -89,6 +122,25 @@ local PLAYER_LED_PATTERNS = {
   [5] = { true,  true,  true,  true,  true  },
   [6] = { true,  false, false, false, true  },
   [7] = { false, true,  true,  true,  false },
+}
+
+-- Input bitmask from ds4u (src/inputs.rs).
+local BTN = {
+  square = 1,
+  cross = 2,
+  circle = 4,
+  triangle = 8,
+  l1 = 16,
+  r1 = 32,
+  l2 = 64,
+  r2 = 128,
+  create = 256,
+  options = 512,
+  l3 = 1024,
+  r3 = 2048,
+  ps = 4096,
+  touchpad = 8192,
+  mute = 16384,
 }
 
 local BODY_W = 58
@@ -137,16 +189,36 @@ local function active_lightbar_hex()
   return LED.default_lightbar
 end
 
+-- The drawn lightbar accents follow the live ds4u profile colour by default,
+-- or a fixed colour/palette role from the settings.
+local function lightbar_accent_hex()
+  if settings.lightbar_color_mode == "custom" then
+    local color = resolve_color(settings.lightbar_color, LED.default_lightbar)
+    if valid_hex(color) then
+      return color
+    end
+  end
+  return active_lightbar_hex()
+end
+
 -- Draw the DualSense line art, body and lightbar accents in the configured
 -- colours. A generated SVG is used because ui.image cannot tint; fall back to
--- the bundled one.
+-- the bundled one. Live input highlights are baked into the same SVG, using a
+-- small ring of filenames so ui.image reloads every changed frame.
 local art_path = nil
+local art_base = nil
+local art_base_key = nil
+local art_static_path = nil
+local art_live_key = nil
+local art_live_path = nil
+local art_live_seq = 0
+local LIVE_SLOTS = 4
 
-local function controller_art()
+local function controller_art(live_overlay)
   local fallback = "assets/controller.svg"
   local line = resolve_color(settings.illustration_color, "#e8ebef")
   local body = resolve_color(settings.controller_body_color, "#2c3035")
-  local lb = active_lightbar_hex()
+  local lb = lightbar_accent_hex()
   if not valid_hex(line) then
     line = "#e8ebef"
   end
@@ -159,37 +231,70 @@ local function controller_art()
   local stroke = settings.controller_stroke_width
   local stroke_text = string.format("%.2f", stroke)
   local grip_text = string.format("%.2f", stroke * 0.625)
+  local lightbar_width_text = string.format("%.2f", settings.lightbar_width)
   local body_opacity_text = string.format("%.2f", settings.controller_body_opacity)
+  local base_key = table.concat({
+    line, body, lb, stroke_text, grip_text, lightbar_width_text, body_opacity_text,
+  }, "|")
 
   local dir = noctalia.pluginDataDir()
   if not dir then
     return fallback
   end
-  local path = dir .. "/dualsense-v1-" .. color_key(line) .. "-" .. color_key(body)
-    .. "-" .. color_key(lb) .. "-" .. color_key(stroke_text)
-    .. "-" .. color_key(body_opacity_text) .. ".svg"
-  if path == art_path then
+
+  if art_base == nil or art_base_key ~= base_key then
+    local template = noctalia.readFile("assets/controller-template.svg")
+    if not template then
+      return fallback
+    end
+    local svg = string.gsub(template, "{{BODY}}", body)
+    svg = string.gsub(svg, "{{BODY_OPACITY}}", body_opacity_text)
+    svg = string.gsub(svg, "{{COLOR}}", line)
+    svg = string.gsub(svg, "{{LIGHTBAR}}", lb)
+    svg = string.gsub(svg, "{{STROKE_BODY}}", stroke_text)
+    svg = string.gsub(svg, "{{STROKE_GRIP}}", grip_text)
+    svg = string.gsub(svg, "{{LIGHTBAR_WIDTH}}", lightbar_width_text)
+    art_base = svg
+    art_base_key = base_key
+  end
+
+  if live_overlay and live_overlay ~= "" then
+    local live_key = base_key .. "\n" .. live_overlay
+    if live_key == art_live_key and art_live_path then
+      return art_live_path
+    end
+    local overlay_key = color_key(
+      tostring(settings.input_highlight_color) .. "-"
+      .. tostring(settings.muted_text_color) .. "-"
+      .. tostring(settings.text_color)
+    )
+    local path = dir .. "/dualsense-live-" .. color_key(base_key) .. "-"
+      .. overlay_key .. "-" .. art_live_seq .. ".svg"
+    art_live_seq = (art_live_seq + 1) % LIVE_SLOTS
+    local svg = string.gsub(art_base, "{{LIVE_OVERLAY}}", live_overlay)
+    if not noctalia.writeFile(path, svg) then
+      return fallback
+    end
+    art_live_key = live_key
+    art_live_path = path
     return path
   end
-  local template = noctalia.readFile("assets/controller-template.svg")
-  if not template then
-    return fallback
-  end
 
-  local svg = string.gsub(template, "{{BODY}}", body)
-  svg = string.gsub(svg, "{{BODY_OPACITY}}", body_opacity_text)
-  svg = string.gsub(svg, "{{COLOR}}", line)
-  svg = string.gsub(svg, "{{LIGHTBAR}}", lb)
-  svg = string.gsub(svg, "{{STROKE_BODY}}", stroke_text)
-  svg = string.gsub(svg, "{{STROKE_GRIP}}", grip_text)
-  local written = noctalia.writeFile(path, svg)
-  if not written then
+  art_live_key = nil
+  art_live_path = nil
+  local path = dir .. "/dualsense-v2-" .. color_key(line) .. "-" .. color_key(body)
+    .. "-" .. color_key(lb) .. "-" .. color_key(stroke_text)
+    .. "-" .. color_key(body_opacity_text) .. "-" .. color_key(lightbar_width_text) .. ".svg"
+  if path == art_static_path then
+    return path
+  end
+  local svg = string.gsub(art_base, "{{LIVE_OVERLAY}}", "")
+  if not noctalia.writeFile(path, svg) then
     return fallback
   end
+  art_static_path = path
   return path
 end
-
-art_path = controller_art()
 
 local function fresh()
   if type(current_state) ~= "table" then
@@ -223,6 +328,150 @@ local function mode_of()
   end
 
   return mode, connected, charging and not full, pct, known, is_fresh
+end
+
+local function has_button(mask, bit)
+  return math.floor(mask / bit) % 2 == 1
+end
+
+local function svg_hex(value, fallback)
+  local color = resolve_color(value, fallback)
+  if valid_hex(color) then
+    return color
+  end
+  return fallback
+end
+
+local function svg_circle(cx, cy, r, fill, opacity, stroke, stroke_width)
+  local out = string.format(
+    '<circle cx="%.2f" cy="%.2f" r="%.2f" fill="%s" opacity="%.2f"',
+    cx, cy, r, fill, opacity
+  )
+  if stroke and stroke_width then
+    out = out .. string.format(' stroke="%s" stroke-width="%.2f"', stroke, stroke_width)
+  end
+  return out .. "/>"
+end
+
+local function svg_rect(x, y, w, h, rx, fill, opacity, stroke, stroke_width)
+  local out = string.format(
+    '<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" rx="%.2f" fill="%s" opacity="%.2f"',
+    x, y, w, h, rx, fill, opacity
+  )
+  if stroke and stroke_width then
+    out = out .. string.format(' stroke="%s" stroke-width="%.2f"', stroke, stroke_width)
+  end
+  return out .. "/>"
+end
+
+-- Button/stick/trigger/touch highlights drawn over the controller art. The
+-- coordinates match the DualSense SVG (the same geometry ds4u uses). Returned
+-- as SVG so the card keeps a single image and updates cheaply.
+local function build_input_overlay(input)
+  local accent = svg_hex(settings.input_highlight_color, "#4a9eff")
+  local track = svg_hex(settings.muted_text_color, "#9aa0a6")
+  local outline = svg_hex(settings.text_color, "#ffffff")
+  local parts = {}
+
+  local function add(markup)
+    parts[#parts + 1] = markup
+  end
+
+  local function circle(cx, cy, r)
+    add(svg_circle(cx, cy, r, accent, 0.95))
+  end
+
+  -- Trigger bars above the shoulders.
+  local function trigger_bar(cx, value)
+    local x, y, w, h = cx - 3.3, 19.7, 6.6, 10.8
+    add(svg_rect(x, y, w, h, 1.6, "none", 1.0, track, 0.8))
+    local amount = math.max(0, math.min(1, (tonumber(value) or 0) / 255))
+    local inner_h = h - 1.8
+    local fill_h = inner_h * amount
+    if fill_h > 0.15 then
+      add(svg_rect(x + 0.9, y + 0.9 + inner_h - fill_h, w - 1.8, fill_h, 0.8, accent, 0.95))
+    end
+  end
+  trigger_bar(28.8228, input.l2)
+  trigger_bar(98.8228, input.r2)
+
+  local buttons = tonumber(input.buttons) or 0
+
+  -- Touchpad press and active touch points.
+  local tp_x, tp_y, tp_w, tp_h = 44.6, 30.4, 40.0, 21.6
+  if has_button(buttons, BTN.touchpad) then
+    add(svg_rect(tp_x, tp_y, tp_w, tp_h, 2.8, accent, 0.16, accent, 1.0))
+  end
+  local touches = type(input.touches) == "table" and input.touches or {}
+  for _, tp in ipairs(touches) do
+    if type(tp) == "table" and tp.active then
+      local tx = math.max(0, math.min(1919, tonumber(tp.x) or 0)) / 1919
+      local ty = math.max(0, math.min(1079, tonumber(tp.y) or 0)) / 1079
+      add(svg_circle(
+        tp_x + tx * tp_w, tp_y + ty * tp_h, 1.6, accent, 0.95, outline, 0.45
+      ))
+    end
+  end
+
+  -- D-pad directions; diagonals light both neighbours.
+  local dpad = tonumber(input.dpad) or 8
+  local up = dpad == 0 or dpad == 1 or dpad == 7
+  local down = dpad == 3 or dpad == 4 or dpad == 5
+  local left = dpad == 5 or dpad == 6 or dpad == 7
+  local right = dpad == 1 or dpad == 2 or dpad == 3
+  if up then circle(29.0, 42.81, 2.4) end
+  if down then circle(29.0, 55.12, 2.4) end
+  if left then circle(22.85, 48.96, 2.4) end
+  if right then circle(35.15, 48.96, 2.4) end
+
+  -- Face buttons.
+  if has_button(buttons, BTN.square) then circle(91.0, 47.96, 3.0) end
+  if has_button(buttons, BTN.cross) then circle(99.0, 55.96, 3.0) end
+  if has_button(buttons, BTN.circle) then circle(107.0, 47.96, 3.0) end
+  if has_button(buttons, BTN.triangle) then circle(99.0, 39.96, 3.0) end
+
+  -- Shoulders and meta buttons.
+  if has_button(buttons, BTN.l1) then circle(28.82, 29.45, 2.7) end
+  if has_button(buttons, BTN.r1) then circle(98.82, 29.45, 2.7) end
+  if has_button(buttons, BTN.create) then circle(37.5, 35.96, 2.0) end
+  if has_button(buttons, BTN.options) then circle(90.5, 35.96, 2.0) end
+  if has_button(buttons, BTN.ps) then circle(64.0, 64.46, 2.3) end
+  if has_button(buttons, BTN.mute) then
+    add(svg_rect(60.5, 69.1, 7.0, 1.8, 0.9, accent, 0.95))
+  end
+
+  -- Sticks: offset dot inside each ring, plus an L3/R3 press fill.
+  local function stick(cx, cy, raw_x, raw_y, pressed)
+    local nx = math.max(-1, math.min(1, ((tonumber(raw_x) or 128) - 128) / 128))
+    local ny = math.max(-1, math.min(1, ((tonumber(raw_y) or 128) - 128) / 128))
+    if pressed then
+      add(svg_circle(cx, cy, 7.2, accent, 0.22))
+    end
+    add(svg_circle(
+      cx + nx * 4.2, cy + ny * 4.2, 2.5, accent, 0.95, outline, 0.55
+    ))
+  end
+  stick(45.5, 64.46, input.lx, input.ly, has_button(buttons, BTN.l3))
+  stick(82.5, 64.46, input.rx, input.ry, has_button(buttons, BTN.r3))
+
+  return "<g>" .. table.concat(parts) .. "</g>"
+end
+
+-- The live overlay is only used while the controller is connected and the
+-- daemon state is fresh; otherwise the static illustration is shown.
+local function input_overlay()
+  if not settings.show_live_inputs then
+    return nil
+  end
+  local s = type(current_state) == "table" and current_state or {}
+  if not fresh() or s.connected ~= true then
+    return nil
+  end
+  local input = type(s.input) == "table" and s.input or nil
+  if not input then
+    return nil
+  end
+  return build_input_overlay(input)
 end
 
 local function state_color(mode, connected, s)
@@ -546,8 +795,8 @@ render = function()
     ui.image({
       key = "controller-art",
       path = art_path,
-      width = 123,
-      height = 92,
+      width = 136,
+      height = 102,
       fit = "contain",
       onClick = "onBuzzController",
     }),
@@ -560,8 +809,12 @@ render = function()
     table.insert(left_children, ui.spacer({ key = "art-gap", height = 6, flexGrow = 0 }))
   end
 
-  table.insert(left_children, pct_row(pct, known, known and not off, s.provisional == true, mode))
-  table.insert(left_children, status_row(mode, connected, charging, s, is_fresh))
+  if settings.show_percentage then
+    table.insert(left_children, pct_row(pct, known, known and not off, s.provisional == true, mode))
+  end
+  if settings.show_status then
+    table.insert(left_children, status_row(mode, connected, charging, s, is_fresh))
+  end
 
   if connected and settings.show_model_badge and s.model == "edge" then
     table.insert(left_children, ui.label({
@@ -586,50 +839,54 @@ render = function()
     opacity = dim,
   }, left_children)
 
-  local fill_height = 0
-  if known and not off then
-    fill_height = math.floor(INNER_H * math.max(0, math.min(100, pct)) / 100 + 0.5)
-  end
+  local row_children = { left }
 
-  local body_children = {}
-  if fill_height > 0 then
-    table.insert(body_children, ui.box({
-      key = "battery-fill",
-      width = BODY_W - 10,
-      height = fill_height,
-      radius = 7,
-      fill = color,
-      opacity = (charging and pulse or 1) * settings.battery_fill_opacity,
+  if settings.show_battery_bar then
+    local fill_height = 0
+    if known and not off then
+      fill_height = math.floor(INNER_H * math.max(0, math.min(100, pct)) / 100 + 0.5)
+    end
+
+    local body_children = {}
+    if fill_height > 0 then
+      table.insert(body_children, ui.box({
+        key = "battery-fill",
+        width = BODY_W - 10,
+        height = fill_height,
+        radius = 7,
+        fill = color,
+        opacity = (charging and pulse or 1) * settings.battery_fill_opacity,
+      }))
+    end
+
+    table.insert(row_children, ui.column({ key = "battery", gap = 3, align = "center", opacity = dim }, {
+      ui.box({
+        key = "battery-nub",
+        width = 22,
+        height = 5,
+        radius = 2,
+        fill = "outline",
+      }),
+      ui.column({
+        key = "battery-body",
+        width = BODY_W,
+        height = BODY_H,
+        radius = 12,
+        border = "outline",
+        borderWidth = 2,
+        padding = 5,
+        justify = "end",
+        align = "stretch",
+      }, body_children),
     }))
   end
-
-  local battery = ui.column({ key = "battery", gap = 3, align = "center", opacity = dim }, {
-    ui.box({
-      key = "battery-nub",
-      width = 22,
-      height = 5,
-      radius = 2,
-      fill = "outline",
-    }),
-    ui.column({
-      key = "battery-body",
-      width = BODY_W,
-      height = BODY_H,
-      radius = 12,
-      border = "outline",
-      borderWidth = 2,
-      padding = 5,
-      justify = "end",
-      align = "stretch",
-    }, body_children),
-  })
 
   local row = ui.row({
     key = "content",
     gap = 20,
     align = "center",
     justify = "center",
-  }, { left, battery })
+  }, row_children)
 
   if type(desktopWidget.setNeedsFrameTick) == "function" then
     desktopWidget.setNeedsFrameTick(mode == "charging")
@@ -717,17 +974,21 @@ function onFrameTick(delta_ms)
   render()
 end
 
+local function refresh_art()
+  art_path = controller_art(input_overlay())
+end
+
 function update()
-  art_path = controller_art()
+  refresh_art()
   render()
 end
 
 current_state = noctalia.state.get("controller")
-art_path = controller_art()
+refresh_art()
 noctalia.setUpdateInterval(1000)
 noctalia.state.watch("controller", function(value)
   current_state = value
-  art_path = controller_art()
+  refresh_art()
   render()
 end)
 render()

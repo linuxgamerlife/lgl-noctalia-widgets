@@ -6,12 +6,12 @@
 
 id          = "jahrek/steam-controller"
 name        = "Steam Controller Battery"
-version     = "2.3.0"
+version     = "2.4.0"
 plugin_api  = 17
 author      = "Jahrek"
 license     = "MIT"
 icon        = "device-gamepad-2"
-description = "Battery level, charging state and link quality for the Steam Controller 2, with configurable colours, outline and battery fill opacity."
+description = "Battery level, charging state, link quality and live input visualisation for the Steam Controller 2, with configurable colours, outline and battery fill opacity."
 tags        = ["gaming", "hardware", "battery", "desktop"]
 dependencies = ["python3"]
 
@@ -114,6 +114,42 @@ entry = "card.luau"
   label_key       = "settings.muted_text_color.label"
   description_key = "settings.muted_text_color.description"
   default         = "on_surface_variant"
+
+  [[desktop_widget.setting]]
+  key             = "show_battery_bar"
+  type            = "bool"
+  label_key       = "settings.show_battery_bar.label"
+  description_key = "settings.show_battery_bar.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_percentage"
+  type            = "bool"
+  label_key       = "settings.show_percentage.label"
+  description_key = "settings.show_percentage.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_status"
+  type            = "bool"
+  label_key       = "settings.show_status.label"
+  description_key = "settings.show_status.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_live_inputs"
+  type            = "bool"
+  label_key       = "settings.show_live_inputs.label"
+  description_key = "settings.show_live_inputs.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "input_highlight_color"
+  type            = "color"
+  label_key       = "settings.input_highlight_color.label"
+  description_key = "settings.input_highlight_color.description"
+  default         = "primary"
+  visible_when    = { key = "show_live_inputs", values = ["true"] }
 
   [[desktop_widget.setting]]
   key             = "show_signal"

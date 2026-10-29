@@ -42,6 +42,10 @@
       "description": "Line-art colour for the controller drawing.",
       "label": "Controller line colour"
     },
+    "input_highlight_color": {
+      "description": "Colour of the pressed buttons, stick positions, trigger pull bars and touchpad points in the live input view. Choose any Noctalia palette role or a custom hex colour.",
+      "label": "Input highlight colour"
+    },
     "low_threshold": {
       "description": "Show the low-battery state and send the notification at or below this percentage.",
       "label": "Low battery threshold"
@@ -54,9 +58,25 @@
       "description": "Send a desktop notification when the battery first drops to the threshold.",
       "label": "Low battery notification"
     },
+    "show_battery_bar": {
+      "description": "Show the vertical battery bar beside the controller. When off, the battery bar is hidden and the controller content is centred.",
+      "label": "Show battery bar"
+    },
+    "show_live_inputs": {
+      "description": "Overlay live button presses, stick movement, trigger pulls and touchpad points on the controller.",
+      "label": "Live input visualisation"
+    },
+    "show_percentage": {
+      "description": "Show the battery percentage below the controller.",
+      "label": "Show battery percentage"
+    },
     "show_signal": {
       "description": "Show the wireless link quality for a controller connected through the puck.",
       "label": "Show signal strength"
+    },
+    "show_status": {
+      "description": "Show the connection, charging and low-battery status line below the controller.",
+      "label": "Show status text"
     },
     "signal_style": {
       "description": "Show bars, bars plus dBm, or the dBm value alone.",

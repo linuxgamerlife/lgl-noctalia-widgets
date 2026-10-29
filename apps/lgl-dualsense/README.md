@@ -4,7 +4,7 @@
 
 **DualSense battery, lightbar, player LEDs, and profiles in a Noctalia desktop widget.**
 
-[![Version](https://img.shields.io/badge/version-1.0.10-purple)](dualsense/plugin.toml)
+[![Version](https://img.shields.io/badge/version-1.1.0-purple)](dualsense/plugin.toml)
 [![Plugin API](https://img.shields.io/badge/Noctalia_API-17-blue)](dualsense/plugin.toml)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
@@ -24,7 +24,7 @@ management informed by [ds4u](https://git.yokai.digital/deadYokai/ds4u).
 | Field | Value |
 | --- | --- |
 | Plugin ID | `deadYokai/dualsense` |
-| Version | `1.0.10` |
+| Version | `1.1.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 | License | MIT |
@@ -44,7 +44,9 @@ same v5 plugin API and is supported by the install scripts.
   `DualSense Edge` badge.
 - **`ds4u` integration**:
   - Syncs the controller's touchpad lightbar accents and battery fill with the
-    active `ds4u` profile's lightbar RGB colour (`~/.config/ds4u/profiles/`).
+    active `ds4u` profile's lightbar RGB colour (`~/.config/ds4u/profiles/`) by
+    default. The accents can instead use a custom colour or any Noctalia palette
+    role, with an adjustable thickness.
   - Displays the 5-segment DualSense player indicator LED bar matching `ds4u`'s
     8 player LED patterns.
   - Shows an explicit profile dropdown on the card. Select any saved `ds4u`
@@ -52,6 +54,10 @@ same v5 plugin API and is supported by the install scripts.
     settings button opens `ds4u` to create and edit controller profiles.
   - **Click the controller illustration** (or send the `buzz` IPC event) to
     rumble the DualSense controller.
+- **Live input visualisation**: overlays button presses, both sticks, trigger
+  pulls and touchpad points on the controller art at about 30 Hz. It uses the
+  ds4u IPC input stream when its daemon is running and reads the same fields
+  from HID reports otherwise.
 
 `ds4u` is optional: battery, charging and connection monitoring work through
 the bundled Python HID reader without it. Install ds4u for its graphical profile
@@ -67,6 +73,12 @@ The desktop widget exposes:
 - battery fill mode: `ds4u` lightbar colour, connection colours (blue on
   Bluetooth, green on USB-C), or a custom colour
 - battery fill opacity (`0–1`) and a separate low-battery colour
+- optional battery bar; hiding it centres the controller card
+- independent toggles for the percentage readout and status line
+- live input visualisation toggle and highlight colour (palette role or custom
+  hex)
+- lightbar accent colour (ds4u profile, custom colour, or Noctalia palette role)
+  and thickness
 - primary and secondary text colours
 - toggles for the `ds4u` profile pill, 5-segment player LED bar, and DualSense
   Edge model badge

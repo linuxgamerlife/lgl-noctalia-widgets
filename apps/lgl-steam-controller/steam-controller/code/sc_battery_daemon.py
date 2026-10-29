@@ -4,7 +4,8 @@ Steam Controller 2 battery daemon for the Noctalia plugin.
 
 Reads raw HID reports from /dev/hidraw*, takes the battery percentage (byte[2])
 and charging flag (byte[1]: 1 = on battery, 2 = charging) from every 0x43
-report, and writes / prints a JSON state object.
+report, and takes live buttons, sticks, triggers and touchpads from the Triton
+0x42/0x45/0x47 state reports. Writes / prints a JSON state object.
 
 Modes:
   (default)   keep the state file fresh
@@ -38,6 +39,10 @@ SIGNAL_STALE = 10       # s without a reading -> no signal value
 DOCK_POLL = 3           # s between "is the pad on the dock?" queries
 SILENCE_DISCONNECT = 2  # s without reports -> pad is off
 WRITE_INTERVAL = 5      # s between state heartbeats
+INPUT_POLL_HZ = 30      # live-visualisation update rate
+INPUT_POLL_INTERVAL = 1.0 / INPUT_POLL_HZ
+INPUT_STICK_DEADZONE = 1200
+INPUT_TRIGGER_DEADZONE = 400
 RUNTIME_DIR = os.environ.get("XDG_RUNTIME_DIR") or "/tmp"
 try:
     os.makedirs(RUNTIME_DIR, exist_ok=True)
@@ -45,7 +50,41 @@ except OSError:
     RUNTIME_DIR = "/tmp"
 STATE_FILE = os.path.join(RUNTIME_DIR, "noctalia-sc-battery.json")
 LOCK_FILE = os.path.join(RUNTIME_DIR, "noctalia-sc-battery.lock")
-DAEMON_VERSION = "2.0.0"
+DAEMON_VERSION = "2.1.0"
+
+# Triton (Steam Controller 2) input report IDs and button bits, from SDL's
+# SDL_hidapi_steam_triton.c / controller_structs.h.
+TRITON_STATE_REPORTS = (0x42, 0x45, 0x47)
+TRITON_A = 1 << 0
+TRITON_B = 1 << 1
+TRITON_X = 1 << 2
+TRITON_Y = 1 << 3
+TRITON_QAM = 1 << 4
+TRITON_R3 = 1 << 5
+TRITON_VIEW = 1 << 6
+TRITON_R4 = 1 << 7
+TRITON_R5 = 1 << 8
+TRITON_R = 1 << 9
+TRITON_DPAD_DOWN = 1 << 10
+TRITON_DPAD_RIGHT = 1 << 11
+TRITON_DPAD_LEFT = 1 << 12
+TRITON_DPAD_UP = 1 << 13
+TRITON_MENU = 1 << 14
+TRITON_L3 = 1 << 15
+TRITON_STEAM = 1 << 16
+TRITON_L4 = 1 << 17
+TRITON_L5 = 1 << 18
+TRITON_L = 1 << 19
+TRITON_RIGHT_JOYSTICK_TOUCH = 1 << 20
+TRITON_RIGHT_TOUCHPAD_TOUCH = 1 << 21
+TRITON_RIGHT_TOUCHPAD_CLICK = 1 << 22
+TRITON_RIGHT_TRIGGER_CLICK = 1 << 23
+TRITON_LEFT_JOYSTICK_TOUCH = 1 << 24
+TRITON_LEFT_TOUCHPAD_TOUCH = 1 << 25
+TRITON_LEFT_TOUCHPAD_CLICK = 1 << 26
+TRITON_LEFT_TRIGGER_CLICK = 1 << 27
+TRITON_RIGHT_GRIP_TOUCH = 1 << 28
+TRITON_LEFT_GRIP_TOUCH = 1 << 29
 
 
 def single_instance():
@@ -223,6 +262,75 @@ def find_device():
     return None, present
 
 
+def _int_or(value, fallback):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return fallback
+
+
+def neutralize_input(inp):
+    """Clamp the Triton axes and hide idle stick jitter from the live view."""
+    for key in ("lx", "ly", "rx", "ry"):
+        value = max(-32768, min(32767, _int_or(inp.get(key), 0)))
+        if abs(value) <= INPUT_STICK_DEADZONE:
+            value = 0
+        inp[key] = value
+    for key in ("l2", "r2"):
+        value = max(0, min(32767, _int_or(inp.get(key), 0)))
+        if value <= INPUT_TRIGGER_DEADZONE:
+            value = 0
+        inp[key] = value
+    buttons = max(0, min(0x3FFFFFFF, _int_or(inp.get("buttons"), 0)))
+    inp["buttons"] = buttons
+    for prefix, touch_bit in (
+        ("lp", TRITON_LEFT_TOUCHPAD_TOUCH),
+        ("rp", TRITON_RIGHT_TOUCHPAD_TOUCH),
+    ):
+        x = max(-32768, min(32767, _int_or(inp.get(prefix + "x"), 0)))
+        y = max(-32768, min(32767, _int_or(inp.get(prefix + "y"), 0)))
+        pressure = max(0, min(32767, _int_or(inp.get(prefix + "p"), 0)))
+        if not (buttons & touch_bit):
+            x = y = pressure = 0
+        inp[prefix + "x"] = x
+        inp[prefix + "y"] = y
+        inp[prefix + "p"] = pressure
+    return inp
+
+
+def neutral_input():
+    return neutralize_input({
+        "lx": 0, "ly": 0, "rx": 0, "ry": 0,
+        "l2": 0, "r2": 0, "buttons": 0,
+        "lpx": 0, "lpy": 0, "lpp": 0,
+        "rpx": 0, "rpy": 0, "rpp": 0,
+    })
+
+
+def parse_triton_input(data):
+    """Parse a Triton 0x42/0x45/0x47 report into the widget's compact form."""
+    if not data or len(data) < 46:
+        return None
+    if data[0] not in TRITON_STATE_REPORTS:
+        return None
+    payload = data[1:]
+    if len(payload) < 45:
+        return None
+    _seq, buttons, l2, r2, lx, ly, rx, ry = struct.unpack_from(
+        "<BIhhhhhh", payload, 0
+    )
+    # The 0x47 timestamp variant inserts a 2-byte trackpad timestamp before the
+    # pad coordinates; the common button/stick/trigger prefix is unchanged.
+    pad_offset = 19 if data[0] == 0x47 else 17
+    lpx, lpy, lpp, rpx, rpy, rpp = struct.unpack_from("<hhHhhH", payload, pad_offset)
+    return neutralize_input({
+        "lx": lx, "ly": ly, "rx": rx, "ry": ry,
+        "l2": l2, "r2": r2, "buttons": buttons,
+        "lpx": lpx, "lpy": lpy, "lpp": lpp,
+        "rpx": rpx, "rpy": rpy, "rpp": rpp,
+    })
+
+
 class State:
     def __init__(self, stream=False):
         self.battery_pct = -1
@@ -235,9 +343,12 @@ class State:
         self.docked = False
         self.internal = False
         self.signal = None
+        self.input = neutral_input()
         self.stream = stream
-        self._last_write = 0
-        self._last_dump = None
+        self._last_stream_write = 0
+        self._last_stream_dump = None
+        self._last_file_write = 0
+        self._last_file_dump = None
         self.load()
 
     def load(self):
@@ -261,34 +372,49 @@ class State:
             "docked": self.docked,
             "internal": self.internal,
             "signal_dbm": self.signal,
+            "input": self.input,
             "daemon_version": DAEMON_VERSION,
             "updated_at": datetime.now().isoformat(timespec="seconds"),
             "ts": int(time.time()),
         }
 
-    def write(self, force=False):
+    def write(self, force=False, persist=True):
         now = time.time()
         d = self.payload()
+        inp = d["input"]
         key = (
             d["battery_pct"], d["connected"], d["charging"], d["provisional"],
             d["connection"], d["docked"], d["internal"], d["signal_dbm"],
+            inp.get("lx"), inp.get("ly"), inp.get("rx"), inp.get("ry"),
+            inp.get("l2"), inp.get("r2"), inp.get("buttons"),
+            inp.get("lpx"), inp.get("lpy"), inp.get("lpp"),
+            inp.get("rpx"), inp.get("rpy"), inp.get("rpp"),
         )
-        if not force and key == self._last_dump and now - self._last_write < WRITE_INTERVAL:
-            return
-        self._last_write = now
-        self._last_dump = key
 
-        if self.stream:
+        if self.stream and (
+            force
+            or key != self._last_stream_dump
+            or now - self._last_stream_write >= WRITE_INTERVAL
+        ):
             print(json.dumps(d, separators=(",", ":")), flush=True)
+            self._last_stream_dump = key
+            self._last_stream_write = now
 
-        # Keep a copy on disk for debugging and for tools that prefer polling.
-        try:
-            tmp = STATE_FILE + ".tmp"
-            with open(tmp, "w") as f:
-                json.dump(d, f)
-            os.replace(tmp, STATE_FILE)
-        except OSError:
-            pass
+        if persist and (
+            force
+            or key != self._last_file_dump
+            or now - self._last_file_write >= WRITE_INTERVAL
+        ):
+            self._last_file_dump = key
+            self._last_file_write = now
+            # Keep a copy on disk for debugging and for tools that prefer polling.
+            try:
+                tmp = STATE_FILE + ".tmp"
+                with open(tmp, "w") as f:
+                    json.dump(d, f)
+                os.replace(tmp, STATE_FILE)
+            except OSError:
+                pass
 
 
 def run(stream=False):
@@ -318,6 +444,7 @@ def run(stream=False):
                 st.connection = present
             st.address = ""
             st.provisional = True    # battery_pct is now the last known value
+            st.input = neutral_input()
             st.write()
             time.sleep(1)
             continue
@@ -333,6 +460,8 @@ def run(stream=False):
             rssi.clear()
             st.signal = None
             silent_since = None
+            last_input_publish = 0.0
+            last_persist = time.time()
         except OSError:
             time.sleep(1)
             continue
@@ -385,13 +514,25 @@ def run(stream=False):
                 if data and data[0] == 0x43 and len(data) >= 3 and data[2] <= 100 and not bt_battery:
                     st.battery_pct = data[2]
                     st.provisional = False
-                st.write()
+
+                inp = parse_triton_input(data)
+                if inp is not None:
+                    st.input = inp
+
+                now = time.time()
+                if now - last_input_publish >= INPUT_POLL_INTERVAL:
+                    last_input_publish = now
+                    st.write(persist=False)
+                if now - last_persist >= 1.5:
+                    last_persist = now
+                    st.write()
         except OSError:
             st.connected = False
             st.charging = False
             st.docked = False
             st.signal = None
             st.provisional = True
+            st.input = neutral_input()
             st.write()
         finally:
             try:

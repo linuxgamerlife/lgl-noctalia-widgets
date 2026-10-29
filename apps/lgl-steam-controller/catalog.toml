@@ -5,11 +5,11 @@
 [[plugin]]
 id           = "jahrek/steam-controller"
 name         = "Steam Controller Battery"
-version      = "2.3.0"
+version      = "2.4.0"
 author       = "Jahrek"
 license      = "MIT"
 icon         = "device-gamepad-2"
-description = "Battery level, charging state and link quality for the Steam Controller 2, with configurable colours, outline and battery fill opacity."
+description = "Battery level, charging state, link quality and live input visualisation for the Steam Controller 2, with configurable colours, outline and battery fill opacity."
 deprecated   = false
 plugin_api   = 17
 tags         = ["gaming", "hardware", "battery", "desktop"]

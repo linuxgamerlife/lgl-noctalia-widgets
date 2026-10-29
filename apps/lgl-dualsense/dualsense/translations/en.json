@@ -50,6 +50,26 @@
       "description": "Line-art colour for the DualSense controller drawing.",
       "label": "Controller line colour"
     },
+    "input_highlight_color": {
+      "description": "Colour of the pressed buttons, stick positions, trigger pull bars and touch points in the live input view. Choose any Noctalia palette role or a custom hex colour.",
+      "label": "Input highlight colour"
+    },
+    "lightbar_color": {
+      "description": "Lightbar accent colour when 'Custom / palette colour' is selected. Choose any Noctalia palette role or a custom hex colour.",
+      "label": "Custom lightbar colour"
+    },
+    "lightbar_color_mode": {
+      "description": "Use the active ds4u profile's lightbar colour, or choose a custom colour or Noctalia palette role for the touchpad accents.",
+      "label": "Lightbar accent colour",
+      "option": {
+        "custom": "Custom / palette colour",
+        "ds4u": "ds4u profile colour"
+      }
+    },
+    "lightbar_width": {
+      "description": "Thickness of the lightbar strips beside the touchpad (0.5–8).",
+      "label": "Lightbar thickness"
+    },
     "low_threshold": {
       "description": "Show the low-battery state and send the notification at or below this percentage.",
       "label": "Low battery threshold"
@@ -66,9 +86,21 @@
       "description": "Opacity of the ds4u settings button background. The cog icon remains fully opaque.",
       "label": "Profile settings background opacity"
     },
+    "show_battery_bar": {
+      "description": "Show the vertical battery bar beside the controller. When off, the battery bar is hidden and the controller content is centred.",
+      "label": "Show battery bar"
+    },
+    "show_live_inputs": {
+      "description": "Overlay live button presses, stick movement, trigger pulls and touchpad points on the controller.",
+      "label": "Live input visualisation"
+    },
     "show_model_badge": {
       "description": "Show a 'DualSense Edge' label when a DualSense Edge (054c:0df2) controller is connected.",
       "label": "Show DualSense Edge badge"
+    },
+    "show_percentage": {
+      "description": "Show the battery percentage below the controller.",
+      "label": "Show battery percentage"
     },
     "show_player_leds": {
       "description": "Show the 5-segment DualSense player indicator LED bar under the controller.",
@@ -77,6 +109,10 @@
     "show_profile": {
       "description": "Show the active ds4u profile dropdown and lightbar swatch for direct profile selection.",
       "label": "Show ds4u profile"
+    },
+    "show_status": {
+      "description": "Show the connection, charging and low-battery status line below the controller.",
+      "label": "Show status text"
     },
     "text_color": {
       "description": "Percentage, status text and active player LEDs. Accepts a hex colour or palette role.",

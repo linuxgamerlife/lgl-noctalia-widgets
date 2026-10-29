@@ -13,7 +13,7 @@ profile's `lightbar_brightness`. Charging pulses; low battery turns red.
 | Field | Value |
 | --- | --- |
 | ID | `deadYokai/dualsense` |
-| Version | `1.0.10` |
+| Version | `1.1.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 
@@ -222,6 +222,9 @@ while Noctalia is running because the shell may overwrite the file.
 | `controller_body_color` | desktop widget | `#2c3035` | Controller body fill colour. |
 | `controller_body_opacity` | desktop widget | `1.0` | Controller body fill opacity (`0` = transparent line art, `1` = solid). |
 | `controller_stroke_width` | desktop widget | `2.8` | Controller outline and touchpad/button edge thickness (`0.5`–`8`). |
+| `lightbar_color_mode` | desktop widget | `ds4u` | `ds4u` follows the active profile's lightbar colour; `custom` uses `lightbar_color`. |
+| `lightbar_color` | desktop widget | `#0080ff` | Lightbar accent colour when `lightbar_color_mode = "custom"`. Accepts a hex value or any Noctalia palette role. |
+| `lightbar_width` | desktop widget | `3.0` | Lightbar strip thickness beside the touchpad (`0.5`–`8`). |
 | `profile_settings_opacity` | desktop widget | `0.65` | Opacity of the ds4u settings button background (`0`–`1`); the cog remains fully opaque. |
 | `battery_color_mode` | desktop widget | `lightbar` | `lightbar` uses the active `ds4u` profile lightbar colour; `connection` uses link colours; `custom` uses `battery_fill_color`. |
 | `battery_fill_color` | desktop widget | `#0080ff` | Custom battery fill colour, used when `battery_color_mode = "custom"`. |
@@ -229,16 +232,27 @@ while Noctalia is running because the shell may overwrite the file.
 | `battery_low_color` | desktop widget | `#ed4c4c` | Low-battery fill, percentage and marker colour. Always wins when low. |
 | `text_color` | desktop widget | `on_surface` | Percentage, status text, marker and active player LEDs. |
 | `muted_text_color` | desktop widget | `on_surface_variant` | Percentage sign, profile label, model badge and inactive player LEDs. |
+| `show_battery_bar` | desktop widget | `true` | Show the vertical battery bar. When off, the bar is hidden and the controller content is centred. |
+| `show_percentage` | desktop widget | `true` | Show the battery percentage below the controller. |
+| `show_status` | desktop widget | `true` | Show the connection, charging and low-battery status line below the controller. |
+| `show_live_inputs` | desktop widget | `true` | Overlay live button presses, stick movement, trigger pulls and touchpad points on the controller. |
+| `input_highlight_color` | desktop widget | `primary` | Highlight colour for the live input overlay. Accepts a hex value or any Noctalia palette role. |
 | `show_profile` | desktop widget | `true` | Show the active `ds4u` profile dropdown for direct profile selection. |
 | `show_player_leds` | desktop widget | `true` | Show the 5-segment DualSense player indicator LEDs. |
 | `show_model_badge` | desktop widget | `true` | Show a `DualSense Edge` label when a DualSense Edge controller is connected. |
+
+With `show_battery_bar = false`, the battery graphic is omitted and the
+controller, percentage and status column is centred in the card. The percentage
+and status line can be hidden independently with `show_percentage` and
+`show_status`.
 
 ## How it works
 
 1. **`ds4u` Daemon IPC (`$XDG_RUNTIME_DIR/ds4u.socket`)**: When `ds4u --daemon`
    is running, `code/ds_battery_daemon.py` queries it over its Unix socket
-   (`GetControllerInfo`, `GetBattery`, `GetActiveProfile`, `ListProfiles`) so
-   both tools coexist without competing for `/dev/hidraw*` reads.
+   (`GetControllerInfo`, `GetBattery`, `GetInputState`, `GetActiveProfile`,
+   `ListProfiles`) so both tools coexist without competing for `/dev/hidraw*`
+   reads.
 2. **Direct HID & Kernel Fallbacks**: When `ds4u --daemon` is not running, the
    daemon reads DualSense USB (`0x01`, byte `53`) and Bluetooth (`0x31`, byte
    `54`) input reports directly, with fallbacks to Linux's `hid-playstation`
@@ -263,6 +277,27 @@ profiles normally so the state refreshes. The DualSense input report does not
 report the current lightbar RGB, so continuously animated effects that are not
 exposed by `ds4u` IPC cannot be sampled exactly; the card shows the profile's
 effective static colour.
+
+The touchpad accent strips follow that profile colour by default. Set
+`lightbar_color_mode = "custom"` to use `lightbar_color` instead: the colour
+picker lists every Noctalia palette role and also accepts a custom hex value.
+`lightbar_width` controls the strip thickness independently of the controller
+outline. The battery fill's `lightbar` colour mode and the profile swatch keep
+mirroring the controller's actual `ds4u` colour; the override only changes the
+illustration.
+
+### Live input visualisation
+
+The controller drawing can show live input: face buttons, D-pad, shoulders,
+PS/touchpad/mute, both sticks, L2/R2 trigger bars and active touchpad points.
+When `ds4u --daemon` is running the widget polls `GetInputState` over its Unix
+socket; otherwise it reads the same fields directly from the HID input reports.
+The overlay refreshes at about 30 Hz and only redraws when the input changes.
+
+`show_live_inputs = false` keeps the static illustration and disables the
+overlay. `input_highlight_color` sets the highlight colour and accepts any
+Noctalia palette role or a hex value. The overlay only renders while the
+controller is connected and its state is fresh.
 
 ## IPC
 

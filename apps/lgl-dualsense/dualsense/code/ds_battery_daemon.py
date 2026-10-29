@@ -55,6 +55,10 @@ DS_STATUS_CHARGING_SHIFT = 4
 
 SILENCE_DISCONNECT = 3.0  # s without reports -> rescan
 WRITE_INTERVAL = 5.0      # s between state heartbeats
+INPUT_POLL_HZ = 30        # live-visualisation update rate
+INPUT_POLL_INTERVAL = 1.0 / INPUT_POLL_HZ
+INPUT_STICK_DEADZONE = 2
+INPUT_TRIGGER_DEADZONE = 3
 
 RUNTIME_DIR = os.environ.get("XDG_RUNTIME_DIR") or "/tmp"
 try:
@@ -67,7 +71,7 @@ LOCK_FILE = os.path.join(RUNTIME_DIR, "noctalia-dualsense-battery.lock")
 DS4U_SOCKET = os.path.join(RUNTIME_DIR, "ds4u.socket")
 CONFIG_HOME = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
 DS4U_CONFIG_DIR = os.path.join(CONFIG_HOME, "ds4u")
-DAEMON_VERSION = "1.0.10"
+DAEMON_VERSION = "1.1.0"
 
 PLAYER_LED_PATTERNS = (
     0b00000,
@@ -79,6 +83,26 @@ PLAYER_LED_PATTERNS = (
     0b10001,
     0b01110,
 )
+
+# Button bitmask matches ds4u/src/inputs.rs.
+BTN_SQUARE = 1 << 0
+BTN_CROSS = 1 << 1
+BTN_CIRCLE = 1 << 2
+BTN_TRIANGLE = 1 << 3
+BTN_L1 = 1 << 4
+BTN_R1 = 1 << 5
+BTN_L2 = 1 << 6
+BTN_R2 = 1 << 7
+BTN_CREATE = 1 << 8
+BTN_OPTIONS = 1 << 9
+BTN_L3 = 1 << 10
+BTN_R3 = 1 << 11
+BTN_PS = 1 << 12
+BTN_TOUCHPAD = 1 << 13
+BTN_MUTE = 1 << 14
+
+TOUCHPAD_MAX_X = 1920
+TOUCHPAD_MAX_Y = 1080
 
 BUZZ_PATTERN = [
     (110, 0.08),
@@ -464,6 +488,190 @@ def parse_input_report(data, connection):
     return None
 
 
+def _int_or(value, fallback):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return fallback
+
+
+def neutralize_input(inp):
+    """Clamp axes/triggers and hide idle stick jitter from the live view."""
+    for key in ("lx", "ly", "rx", "ry"):
+        value = max(0, min(255, _int_or(inp.get(key), 128)))
+        if abs(value - 128) <= INPUT_STICK_DEADZONE:
+            value = 128
+        inp[key] = value
+    for key in ("l2", "r2"):
+        value = max(0, min(255, _int_or(inp.get(key), 0)))
+        if value <= INPUT_TRIGGER_DEADZONE:
+            value = 0
+        inp[key] = value
+    inp["buttons"] = max(0, min(0x7FFF, _int_or(inp.get("buttons"), 0)))
+    inp["dpad"] = max(0, min(8, _int_or(inp.get("dpad"), 8)))
+    touches = []
+    source_touches = inp.get("touches")
+    if not isinstance(source_touches, list):
+        source_touches = []
+    for tp in source_touches[:2]:
+        if not isinstance(tp, dict):
+            continue
+        touches.append({
+            "active": bool(tp.get("active", False)),
+            "x": max(0, min(TOUCHPAD_MAX_X - 1, _int_or(tp.get("x"), 0))),
+            "y": max(0, min(TOUCHPAD_MAX_Y - 1, _int_or(tp.get("y"), 0))),
+        })
+    while len(touches) < 2:
+        touches.append({"active": False, "x": 0, "y": 0})
+    inp["touches"] = touches
+    return inp
+
+
+def neutral_input():
+    return neutralize_input({
+        "lx": 128, "ly": 128, "rx": 128, "ry": 128,
+        "l2": 0, "r2": 0, "buttons": 0, "dpad": 8, "touches": [],
+    })
+
+
+def input_from_ds4u(data):
+    """Convert a ds4u IPC InputState payload into the widget's compact form."""
+    if not isinstance(data, dict):
+        return None
+    return neutralize_input({
+        "lx": data.get("left_x", 128),
+        "ly": data.get("left_y", 128),
+        "rx": data.get("right_x", 128),
+        "ry": data.get("right_y", 128),
+        "l2": data.get("l2", 0),
+        "r2": data.get("r2", 0),
+        "buttons": data.get("buttons", 0),
+        "dpad": data.get("dpad", 8),
+        "touches": data.get("touch_points") or [],
+    })
+
+
+def parse_input_state(data, connection):
+    """Extract buttons, sticks, triggers and touch points from a DualSense report."""
+    if not data:
+        return None
+    if connection == "bluetooth":
+        if data[0] != DS_INPUT_REPORT_BT or len(data) < DS_INPUT_REPORT_BT_SIZE:
+            return None
+        d = data[2:]
+    else:
+        if data[0] != DS_INPUT_REPORT_USB or len(data) < DS_INPUT_REPORT_USB_SIZE:
+            return None
+        d = data[1:]
+    if len(d) < 36:
+        return None
+
+    b0, b1, b2 = d[7], d[8], d[9]
+    buttons = 0
+    if b0 & 0x10:
+        buttons |= BTN_SQUARE
+    if b0 & 0x20:
+        buttons |= BTN_CROSS
+    if b0 & 0x40:
+        buttons |= BTN_CIRCLE
+    if b0 & 0x80:
+        buttons |= BTN_TRIANGLE
+    if b1 & 0x01:
+        buttons |= BTN_L1
+    if b1 & 0x02:
+        buttons |= BTN_R1
+    if b1 & 0x04:
+        buttons |= BTN_L2
+    if b1 & 0x08:
+        buttons |= BTN_R2
+    if b1 & 0x10:
+        buttons |= BTN_CREATE
+    if b1 & 0x20:
+        buttons |= BTN_OPTIONS
+    if b1 & 0x40:
+        buttons |= BTN_L3
+    if b1 & 0x80:
+        buttons |= BTN_R3
+    if b2 & 0x01:
+        buttons |= BTN_PS
+    if b2 & 0x02:
+        buttons |= BTN_TOUCHPAD
+    if b2 & 0x04:
+        buttons |= BTN_MUTE
+
+    touches = []
+    for i in range(2):
+        base = 32 + i * 4
+        flags = d[base]
+        active = (flags & 0x80) == 0
+        if active:
+            x = d[base + 1] | ((d[base + 2] & 0x0F) << 8)
+            y = (d[base + 2] >> 4) | (d[base + 3] << 4)
+        else:
+            x = y = 0
+        touches.append({"active": active, "x": x, "y": y})
+
+    return neutralize_input({
+        "lx": d[0],
+        "ly": d[1],
+        "rx": d[2],
+        "ry": d[3],
+        "l2": d[4],
+        "r2": d[5],
+        "buttons": buttons,
+        "dpad": d[7] & 0x0F,
+        "touches": touches,
+    })
+
+
+class DS4UClient:
+    """Persistent connection for high-rate ds4u IPC polling."""
+
+    def __init__(self, timeout=0.6):
+        self.timeout = timeout
+        self.sock = None
+        self.buf = b""
+
+    def connect(self):
+        self.close()
+        try:
+            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            sock.settimeout(self.timeout)
+            sock.connect(DS4U_SOCKET)
+            self.sock = sock
+            self.buf = b""
+            return True
+        except OSError:
+            self.close()
+            return False
+
+    def close(self):
+        sock, self.sock = self.sock, None
+        self.buf = b""
+        if sock is not None:
+            try:
+                sock.close()
+            except OSError:
+                pass
+
+    def request(self, cmd_obj):
+        if self.sock is None:
+            return None
+        try:
+            line = json.dumps(cmd_obj, separators=(",", ":")) + "\n"
+            self.sock.sendall(line.encode("utf-8"))
+            while b"\n" not in self.buf:
+                chunk = self.sock.recv(4096)
+                if not chunk:
+                    raise OSError("ds4u socket closed")
+                self.buf += chunk
+            line, _, self.buf = self.buf.partition(b"\n")
+            return json.loads(line.decode("utf-8", errors="replace"))
+        except (OSError, ValueError, TypeError):
+            self.close()
+            return None
+
+
 class State:
     def __init__(self, stream=False):
         self.battery_pct = -1
@@ -483,9 +691,12 @@ class State:
         self.player_leds = 1
         self.mic_muted = True
         self.ds4u_daemon = False
+        self.input = neutral_input()
         self.stream = stream
-        self._last_write = 0
-        self._last_dump = None
+        self._last_stream_write = 0
+        self._last_stream_dump = None
+        self._last_file_write = 0
+        self._last_file_dump = None
         self.load()
 
     def load(self):
@@ -525,14 +736,16 @@ class State:
             "player_leds": self.player_leds,
             "mic_muted": self.mic_muted,
             "ds4u_daemon": self.ds4u_daemon,
+            "input": self.input,
             "daemon_version": DAEMON_VERSION,
             "updated_at": datetime.now().isoformat(timespec="seconds"),
             "ts": int(time.time()),
         }
 
-    def write(self, force=False):
+    def write(self, force=False, persist=True):
         now = time.time()
         d = self.payload()
+        inp = d["input"]
         key = (
             d["battery_pct"],
             d["battery_status"],
@@ -548,26 +761,81 @@ class State:
             d["player_leds"],
             d["mic_muted"],
             d["ds4u_daemon"],
+            inp.get("lx"),
+            inp.get("ly"),
+            inp.get("rx"),
+            inp.get("ry"),
+            inp.get("l2"),
+            inp.get("r2"),
+            inp.get("buttons"),
+            inp.get("dpad"),
+            tuple(
+                (t.get("active"), t.get("x"), t.get("y"))
+                for t in inp.get("touches", [])
+            ),
         )
-        if (
-            not force
-            and key == self._last_dump
-            and now - self._last_write < WRITE_INTERVAL
+
+        if self.stream and (
+            force
+            or key != self._last_stream_dump
+            or now - self._last_stream_write >= WRITE_INTERVAL
         ):
-            return
-        self._last_write = now
-        self._last_dump = key
-
-        if self.stream:
             print(json.dumps(d, separators=(",", ":")), flush=True)
+            self._last_stream_dump = key
+            self._last_stream_write = now
 
-        try:
-            tmp = STATE_FILE + ".tmp"
-            with open(tmp, "w") as f:
-                json.dump(d, f)
-            os.replace(tmp, STATE_FILE)
-        except OSError:
-            pass
+        if persist and (
+            force
+            or key != self._last_file_dump
+            or now - self._last_file_write >= WRITE_INTERVAL
+        ):
+            self._last_file_dump = key
+            self._last_file_write = now
+            try:
+                tmp = STATE_FILE + ".tmp"
+                with open(tmp, "w") as f:
+                    json.dump(d, f)
+                os.replace(tmp, STATE_FILE)
+            except OSError:
+                pass
+
+
+def apply_ipc_state(st, ipc_state):
+    """Copy a ds4u daemon snapshot into the widget state."""
+    st.ds4u_daemon = True
+    st.apply_config(ipc_state)
+    if ipc_state.get("connected"):
+        st.connected = True
+        st.connection = ipc_state["connection"]
+        st.address = ipc_state["address"]
+        st.model = ipc_state["model"]
+        st.product_id = ipc_state["product_id"]
+        st.last_seen = datetime.now().strftime("%H:%M")
+        pct = ipc_state.get("battery_pct", -1)
+        if pct >= 0:
+            st.battery_pct = pct
+            st.battery_status = ipc_state.get("battery_status", "Connected")
+            st.charging = bool(ipc_state.get("charging", False))
+            st.full = bool(ipc_state.get("full", False))
+            st.provisional = False
+        else:
+            spct, sstat = sysfs_battery(uniq=st.address)
+            if spct is not None:
+                st.battery_pct = spct
+                st.battery_status = sstat or "Discharging"
+                st.charging = sstat in ("Charging", "Full")
+                st.full = sstat == "Full"
+                st.provisional = False
+    else:
+        st.connected = False
+        st.charging = False
+        st.full = False
+        st.battery_status = "Disconnected"
+        st.connection = ""
+        st.address = ""
+        st.provisional = True
+        st.input = neutral_input()
+    return st.connected
 
 
 def run(stream=False):
@@ -579,40 +847,37 @@ def run(stream=False):
         # 1. Prefer querying ds4u daemon if it is running so we don't steal HID reports
         ipc_state = query_ds4u_daemon()
         if ipc_state is not None:
-            st.ds4u_daemon = True
-            st.apply_config(ipc_state)
-            if ipc_state.get("connected"):
-                st.connected = True
-                st.connection = ipc_state["connection"]
-                st.address = ipc_state["address"]
-                st.model = ipc_state["model"]
-                st.product_id = ipc_state["product_id"]
-                st.last_seen = datetime.now().strftime("%H:%M")
-                pct = ipc_state.get("battery_pct", -1)
-                if pct >= 0:
-                    st.battery_pct = pct
-                    st.battery_status = ipc_state.get("battery_status", "Connected")
-                    st.charging = bool(ipc_state.get("charging", False))
-                    st.full = bool(ipc_state.get("full", False))
-                    st.provisional = False
-                else:
-                    spct, sstat = sysfs_battery(uniq=st.address)
-                    if spct is not None:
-                        st.battery_pct = spct
-                        st.battery_status = sstat or "Discharging"
-                        st.charging = sstat in ("Charging", "Full")
-                        st.full = sstat == "Full"
-                        st.provisional = False
-            else:
-                st.connected = False
-                st.charging = False
-                st.full = False
-                st.battery_status = "Disconnected"
-                st.connection = ""
-                st.address = ""
-                st.provisional = True
+            connected = apply_ipc_state(st, ipc_state)
             st.write()
-            time.sleep(1.5)
+            if connected:
+                # Keep one IPC socket open and poll input at the visualisation rate.
+                client = DS4UClient()
+                if client.connect():
+                    last_refresh = time.time()
+                    try:
+                        while True:
+                            resp = client.request({"cmd": "GetInputState"})
+                            if resp is None:
+                                break
+                            if isinstance(resp, dict) and resp.get("type") == "InputState":
+                                inp = input_from_ds4u(resp.get("data") or {})
+                                if inp is not None:
+                                    st.input = inp
+                                    st.write(persist=False)
+                            now = time.time()
+                            if now - last_refresh >= 1.5:
+                                last_refresh = now
+                                ipc_state = query_ds4u_daemon()
+                                if ipc_state is None:
+                                    break
+                                if not apply_ipc_state(st, ipc_state):
+                                    st.write()
+                                    break
+                                st.write()
+                            time.sleep(INPUT_POLL_INTERVAL)
+                    finally:
+                        client.close()
+            time.sleep(0.5)
             continue
 
         st.ds4u_daemon = False
@@ -643,6 +908,7 @@ def run(stream=False):
                 st.connection = ""
                 st.address = ""
                 st.provisional = True
+                st.input = neutral_input()
             st.write()
             time.sleep(1.5)
             continue
@@ -659,6 +925,8 @@ def run(stream=False):
         st.model = "edge" if pid == DSE_PID else "dualsense"
         silent_since = None
         last_cfg_poll = 0.0
+        last_input_publish = 0.0
+        last_persist = time.time()
 
         try:
             while True:
@@ -684,6 +952,10 @@ def run(stream=False):
                 silent_since = None
                 st.connected = True
                 st.last_seen = datetime.now().strftime("%H:%M")
+
+                inp = parse_input_state(data, st.connection)
+                if inp is not None:
+                    st.input = inp
 
                 parsed = parse_input_report(data, st.connection)
                 if parsed is not None:
@@ -712,13 +984,20 @@ def run(stream=False):
                             st.full = False
                             st.provisional = False
 
-                st.write()
+                now = time.time()
+                if now - last_input_publish >= INPUT_POLL_INTERVAL:
+                    last_input_publish = now
+                    st.write(persist=False)
+                if now - last_persist >= 1.5:
+                    last_persist = now
+                    st.write()
         except OSError:
             st.connected = False
             st.charging = False
             st.full = False
             st.battery_status = "Disconnected"
             st.provisional = True
+            st.input = neutral_input()
             st.write()
         finally:
             try:

@@ -4,7 +4,7 @@
 
 **Steam Controller 2 battery, charging, connection, and signal state for Noctalia.**
 
-[![Version](https://img.shields.io/badge/version-2.3.0-purple)](steam-controller/plugin.toml)
+[![Version](https://img.shields.io/badge/version-2.4.0-purple)](steam-controller/plugin.toml)
 [![Plugin API](https://img.shields.io/badge/Noctalia_API-17-blue)](steam-controller/plugin.toml)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
@@ -18,13 +18,13 @@ LGL Steam Controller Battery is a Noctalia v5 desktop widget and headless
 service adapted from Jahrek's
 [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget).
 It shows the battery level, charging state, connection type, and wireless link
-quality of the Steam Controller 2 ("Triton"), with additional Noctalia-native
-theming and configuration.
+quality of the Steam Controller 2 ("Triton"), with live input visualisation and
+additional Noctalia-native theming and configuration.
 
 | Field | Value |
 | --- | --- |
 | Plugin ID | `jahrek/steam-controller` |
-| Version | `2.3.0` |
+| Version | `2.4.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
 | License | MIT |
@@ -40,6 +40,10 @@ The desktop widget exposes:
 - controller line colour, body colour and outline thickness
 - battery fill mode: connection LED colours or a custom colour
 - battery fill opacity (`0–1`) and a separate low-battery colour
+- optional battery bar; hiding it centres the controller card
+- independent toggles for the percentage readout and status line
+- live input visualisation toggle and highlight colour (palette role or custom
+  hex)
 - primary and secondary text colours
 - signal display mode, low-battery threshold and notification toggle
 

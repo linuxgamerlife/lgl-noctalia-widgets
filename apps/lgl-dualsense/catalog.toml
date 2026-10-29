@@ -5,11 +5,11 @@
 [[plugin]]
 id           = "deadYokai/dualsense"
 name         = "DualSense Battery"
-version      = "1.0.10"
+version      = "1.1.0"
 author       = "deadYokai"
 license      = "MIT"
 icon         = "device-gamepad-2"
-description  = "Battery level, charging state, lightbar sync and ds4u profile controls for DualSense and DualSense Edge controllers."
+description  = "Battery level, charging state, lightbar sync, live input visualisation and ds4u profile controls for DualSense and DualSense Edge controllers."
 deprecated   = false
 plugin_api   = 17
 tags         = ["gaming", "hardware", "battery", "dualsense", "desktop"]
