@@ -211,8 +211,76 @@ local art_base_key = nil
 local art_static_path = nil
 local art_live_key = nil
 local art_live_path = nil
+local art_live_prefix = nil
+local art_live_suffix = nil
 local art_live_seq = 0
 local LIVE_SLOTS = 4
+local ART_MIN_INTERVAL_MS = 66
+local last_art_ms = 0
+
+-- Split the controller template once into static chunks and placeholder names.
+-- Building an SVG afterwards is a table.concat instead of eight string.gsub
+-- passes. Noctalia meters every pattern-match attempt against the callback CPU
+-- budget, and eight gsubs over the 10 KB template cost ~45 ms, enough to trip
+-- the 25 ms budget and get the card auto-disabled.
+local template_cache = nil
+
+local function template_parts()
+  if template_cache then
+    return template_cache
+  end
+  local raw = noctalia.readFile("assets/controller-template.svg")
+  if not raw then
+    return nil
+  end
+  local chunks = {}
+  local keys = {}
+  local pos = 1
+  while true do
+    local start_pos, end_pos = string.find(raw, "{{", pos, true)
+    if not start_pos then
+      break
+    end
+    local key_end = string.find(raw, "}}", end_pos + 1, true)
+    if not key_end then
+      break
+    end
+    chunks[#chunks + 1] = string.sub(raw, pos, start_pos - 1)
+    keys[#keys + 1] = string.sub(raw, end_pos + 1, key_end - 1)
+    pos = key_end + 2 -- skip both closing braces
+  end
+  chunks[#chunks + 1] = string.sub(raw, pos)
+  template_cache = { chunks = chunks, keys = keys }
+  return template_cache
+end
+
+local function build_svg(values)
+  local parts = template_parts()
+  if not parts then
+    return nil
+  end
+  local out = {}
+  for i, chunk in ipairs(parts.chunks) do
+    out[#out + 1] = chunk
+    local key = parts.keys[i]
+    if key then
+      out[#out + 1] = values[key] or ""
+    end
+  end
+  return table.concat(out)
+end
+
+local function live_svg(base_svg, live_overlay)
+  if art_live_prefix == nil or art_live_suffix == nil then
+    local start_pos, end_pos = string.find(base_svg, "{{LIVE_OVERLAY}}", 1, true)
+    if not start_pos then
+      return nil
+    end
+    art_live_prefix = string.sub(base_svg, 1, start_pos - 1)
+    art_live_suffix = string.sub(base_svg, end_pos + 1)
+  end
+  return art_live_prefix .. live_overlay .. art_live_suffix
+end
 
 local function controller_art(live_overlay)
   local fallback = "assets/controller.svg"
@@ -243,19 +311,24 @@ local function controller_art(live_overlay)
   end
 
   if art_base == nil or art_base_key ~= base_key then
-    local template = noctalia.readFile("assets/controller-template.svg")
-    if not template then
+    art_base = build_svg({
+      BODY = body,
+      BODY_OPACITY = body_opacity_text,
+      COLOR = line,
+      LIGHTBAR = lb,
+      STROKE_BODY = stroke_text,
+      STROKE_GRIP = grip_text,
+      LIGHTBAR_WIDTH = lightbar_width_text,
+      LIVE_OVERLAY = "{{LIVE_OVERLAY}}",
+    })
+    if not art_base then
       return fallback
     end
-    local svg = string.gsub(template, "{{BODY}}", body)
-    svg = string.gsub(svg, "{{BODY_OPACITY}}", body_opacity_text)
-    svg = string.gsub(svg, "{{COLOR}}", line)
-    svg = string.gsub(svg, "{{LIGHTBAR}}", lb)
-    svg = string.gsub(svg, "{{STROKE_BODY}}", stroke_text)
-    svg = string.gsub(svg, "{{STROKE_GRIP}}", grip_text)
-    svg = string.gsub(svg, "{{LIGHTBAR_WIDTH}}", lightbar_width_text)
-    art_base = svg
     art_base_key = base_key
+    art_live_prefix = nil
+    art_live_suffix = nil
+    art_live_key = nil
+    art_live_path = nil
   end
 
   if live_overlay and live_overlay ~= "" then
@@ -271,8 +344,8 @@ local function controller_art(live_overlay)
     local path = dir .. "/dualsense-live-" .. color_key(base_key) .. "-"
       .. overlay_key .. "-" .. art_live_seq .. ".svg"
     art_live_seq = (art_live_seq + 1) % LIVE_SLOTS
-    local svg = string.gsub(art_base, "{{LIVE_OVERLAY}}", live_overlay)
-    if not noctalia.writeFile(path, svg) then
+    local svg = live_svg(art_base, live_overlay)
+    if not svg or not noctalia.writeFile(path, svg) then
       return fallback
     end
     art_live_key = live_key
@@ -288,8 +361,8 @@ local function controller_art(live_overlay)
   if path == art_static_path then
     return path
   end
-  local svg = string.gsub(art_base, "{{LIVE_OVERLAY}}", "")
-  if not noctalia.writeFile(path, svg) then
+  local svg = live_svg(art_base, "")
+  if not svg or not noctalia.writeFile(path, svg) then
     return fallback
   end
   art_static_path = path
@@ -974,7 +1047,14 @@ function onFrameTick(delta_ms)
   render()
 end
 
-local function refresh_art()
+local function refresh_art(force)
+  if type(noctalia.nowMs) == "function" then
+    local now = noctalia.nowMs()
+    if not force and now - last_art_ms < ART_MIN_INTERVAL_MS then
+      return
+    end
+    last_art_ms = now
+  end
   art_path = controller_art(input_overlay())
 end
 
@@ -984,7 +1064,7 @@ function update()
 end
 
 current_state = noctalia.state.get("controller")
-refresh_art()
+refresh_art(true)
 noctalia.setUpdateInterval(1000)
 noctalia.state.watch("controller", function(value)
   current_state = value
