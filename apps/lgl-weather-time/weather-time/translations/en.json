@@ -187,10 +187,6 @@
         "day": "Day"
       }
     },
-    "animate_effects": {
-      "label": "Animate effects",
-      "description": "Animate the scene frames: rain, snow and lightning at 180 ms; stars, clouds and fog at a 420 ms ambient cadence."
-    },
     "background": {
       "label": "Host panel background",
       "description": "Let Noctalia draw its surface behind the card. The scene still draws inside the card; turn this off to place the card directly on the wallpaper."

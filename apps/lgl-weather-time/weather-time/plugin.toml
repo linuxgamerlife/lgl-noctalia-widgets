@@ -132,13 +132,6 @@ options = [
   { value = "day",   label_key = "settings.scene_theme.option.day" },
 ]
 
-[[setting]]
-key             = "animate_effects"
-type            = "bool"
-label_key       = "settings.animate_effects.label"
-description_key = "settings.animate_effects.description"
-default         = true
-
 # ── Service ────────────────────────────────────────────────────────────────
 
 [[service]]

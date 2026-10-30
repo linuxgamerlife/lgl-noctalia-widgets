@@ -115,7 +115,9 @@ local function ensure_scene()
     scene_variant = nil
     return
   end
-  if scene_info ~= nil and scene_variant == variant and #scene_info.frames > 0 then
+  if scene_info ~= nil and scene_variant == variant
+    and type(scene_info.image) == "string" and scene_info.image ~= ""
+  then
     return
   end
   local dir, err = noctalia.pluginDataDir()
@@ -125,8 +127,8 @@ local function ensure_scene()
     scene_variant = nil
     return
   end
-  local paths, write_err = scene.write(dir, variant)
-  if paths == nil then
+  local image, write_err = scene.write(dir, variant)
+  if image == nil then
     log("scene disabled: " .. tostring(write_err))
     scene_info = nil
     scene_variant = nil
@@ -135,8 +137,7 @@ local function ensure_scene()
   scene_variant = variant
   scene_info = {
     variant = variant,
-    frames = paths,
-    interval_ms = scene.interval_ms(variant),
+    image = image,
   }
 end
 

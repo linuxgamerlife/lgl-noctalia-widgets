@@ -69,7 +69,6 @@ function M.service()
     secondary_label = text("secondary_label", "Home"),
     scene = one_of(text("scene", "auto"), { "auto", "off", "clear", "cloudy", "rain", "snow", "thunder", "fog" }, "auto"),
     scene_theme = one_of(text("scene_theme", "auto"), { "auto", "night", "day" }, "auto"),
-    animate_effects = bool("animate_effects", true),
   }
 end
 

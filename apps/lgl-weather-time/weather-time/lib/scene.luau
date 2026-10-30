@@ -9,8 +9,6 @@ local M = {}
 
 M.WIDTH = 800
 M.HEIGHT = 460
-M.INTERVAL_MS = 180
-M.AMBIENT_INTERVAL_MS = 420
 
 local COLORS = {
   clear_day = { top = "#1b4a6e", mid = "#3a7ba4", bottom = "#15334c", star = "#eaf5ff", ground = "#031018" },
@@ -79,21 +77,16 @@ local function defs(colors)
   })
 end
 
-local function stars(colors, variant, frame)
+local function stars(colors, variant)
   local night = variant:match("_night") ~= nil
   local count = night and 110 or 0
-  local random = rng(hash(variant) + frame * 7919)
-  local total = M.frame_count(variant)
-  local phase = (frame / total) * 2 * math.pi
+  local random = rng(hash(variant))
   local out = {}
   for index = 1, count do
     local x = random() * M.WIDTH
     local y = random() * M.HEIGHT * 0.62
     local radius = 0.35 + random() * 1.25
-    local twinkle = 0.45 + random() * 0.5 + 0.10 * math.sin(phase + index * 0.9)
-    if twinkle > 1 then
-      twinkle = 1
-    end
+    local twinkle = 0.45 + random() * 0.5
     out[#out + 1] = string.format(
       '<circle cx="%s" cy="%s" r="%s" fill="%s" opacity="%s"/>',
       f(x), f(y), f(radius), colors.star, f(twinkle)
@@ -126,7 +119,7 @@ local function celestial(colors, variant)
   })
 end
 
-local function clouds(colors, variant, frame)
+local function clouds(colors, variant)
   local rainy = variant:match("rain") or variant:match("thunder") or variant:match("cloudy")
     or variant:match("fog") or variant:match("snow")
   if not rainy then
@@ -135,13 +128,9 @@ local function clouds(colors, variant, frame)
   local random = rng(hash(variant) + 33)
   local out = { '<g filter="url(#soft)">' }
   local count = variant:match("fog") and 3 or 4
-  local total = M.frame_count(variant)
-  local phase = (frame / total) * 2 * math.pi
   for index = 1, count do
-    local base_x = random() * M.WIDTH
+    local x = random() * M.WIDTH
     local base_y = 42 + random() * 100
-    local drift = math.sin(phase + index * 1.3) * 18
-    local x = base_x + drift
     local thunder = variant:match("thunder") ~= nil
     local rain = variant:match("rain") ~= nil
     local foggy = variant:match("fog") ~= nil
@@ -161,14 +150,12 @@ local function clouds(colors, variant, frame)
   return table.concat(out)
 end
 
-local function rain(frame)
-  local random = rng(hash("rain") + frame * 104729)
+local function rain()
+  local random = rng(hash("rain"))
   local out = { '<g stroke="#a9cfe8" stroke-linecap="round">' }
   for index = 1, 64 do
     local x = random() * M.WIDTH
-    local base = random() * M.HEIGHT
-    local shift = frame * 24
-    local y = (base + shift) % (M.HEIGHT + 40) - 20
+    local y = random() * M.HEIGHT
     local length = 12 + random() * 20
     local opacity = 0.18 + random() * 0.42
     out[#out + 1] = string.format(
@@ -180,13 +167,12 @@ local function rain(frame)
   return table.concat(out)
 end
 
-local function snow(frame)
-  local random = rng(hash("snow") + frame * 15485863)
+local function snow()
+  local random = rng(hash("snow"))
   local out = { '<g fill="#eaf6ff">' }
   for index = 1, 54 do
     local x = random() * M.WIDTH
-    local base = random() * M.HEIGHT
-    local y = (base + frame * 13) % (M.HEIGHT + 20) - 10
+    local y = random() * M.HEIGHT
     local radius = 1 + random() * 2.3
     local opacity = 0.35 + random() * 0.55
     out[#out + 1] = string.format(
@@ -198,10 +184,7 @@ local function snow(frame)
   return table.concat(out)
 end
 
-local function lightning(frame)
-  if frame ~= 1 and frame ~= 4 then
-    return ""
-  end
+local function lightning()
   return table.concat({
     '<g stroke="#eef6ff" fill="none" stroke-linecap="round" stroke-linejoin="round">',
     '<polyline points="590,55 572,128 595,128 556,212 612,122 586,122 620,55" stroke-width="7" opacity="0.12"/>',
@@ -210,12 +193,10 @@ local function lightning(frame)
   })
 end
 
-local function fog(frame)
+local function fog()
   local out = { '<g fill="#dbe6ec">' }
-  local total = M.frame_count(variant)
-  local phase = (frame / total) * 2 * math.pi
   for index = 1, 5 do
-    local y = 130 + index * 44 + math.sin(phase + index) * 5
+    local y = 130 + index * 44
     local opacity = 0.05 + (index % 2) * 0.025
     out[#out + 1] = string.format(
       '<rect x="-40" y="%s" width="880" height="28" rx="14" opacity="%s"/>',
@@ -265,41 +246,27 @@ function M.variant(category, is_day)
   return safe .. (is_day and "_day" or "_night")
 end
 
-function M.frame_count(_variant)
-  -- Every scene animates: stars twinkle, clouds drift, fog breathes and
-  -- precipitation falls. The card chooses a slower cadence for ambient scenes.
-  return 6
-end
 
-function M.interval_ms(variant)
-  local category = variant:match("^[^_]+")
-  if category == "rain" or category == "snow" or category == "thunder" then
-    return M.INTERVAL_MS
-  end
-  return M.AMBIENT_INTERVAL_MS
-end
-
-function M.svg(variant, frame)
+function M.svg(variant)
   local colors = palette(variant)
-  local index = math.max(0, tonumber(frame) or 0)
   local parts = {
     '<svg xmlns="http://www.w3.org/2000/svg" width="', tostring(M.WIDTH), '" height="', tostring(M.HEIGHT),
     '" viewBox="0 0 ', tostring(M.WIDTH), ' ', tostring(M.HEIGHT), '">',
     defs(colors),
     '<rect width="', tostring(M.WIDTH), '" height="', tostring(M.HEIGHT), '" fill="url(#sky)"/>',
-    stars(colors, variant, index),
+    stars(colors, variant),
     celestial(colors, variant),
-    clouds(colors, variant, index),
+    clouds(colors, variant),
   }
   if variant:match("rain") then
-    parts[#parts + 1] = rain(index)
+    parts[#parts + 1] = rain()
   elseif variant:match("snow") then
-    parts[#parts + 1] = snow(index)
+    parts[#parts + 1] = snow()
   elseif variant:match("thunder") then
-    parts[#parts + 1] = rain(index)
-    parts[#parts + 1] = lightning(index)
+    parts[#parts + 1] = rain()
+    parts[#parts + 1] = lightning()
   elseif variant:match("fog") then
-    parts[#parts + 1] = fog(index)
+    parts[#parts + 1] = fog()
   end
   parts[#parts + 1] = grass(colors)
   parts[#parts + 1] = '<rect width="'
@@ -316,8 +283,8 @@ function M.svg(variant, frame)
   return table.concat(parts)
 end
 
--- Write the frames for one variant into pluginDataDir()/scenes/<variant>/.
--- Frames are rewritten when the variant is selected again, so generator or art
+-- Write the static image for one variant into pluginDataDir()/scenes/<variant>/.
+-- The image is rewritten when the variant is selected again, so generator or art
 -- changes are picked up without a separate cache-version bump.
 function M.write(dir, variant)
   if type(dir) ~= "string" or dir == "" then
@@ -328,17 +295,17 @@ function M.write(dir, variant)
   if ok == false then
     return nil, err or "mkdir failed"
   end
-  local count = M.frame_count(variant)
-  local paths = {}
-  for index = 0, count - 1 do
-    local path = folder .. "/frame-" .. tostring(index) .. ".svg"
-    local written, write_err = noctalia.writeFile(path, M.svg(variant, index))
-    if written == false then
-      return nil, write_err or "write failed"
-    end
-    paths[#paths + 1] = path
+  local path = folder .. "/scene.svg"
+  local written, write_err = noctalia.writeFile(path, M.svg(variant))
+  if written == false then
+    return nil, write_err or "write failed"
   end
-  return paths
+  -- Remove frames written by older animated versions when this variant is
+  -- regenerated.
+  for index = 0, 5 do
+    noctalia.removeFile(folder .. "/frame-" .. tostring(index) .. ".svg")
+  end
+  return path
 end
 
 return M

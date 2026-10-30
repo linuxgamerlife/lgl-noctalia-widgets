@@ -46,20 +46,11 @@ local CONDITION_FALLBACK = {
 
 local current = noctalia.state.get("weather_time")
 local current_scene = current and current.scene or nil
-local frame_index = 0
-local last_frame_at = 0
 local last_key = nil
 
 local function tr(key, fallback, subst)
   local text = noctalia.tr(key, subst)
   return (text ~= nil and text ~= key) and text or fallback
-end
-
-local function now_ms()
-  if type(noctalia.nowMs) == "function" then
-    return noctalia.nowMs()
-  end
-  return os.time() * 1000
 end
 
 local function text_size(value)
@@ -140,8 +131,8 @@ end
 local function scene_active()
   return cfg.show_scene
     and current_scene ~= nil
-    and type(current_scene.frames) == "table"
-    and #current_scene.frames > 0
+    and type(current_scene.image) == "string"
+    and current_scene.image ~= ""
 end
 
 local function custom_color(value, default)
@@ -748,7 +739,6 @@ local function render()
     tostring(model and model.seq or -1),
     tostring(model and model.fetched_at or 0),
     tostring(model and model.error and model.error.reason or ""),
-    tostring(scene_active() and frame_index or -1),
     tostring(current_scene and current_scene.variant or ""),
     clock_text(tz),
     tostring(date_text(tz) or ""),
@@ -768,7 +758,7 @@ local function render()
     stack = ui.column({ key = "scene-stack", width = cfg.content_width, gap = -height }, {
       ui.image({
         key = "scene-image",
-        path = current_scene.frames[frame_index + 1],
+        path = current_scene.image,
         width = cfg.content_width,
         height = height,
         fit = "cover",
@@ -833,34 +823,18 @@ function requestRefresh()
 end
 
 function update()
-  if scene_active() and service_cfg.animate_effects and #current_scene.frames > 1 then
-    local now = now_ms()
-    local interval = tonumber(current_scene.interval_ms) or 180
-    if now - last_frame_at >= interval then
-      last_frame_at = now
-      frame_index = (frame_index + 1) % #current_scene.frames
-    end
-  end
   render()
 end
 
 local function ingest(value)
   current = value
-  local next_scene = type(value) == "table" and value.scene or nil
-  if next_scene == nil or current_scene == nil or next_scene.variant ~= current_scene.variant then
-    frame_index = 0
-    last_frame_at = now_ms()
-  end
-  current_scene = next_scene
-  local animated = scene_active() and service_cfg.animate_effects and #current_scene.frames > 1
-  local interval = tonumber(current_scene and current_scene.interval_ms) or 180
-  noctalia.setUpdateInterval(animated and math.max(100, interval) or 1000)
+  current_scene = type(value) == "table" and value.scene or nil
+  noctalia.setUpdateInterval(1000)
   last_key = nil
   render()
 end
 
-local initial_interval = tonumber(current_scene and current_scene.interval_ms) or 180
-noctalia.setUpdateInterval(scene_active() and service_cfg.animate_effects and math.max(100, initial_interval) or 1000)
+noctalia.setUpdateInterval(1000)
 if current ~= nil then
   ingest(current)
 else

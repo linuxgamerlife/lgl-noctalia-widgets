@@ -67,8 +67,8 @@ Open-Meteo.
 | --- | --- |
 | Large clock over a night scene | Real `ui.label` text over a generated SVG scene |
 | Starfield, grass silhouette | Deterministic procedural SVG stars and two grass layers |
-| Stars / clouds / fog | Six-frame ambient loops at 420 ms: twinkle, drift and fog breathing |
-| Rain / snow / lightning | Six-frame SVG loops at 180 ms |
+| Stars / clouds / fog | Static generated starfield, cloud and fog layers |
+| Rain / snow / lightning | Static rain, snow and lightning drawn into the scene |
 | Sun or moon | Scene palette and `is_day` from the forecast; shown on clear scenes |
 | Current condition, temperature, high/low | Current Open-Meteo data, WMO code mapping |
 | Three-day forecast | Next 3/5/7 days, excluding today |
@@ -114,7 +114,7 @@ Plugin-level:
 - clock source (auto / system / weather location);
 - clock format (auto / 24-hour / 12-hour);
 - seconds, date style, secondary timezone and label;
-- scene (auto / off / fixed condition), scene theme, effect animation.
+- scene (auto / off / fixed condition) and scene theme.
 
 Desktop card:
 
