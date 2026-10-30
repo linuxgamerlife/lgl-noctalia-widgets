@@ -4,7 +4,7 @@
 
 **KDE Plasma widgets, rebuilt and improved for Noctalia Shell and Noctalia KWE.**
 
-[![Apps](https://img.shields.io/badge/apps-5-purple)](#apps)
+[![Apps](https://img.shields.io/badge/apps-6-purple)](#apps)
 [![Noctalia](https://img.shields.io/badge/Noctalia-v5-blue)](https://github.com/noctalia-dev/noctalia-shell)
 [![Noctalia KWE](https://img.shields.io/badge/noctalia--kwe-v5.3.0-blue)](#install)
 [![Language](https://img.shields.io/badge/Luau-plugins-00A2FF)](#how-the-ports-work)
@@ -38,9 +38,10 @@ other Noctalia users can install it easily.
 |---|---|---:|---|
 | [**LGL AI Usage**](apps/lgl-ai-usage/) | Shows AI limits, spend, balances, and local OpenCode statistics in desktop, bar, and panel views[^ai-usage] | 24 | GPL-3.0-or-later |
 | [**LGL DualSense Battery**](apps/lgl-dualsense/) | Shows DualSense battery and connection state with live input visualisation, lightbar, player LED, and optional `ds4u` profile controls[^dualsense] | 17 | MIT |
-| [**LGL Modern SysMonitor Plus**](apps/lgl-modern-sysmonitor-plus/) | Monitors CPU, GPU, memory, disks, fans, temperatures, and network activity[^sysmonitor] | 22 | GPL-2.0-or-later |
+| [**LGL KBM Overlay**](apps/lgl-kbm-overlay/) | Shows a customisable gaming keyboard and mouse input drawing as a movable desktop widget, with configurable layouts and effects[^kbm-overlay] | 30 | MIT |
+| [**LGL Modern SysMonitor Plus**](apps/lgl-modern-sysmonitor-plus/) | Monitors CPU, GPU, memory, disks, fans, temperatures, and network activity[^sysmonitor] | 22 | GPL-3.0-or-later |
 | [**LGL Steam Controller Battery**](apps/lgl-steam-controller/) | Shows Steam Controller 2 battery, charging, connection, wireless signal and live input state[^steam-controller] | 17 | MIT |
-| [**LGL Weather & Time**](apps/lgl-weather-time/) | Shows a location-aware clock, current conditions and forecast with a full-bleed procedural weather scene, plus privacy-first location handling[^weather-time] | 24 | GPL-3.0-or-later |
+| [**LGL Weather & Time**](apps/lgl-weather-time/) | Shows a location-aware clock, current conditions and forecast with a full-bleed procedural weather scene, plus privacy-first location handling[^weather-time] | 24 | MIT |
 
 Open an app's README for its requirements, settings, hardware notes, and full
 installation instructions.
@@ -107,6 +108,16 @@ git sparse-checkout set apps/lgl-dualsense
 ./apps/lgl-dualsense/install.sh      # Upstream Noctalia
 ```
 
+#### LGL KBM Overlay
+
+```bash
+git sparse-checkout set apps/lgl-kbm-overlay
+
+./apps/lgl-kbm-overlay/install-kwe.sh  # Noctalia KWE
+# OR
+./apps/lgl-kbm-overlay/install.sh      # Upstream Noctalia
+```
+
 #### LGL Modern SysMonitor Plus
 
 ```bash
@@ -169,6 +180,7 @@ hardware, services, dependencies, and upstream licence differ.
 apps/
 ├── lgl-ai-usage/
 ├── lgl-dualsense/
+├── lgl-kbm-overlay/
 ├── lgl-modern-sysmonitor-plus/
 ├── lgl-steam-controller/
 └── lgl-weather-time/
@@ -191,14 +203,38 @@ specific implementation and improvements in each app's README.
 [^sysmonitor]: Based on Modern SysMonitor Plus by UnsaidSpeech, itself based on [Modern SysMonitor](https://github.com/joaogabrielmedeiros/kde_plasma_widgets) by Joao Gabriel Medeiros.
 [^steam-controller]: Based on Jahrek's [Steam Controller Plasma widget](https://github.com/jahrekza/steam-controller-plasma-widget).
 [^weather-time]: Weather data by [Open-Meteo](https://open-meteo.com/) under [CC BY 4.0](https://open-meteo.com/en/license). The widget draws its own procedural scene and does not reuse Noctalia's IP-based auto-location.
+[^kbm-overlay]: Inspired by [univrsal/input-overlay](https://github.com/univrsal/input-overlay) and its mouse/keyboard presets. This is an independent Noctalia implementation.
 
 ---
 
 ## Licences
 
-The apps use different licences. Refer to the `LICENSE` file in each app
-directory for the terms that apply to that app. No single repository-wide
-licence overrides those individual terms.
+This repository is a collection of separately licensed apps, not a single
+work. Every app carries its own `LICENSE` file and every source file declares
+its licence with an SPDX header. Machine-readable metadata lives in
+[`REUSE.toml`](REUSE.toml); licence texts are in [`LICENSES/`](LICENSES/).
+
+| Licence | Apps |
+|---|---|
+| MIT | DualSense Battery, KBM Overlay, Steam Controller Battery, Weather & Time |
+| GPL-3.0-or-later | AI Usage, Modern SysMonitor Plus |
+
+The four MIT apps may be reused, modified and redistributed freely, including
+in closed-source projects, provided the copyright and permission notices are
+kept. AI Usage is a port of
+[Lukk17/ai-usage-widget](https://github.com/Lukk17/ai-usage-widget), and Modern
+SysMonitor Plus derives from UnsaidSpeech's widget, itself based on
+[Modern SysMonitor](https://github.com/joaogabrielmedeiros/kde_plasma_widgets)
+by Joao Gabriel Medeiros. Both upstreams are copyleft, so those two apps stay
+under GPL-3.0-or-later.
+
+Repository-level files (`README.md`, `.gitignore`) are MIT, licensed by
+LinuxGamerLife. The shared `remove-plugin-widgets.py` helper is LGL's own code
+and is offered under the licence of the app that ships it.
+
+Weather data comes from [Open-Meteo](https://open-meteo.com/) under
+[CC BY 4.0](https://open-meteo.com/en/license). That licence covers the data,
+not the widget code.
 
 ---
 

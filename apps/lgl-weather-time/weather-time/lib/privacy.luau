@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Privacy projections and assertions.
 --
 -- `public_weather` is the only shape that may be published through

@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Small numeric and display helpers shared by the service and the UI entries.
 -- Pure functions only: no noctalia.* access, so every helper is testable.
 

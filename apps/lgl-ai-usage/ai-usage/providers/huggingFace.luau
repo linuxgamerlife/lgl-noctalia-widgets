@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Hugging Face plan and inference spend. Port of providers/huggingFace.mjs.
 
 local http = require("../lib/http.luau")

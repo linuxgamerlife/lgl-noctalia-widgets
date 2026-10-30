@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Headless weather/time service.
 --
 -- Owns the location file, the last-good cache, the HTTP client and the scene

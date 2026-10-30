@@ -1,4 +1,9 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 deadYokai
+-- Copyright (C) 2026 Jarek
+
 -- Headless service: runs the bundled DualSense HID / ds4u IPC daemon and
 -- publishes its JSON state to the plugin's other entries.
 

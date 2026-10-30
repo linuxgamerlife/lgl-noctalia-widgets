@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (C) 2026 jahrekza
+# Copyright (C) 2026 Jarek
+
 """
 Steam Controller 2 battery daemon for the Noctalia plugin.
 
@@ -86,7 +90,6 @@ TRITON_LEFT_TRIGGER_CLICK = 1 << 27
 TRITON_RIGHT_GRIP_TOUCH = 1 << 28
 TRITON_LEFT_GRIP_TOUCH = 1 << 29
 
-
 def single_instance():
     """Take a per-user lock; exit quietly when another daemon is already up."""
     fd = os.open(LOCK_FILE, os.O_RDWR | os.O_CREAT, 0o600)
@@ -105,14 +108,12 @@ def single_instance():
     os.write(fd, str(os.getpid()).encode())
     return fd
 
-
 def release_lock(fd):
     try:
         os.ftruncate(fd, 0)
     except OSError:
         pass
     os.close(fd)
-
 
 def hid_info(dev):
     """(connection, bluetooth MAC or "") from the hidraw node's sysfs uevent."""
@@ -137,7 +138,6 @@ def hid_info(dev):
         return "receiver", ""
     return "usb", ""
 
-
 def hid_pid(dev):
     """USB/BT product ID of a hidraw node (0 if unknown)."""
     try:
@@ -148,7 +148,6 @@ def hid_pid(dev):
     except (OSError, IndexError, ValueError):
         pass
     return 0
-
 
 def bluez_battery(address):
     """Live battery % from the BLE Battery Service via BlueZ, or None."""
@@ -166,7 +165,6 @@ def bluez_battery(address):
         if len(out) == 2 and out[0] == "y":
             return max(0, min(100, int(out[1])))
     return None
-
 
 def puck_dock_node():
     """hidraw node of the puck's dock interface: a 28de:1304 node without OUTPUT reports."""
@@ -194,7 +192,6 @@ def puck_dock_node():
             return f"/dev/hidraw{i}"
     return None
 
-
 def puck_docked():
     """True/False = pad on/off the puck's dock, None = can't tell."""
     dev = puck_dock_node()
@@ -220,7 +217,6 @@ def puck_docked():
     finally:
         os.close(fd)
 
-
 class DockCache:
     def __init__(self):
         self.value, self.at = None, 0
@@ -235,7 +231,6 @@ class DockCache:
 
     def reset(self):
         self.at = 0
-
 
 def find_device():
     """Returns (live hidraw node or None, connection of any silent controller/puck node or "")."""
@@ -261,13 +256,11 @@ def find_device():
             os.close(fd)
     return None, present
 
-
 def _int_or(value, fallback):
     try:
         return int(value)
     except (TypeError, ValueError):
         return fallback
-
 
 def neutralize_input(inp):
     """Clamp the Triton axes and hide idle stick jitter from the live view."""
@@ -297,7 +290,6 @@ def neutralize_input(inp):
         inp[prefix + "p"] = pressure
     return inp
 
-
 def neutral_input():
     return neutralize_input({
         "lx": 0, "ly": 0, "rx": 0, "ry": 0,
@@ -305,7 +297,6 @@ def neutral_input():
         "lpx": 0, "lpy": 0, "lpp": 0,
         "rpx": 0, "rpy": 0, "rpp": 0,
     })
-
 
 def parse_triton_input(data):
     """Parse a Triton 0x42/0x45/0x47 report into the widget's compact form."""
@@ -329,7 +320,6 @@ def parse_triton_input(data):
         "lpx": lpx, "lpy": lpy, "lpp": lpp,
         "rpx": rpx, "rpy": rpy, "rpp": rpp,
     })
-
 
 class State:
     def __init__(self, stream=False):
@@ -415,7 +405,6 @@ class State:
                 os.replace(tmp, STATE_FILE)
             except OSError:
                 pass
-
 
 def run(stream=False):
     st = State(stream=stream)
@@ -541,14 +530,12 @@ def run(stream=False):
                 pass
         time.sleep(1)
 
-
 # Rumble (output report 0x80, layout from SDL's SDL_hidapi_steam_triton.c):
 # report id, type, intensity u16, left speed u16, left gain s8, right speed u16,
 # right gain s8. The pad stops on its own after ~50 ms, so it is resent every 40 ms.
 RUMBLE = struct.Struct("<BBHHbHb")
 # Easter egg: a scream-shaped buzz (speed, seconds) -- quick rise, hold, fade
 BUZZ_PATTERN = [(30000, 0.08), (55000, 0.12), (65535, 0.45), (45000, 0.15), (25000, 0.15)]
-
 
 def buzz():
     """Rumble whichever controller node is live (puck slot, Bluetooth or USB)."""
@@ -572,7 +559,6 @@ def buzz():
         os.close(fd)
     return 0
 
-
 def main():
     if "--buzz" in sys.argv[1:]:
         return buzz()
@@ -587,7 +573,6 @@ def main():
     finally:
         release_lock(lock)
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

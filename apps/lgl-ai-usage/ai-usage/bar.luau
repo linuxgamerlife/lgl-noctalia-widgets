@@ -1,4 +1,9 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Compact bar widget: the worst current limit, an error count or the account
 -- count. Click opens the panel; right-click refreshes.
 

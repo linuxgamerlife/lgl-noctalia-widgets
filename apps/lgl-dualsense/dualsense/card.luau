@@ -1,4 +1,9 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 deadYokai
+-- Copyright (C) 2026 Jarek
+
 -- Declarative desktop card for DualSense & DualSense Edge controllers (ds4u).
 --
 -- By default the card mirrors the controller's ds4u lightbar color (or its

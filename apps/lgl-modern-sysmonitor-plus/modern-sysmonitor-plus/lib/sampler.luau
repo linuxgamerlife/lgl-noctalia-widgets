@@ -1,4 +1,10 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Joao Gabriel Medeiros
+-- Copyright (C) 2026 UnsaidSpeech
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- CPU, RAM and network sampling with the delta state kept between calls.
 
 local hwmon = require("./hwmon.luau")

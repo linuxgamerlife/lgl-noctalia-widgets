@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- OpenCode Zen member budgets. Port of providers/opencodeZen.mjs.
 
 local http = require("../lib/http.luau")

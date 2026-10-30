@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Read-only local sources with a hard timeout and a byte cap. Port of
 -- core/localRead.mjs. The shell commands contain no user input.
 

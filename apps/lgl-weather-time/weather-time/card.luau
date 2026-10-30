@@ -1,4 +1,8 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Declarative Weather & Time desktop card.
 --
 -- The service publishes "weather_time". This entry only formats and renders it.

@@ -1,4 +1,9 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Declarative desktop card for AI Usage.
 --
 -- The headless "poller" service publishes a plain "ai_usage" table. This entry

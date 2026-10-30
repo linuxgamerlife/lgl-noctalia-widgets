@@ -1,4 +1,9 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 jahrekza
+-- Copyright (C) 2026 Jarek
+
 -- Headless service: runs the bundled HID daemon and publishes its JSON state
 -- to the plugin's other entries. The desktop widget only watches that state.
 

@@ -1,0 +1,49 @@
+version = 1
+
+# Repository-level files. Individual apps carry their own licence; see the
+# table in README.md and the LICENSE file inside each app directory.
+
+[[annotations]]
+path = ["README.md", ".gitignore", "REUSE.toml"]
+SPDX-FileCopyrightText = "2026 LinuxGamerLife"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["apps/lgl-ai-usage/**"]
+precedence = "closest"
+SPDX-FileCopyrightText = ["2026 Łukasz Sarna", "2026 LinuxGamerLife"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ["apps/lgl-dualsense/**"]
+precedence = "closest"
+SPDX-FileCopyrightText = ["2026 deadYokai", "2026 Jarek"]
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["apps/lgl-kbm-overlay/**"]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 LinuxGamerLife"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["apps/lgl-modern-sysmonitor-plus/**"]
+precedence = "closest"
+SPDX-FileCopyrightText = [
+  "2026 Joao Gabriel Medeiros",
+  "2026 UnsaidSpeech",
+  "2026 LinuxGamerLife",
+]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ["apps/lgl-steam-controller/**"]
+precedence = "closest"
+SPDX-FileCopyrightText = ["2026 jahrekza", "2026 Jarek"]
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["apps/lgl-weather-time/**"]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 LinuxGamerLife"
+SPDX-License-Identifier = "MIT"

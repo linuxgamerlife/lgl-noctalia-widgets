@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Key storage. Secret Service is the default; users may explicitly choose a
 -- mode-600 local file for read-only, scoped API keys.
 

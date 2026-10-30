@@ -27,7 +27,7 @@ whose original design and code are by Joao Gabriel Medeiros.
 | Version | `1.0.0` |
 | Entries | Service `poller`, desktop widget `card` |
 | Plugin API | 22 |
-| License | GPL-2.0-or-later |
+| License | GPL-3.0-or-later |
 
 Targets KineticWE's `noctalia-kwe` v5.3.0 and upstream Noctalia v5. Both
 install scripts use the same v5 plugin API and the `noctalia` / `noctalia-kwe`
@@ -228,4 +228,6 @@ Based on Modern SysMonitor Plus by UnsaidSpeech and the original Modern
 SysMonitor by Joao Gabriel Medeiros. LGL adapted and extended the widget for
 Noctalia and Noctalia KWE.
 
-GPL-2.0-or-later — see [LICENSE](LICENSE).
+GPL-3.0-or-later — see [LICENSE](LICENSE).
+
+Upgraded from GPL-2.0-or-later, which permits use under any later GPL version.

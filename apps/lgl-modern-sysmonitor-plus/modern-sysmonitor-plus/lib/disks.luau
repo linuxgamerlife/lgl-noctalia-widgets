@@ -1,4 +1,10 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Joao Gabriel Medeiros
+-- Copyright (C) 2026 UnsaidSpeech
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Physical-disk usage from `df -kPT`, grouped the way the KDE widget grouped
 -- mounted filesystems: LUKS/LVM/btrfs subvolumes collapse onto their physical
 -- disk, and duplicate mounts of the same source are counted once.

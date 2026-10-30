@@ -1,4 +1,10 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Joao Gabriel Medeiros
+-- Copyright (C) 2026 UnsaidSpeech
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Small, dependency-free formatters shared by the sampler and the card.
 
 local M = {}

@@ -1,4 +1,10 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Joao Gabriel Medeiros
+-- Copyright (C) 2026 UnsaidSpeech
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Headless poller for Modern SysMonitor Plus.
 --
 -- Reads the sources the KDE widget used: /proc/stat, /proc/meminfo,

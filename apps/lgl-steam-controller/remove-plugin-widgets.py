@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (C) 2026 jahrekza
+# Copyright (C) 2026 Jarek
+
 """Remove desktop-widget instances of one plugin type from a Noctalia settings.toml.
 
 Usage:
@@ -23,7 +27,6 @@ from pathlib import Path
 WIDGET_START = re.compile(r'^ {0,4}\[desktop_widgets\.widget\.("?)([^"\]]+)\1\]\s*$')
 TOP_LEVEL = re.compile(r'^\[[^\]]+\]\s*$')
 TYPE_LINE = r'^\s*type\s*=\s*"%s"\s*$'
-
 
 def remove_widgets(path: Path, widget_type: str, dry_run: bool) -> int:
     if not path.is_file():
@@ -95,7 +98,6 @@ def remove_widgets(path: Path, widget_type: str, dry_run: bool) -> int:
     print(f"backup: {backup}")
     return 0
 
-
 def main(argv: list[str]) -> int:
     dry_run = "--dry-run" in argv
     args = [arg for arg in argv if arg != "--dry-run"]
@@ -103,7 +105,6 @@ def main(argv: list[str]) -> int:
         print(__doc__.strip(), file=sys.stderr)
         return 2
     return remove_widgets(Path(args[0]).expanduser(), args[1], dry_run)
-
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))

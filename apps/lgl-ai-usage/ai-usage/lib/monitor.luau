@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Account scheduler. Port of core/monitor.mjs with callback-based checks.
 
 local http = require("./http.luau")

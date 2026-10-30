@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Refresh scheduling and bounded exponential backoff.
 
 local M = {}

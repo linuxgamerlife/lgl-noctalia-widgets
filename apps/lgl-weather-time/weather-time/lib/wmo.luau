@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- WMO weather-code mapping used by both the card and the scene generator.
 -- Keys are translation keys; glyphs are Noctalia's built-in weather glyphs.
 

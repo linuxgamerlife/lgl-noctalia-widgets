@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Validate and normalize an Open-Meteo forecast response into the plugin's
 -- canonical (metric) weather model. No HTTP, filesystem or host calls.
 

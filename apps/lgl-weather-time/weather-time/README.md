@@ -207,3 +207,9 @@ Python. The tests cover formatting, units, WMO codes, dates, location privacy,
 forecast normalization, scene generation, service fetch/failure, no-location
 privacy, location-clock timezone selection, card, bar, panel and service+card
 integration.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE). Weather data by
+[Open-Meteo](https://open-meteo.com/) under
+[CC BY 4.0](https://open-meteo.com/en/license).

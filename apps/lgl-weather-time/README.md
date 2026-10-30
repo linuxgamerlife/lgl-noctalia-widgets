@@ -40,7 +40,7 @@ The card's clock always works. Weather is optional until you set a location.
 | Entries | Service `fetcher`, desktop `card`, bar `bar`, panel `setup` |
 | Plugin API | 24 |
 | Weather provider | [Open-Meteo](https://open-meteo.com/) |
-| License | GPL-3.0-or-later |
+| License | MIT |
 
 ## Privacy first
 
@@ -149,6 +149,13 @@ Bar widget:
 - The scene is full-bleed to the widget tile, with starfield, grass and animated
   rain/snow/lightning. It does not replace Noctalia's shell-wide wallpaper
   effects; those remain owned by Noctalia.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE). The widget code and procedural scenes are LGL's
+own work. Weather data is provided by [Open-Meteo](https://open-meteo.com/)
+under [CC BY 4.0](https://open-meteo.com/en/license); that attribution must be
+kept wherever the data is displayed.
 
 ## Related
 

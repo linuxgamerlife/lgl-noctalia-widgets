@@ -1,4 +1,10 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Joao Gabriel Medeiros
+-- Copyright (C) 2026 UnsaidSpeech
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- sysfs/hwmon helpers. Every read is defensive: a missing sensor is nil, not 0.
 
 local M = {}

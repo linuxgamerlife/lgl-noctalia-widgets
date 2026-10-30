@@ -263,4 +263,4 @@ Based on Modern SysMonitor Plus by UnsaidSpeech and the original Modern
 SysMonitor by Joao Gabriel Medeiros. LGL adapted and extended it for Noctalia
 and Noctalia KWE.
 
-GPL-2.0-or-later — see [LICENSE](LICENSE).
+GPL-3.0-or-later — see [LICENSE](LICENSE).

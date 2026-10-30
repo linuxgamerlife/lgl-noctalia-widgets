@@ -1,4 +1,8 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Compact bar widget: current condition/temperature and/or the location clock.
 
 local config = require("./lib/config.luau")

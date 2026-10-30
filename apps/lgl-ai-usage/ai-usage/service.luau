@@ -1,4 +1,9 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Headless poller. Started when the plugin is enabled (plugin_api 17+).
 
 local service = require("./lib/service.luau")

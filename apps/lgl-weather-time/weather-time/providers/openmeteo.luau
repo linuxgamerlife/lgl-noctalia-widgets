@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Open-Meteo forecast transport.
 --
 -- One HTTPS GET per refresh, no API key, no redirects. Coordinates are rounded

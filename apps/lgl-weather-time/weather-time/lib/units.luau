@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Unit-system resolution and display strings. Canonical state is metric.
 
 local M = {}

@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Procedural full-bleed weather scenes rendered as small SVG files.
 --
 -- Noctalia's declarative UI has no z-index, so the card overlays its real text
@@ -245,7 +248,6 @@ function M.variant(category, is_day)
   end
   return safe .. (is_day and "_day" or "_night")
 end
-
 
 function M.svg(variant)
   local colors = palette(variant)

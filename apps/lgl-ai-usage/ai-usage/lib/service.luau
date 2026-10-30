@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Headless service: owns the account list, the timer and the curl transport,
 -- then publishes a plain snapshot for the card, bar widget and panel.
 

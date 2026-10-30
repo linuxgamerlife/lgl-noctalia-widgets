@@ -1,4 +1,10 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Joao Gabriel Medeiros
+-- Copyright (C) 2026 UnsaidSpeech
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- GPU readers: AMD through /sys/class/drm, Nvidia through nvidia-smi, and the
 -- host's own system monitor as a last resort (Intel or an NVML-only setup).
 

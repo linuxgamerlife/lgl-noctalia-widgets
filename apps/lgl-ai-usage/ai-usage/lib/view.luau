@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Shared HUD-style card rendering for the desktop widget and the panel.
 
 local formatter = require("./formatter.luau")

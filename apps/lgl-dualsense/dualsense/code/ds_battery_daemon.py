@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (C) 2026 deadYokai
+# Copyright (C) 2026 Jarek
+
 """
 DualSense / DualSense Edge battery and status daemon for the Noctalia plugin.
 
@@ -112,7 +116,6 @@ BUZZ_PATTERN = [
     (80, 0.12),
 ]
 
-
 def single_instance():
     """Take a per-user lock; exit quietly when another daemon is already up."""
     fd = os.open(LOCK_FILE, os.O_RDWR | os.O_CREAT, 0o600)
@@ -130,7 +133,6 @@ def single_instance():
     os.write(fd, str(os.getpid()).encode())
     return fd
 
-
 def release_lock(fd):
     try:
         os.ftruncate(fd, 0)
@@ -138,17 +140,14 @@ def release_lock(fd):
         pass
     os.close(fd)
 
-
 def rgb_to_hex(r, g, b):
     r_i = max(0, min(255, int(round(r))))
     g_i = max(0, min(255, int(round(g))))
     b_i = max(0, min(255, int(round(b))))
     return f"#{r_i:02x}{g_i:02x}{b_i:02x}"
 
-
 def sanitize_profile_filename(name):
     return "".join(c if (c.isalnum() or c in "-_") else "_" for c in name)
-
 
 def read_ds4u_config(override_profile=None):
     """Read active profile and settings from ~/.config/ds4u/."""
@@ -228,7 +227,6 @@ def read_ds4u_config(override_profile=None):
         "mic_muted": mic_muted,
     }
 
-
 def ds4u_ipc_request(cmd_obj, timeout=0.6):
     """Send one command to $XDG_RUNTIME_DIR/ds4u.socket and return parsed JSON."""
     if not os.path.exists(DS4U_SOCKET):
@@ -255,7 +253,6 @@ def ds4u_ipc_request(cmd_obj, timeout=0.6):
             sock.close()
         except OSError:
             pass
-
 
 def query_ds4u_daemon():
     """Query the running ds4u daemon if its socket is active."""
@@ -335,7 +332,6 @@ def query_ds4u_daemon():
         **cfg,
     }
 
-
 def hid_info(dev):
     """Return (connection, address/uniq, pid) from sysfs uevent of a hidraw node."""
     bus, pid, uniq = "", 0, ""
@@ -354,7 +350,6 @@ def hid_info(dev):
     conn = "bluetooth" if bus == "0005" else "usb"
     return conn, uniq, pid
 
-
 def find_present_controller():
     """Return (connection, address, pid) from current hidraw sysfs nodes.
 
@@ -367,7 +362,6 @@ def find_present_controller():
         if pid in DS_PIDS:
             return conn, uniq, pid
     return "", "", 0
-
 
 def sysfs_battery(dev=None, uniq=""):
     """Read battery capacity & status from kernel power_supply (hid-playstation)."""
@@ -395,7 +389,6 @@ def sysfs_battery(dev=None, uniq=""):
         except (OSError, ValueError):
             continue
     return None, None
-
 
 def bluez_battery(address):
     """Fallback battery % from BlueZ org.bluez.Battery1, or None."""
@@ -427,7 +420,6 @@ def bluez_battery(address):
                 return None
     return None
 
-
 def find_device():
     """Return (hidraw path or None, connection, uniq, pid) for DualSense/Edge."""
     fallback = (None, "", "", 0)
@@ -458,7 +450,6 @@ def find_device():
             os.close(fd)
     return fallback
 
-
 def parse_battery_byte(status_byte):
     """Parse DualSense battery status byte using ds4u's exact formula."""
     bat_data = status_byte & DS_STATUS_BATTERY_CAPACITY
@@ -473,7 +464,6 @@ def parse_battery_byte(status_byte):
         return 0, "Not charging", False, False
     return 0, "Unknown", False, False
 
-
 def parse_input_report(data, connection):
     """Extract (capacity, status_str, charging, full) from a DualSense input report."""
     if not data:
@@ -487,13 +477,11 @@ def parse_input_report(data, connection):
             return parse_battery_byte(data[53])
     return None
 
-
 def _int_or(value, fallback):
     try:
         return int(value)
     except (TypeError, ValueError):
         return fallback
-
 
 def neutralize_input(inp):
     """Clamp axes/triggers and hide idle stick jitter from the live view."""
@@ -526,13 +514,11 @@ def neutralize_input(inp):
     inp["touches"] = touches
     return inp
 
-
 def neutral_input():
     return neutralize_input({
         "lx": 128, "ly": 128, "rx": 128, "ry": 128,
         "l2": 0, "r2": 0, "buttons": 0, "dpad": 8, "touches": [],
     })
-
 
 def input_from_ds4u(data):
     """Convert a ds4u IPC InputState payload into the widget's compact form."""
@@ -549,7 +535,6 @@ def input_from_ds4u(data):
         "dpad": data.get("dpad", 8),
         "touches": data.get("touch_points") or [],
     })
-
 
 def parse_input_state(data, connection):
     """Extract buttons, sticks, triggers and touch points from a DualSense report."""
@@ -623,7 +608,6 @@ def parse_input_state(data, connection):
         "touches": touches,
     })
 
-
 class DS4UClient:
     """Persistent connection for high-rate ds4u IPC polling."""
 
@@ -670,7 +654,6 @@ class DS4UClient:
         except (OSError, ValueError, TypeError):
             self.close()
             return None
-
 
 class State:
     def __init__(self, stream=False):
@@ -799,7 +782,6 @@ class State:
             except OSError:
                 pass
 
-
 def apply_ipc_state(st, ipc_state):
     """Copy a ds4u daemon snapshot into the widget state."""
     st.ds4u_daemon = True
@@ -836,7 +818,6 @@ def apply_ipc_state(st, ipc_state):
         st.provisional = True
         st.input = neutral_input()
     return st.connected
-
 
 def run(stream=False):
     st = State(stream=stream)
@@ -1006,7 +987,6 @@ def run(stream=False):
                 pass
         time.sleep(1.0)
 
-
 def build_output_report(is_bt, seq, rumble_l=0, rumble_r=0, lightbar=None, player_leds=None):
     """Build a DualSense USB (0x02) or Bluetooth (0x31) output report with CRC-32."""
     if is_bt:
@@ -1043,7 +1023,6 @@ def build_output_report(is_bt, seq, rumble_l=0, rumble_r=0, lightbar=None, playe
 
     return bytes(buf)
 
-
 def buzz():
     """Rumble the DualSense controller via ds4u daemon or direct HID output report."""
     if query_ds4u_daemon() is not None:
@@ -1077,7 +1056,6 @@ def buzz():
     finally:
         os.close(fd)
     return 0
-
 
 def apply_profile_direct(profile_name):
     """Apply lightbar and player LEDs from a saved ds4u profile directly over HID."""
@@ -1114,7 +1092,6 @@ def apply_profile_direct(profile_name):
     finally:
         os.close(fd)
 
-
 def switch_profile(target_name):
     """Switch active ds4u profile via daemon IPC or settings.json fallback."""
     target = (target_name or "").strip()
@@ -1144,7 +1121,6 @@ def switch_profile(target_name):
     apply_profile_direct(target)
     return 0
 
-
 def cycle_profile():
     """Cycle to the next profile in ~/.config/ds4u/profiles/."""
     ipc_state = query_ds4u_daemon()
@@ -1156,7 +1132,6 @@ def cycle_profile():
     else:
         idx = 0
     return switch_profile(profiles[idx])
-
 
 def main():
     args = sys.argv[1:]
@@ -1181,7 +1156,6 @@ def main():
     finally:
         release_lock(lock)
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

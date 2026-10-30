@@ -1,4 +1,9 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 jahrekza
+-- Copyright (C) 2026 Jarek
+
 -- Declarative desktop card for the Steam Controller 2.
 --
 -- By default the card mirrors the controller's LED: the battery fill is white

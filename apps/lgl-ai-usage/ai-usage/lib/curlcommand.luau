@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- One shell pipeline per check: secret-tool reads the key, curl receives the
 -- auth header on stdin, and a random boundary frames each answer. Port of
 -- core/curlCommand.mjs. The key never reaches a process argument list.

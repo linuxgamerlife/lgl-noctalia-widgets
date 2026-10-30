@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Łukasz Sarna
+# Copyright (C) 2026 LinuxGamerLife
+
 """Remove one plugin's widget instances (and settings table) from settings.toml.
 
 Usage:
@@ -28,7 +32,6 @@ SECTION = re.compile(r'^(\s*)\[([^\]]+)\]\s*$')
 TYPE_LINE = re.compile(r'^\s*type\s*=\s*"([^"]+)"\s*$', re.MULTILINE)
 ARRAY = re.compile(r'\b(widget_order|start|center|end)\s*=\s*\[(.*?)\]', re.DOTALL)
 
-
 def section_end(lines: list[str], start: int, header_path: str) -> int:
     """Return the first line after this table and all of its child tables."""
     for index in range(start + 1, len(lines)):
@@ -40,7 +43,6 @@ def section_end(lines: list[str], start: int, header_path: str) -> int:
             continue
         return index
     return len(lines)
-
 
 def find_ranges(lines: list[str], types: set[str], plugin_id: str | None) -> tuple[list[tuple[int, int]], set[str], set[str]]:
     ranges: list[tuple[int, int]] = []
@@ -84,7 +86,6 @@ def find_ranges(lines: list[str], types: set[str], plugin_id: str | None) -> tup
             merged.append((start, end))
     return merged, remove_ids, plugin_tables
 
-
 def remove_arrays(text: str, remove_ids: set[str]) -> str:
     def replace(match: re.Match[str]) -> str:
         key = match.group(1)
@@ -96,7 +97,6 @@ def remove_arrays(text: str, remove_ids: set[str]) -> str:
         return f"{key} = [\n{body}]"
 
     return ARRAY.sub(replace, text)
-
 
 def remove_widgets(
     path: Path,
@@ -153,7 +153,6 @@ def remove_widgets(
     print(f"backup: {backup}")
     return 0
 
-
 def main(argv: list[str]) -> int:
     dry_run = "--dry-run" in argv
     args = [arg for arg in argv if arg != "--dry-run"]
@@ -169,7 +168,6 @@ def main(argv: list[str]) -> int:
         print(__doc__.strip(), file=sys.stderr)
         return 2
     return remove_widgets(Path(args[0]).expanduser(), set(args[1:]), plugin_id, dry_run)
-
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))

@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Config readers shared by the entries. Values are clamped here so a bad
 -- settings file cannot make the service or a card misbehave.
 

@@ -1,4 +1,9 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Panel: cards, account management and the add/edit forms. Accounts are kept
 -- in pluginDataDir/accounts.json; keys use the configured secure or local store.
 

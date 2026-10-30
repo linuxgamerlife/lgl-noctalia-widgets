@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Shell quoting. Only safe printable ASCII is allowed, matching the KDE port.
 -- User-visible text never reaches a shell command: account ids, provider ids
 -- and field values are validated to [A-Za-z0-9-] first.

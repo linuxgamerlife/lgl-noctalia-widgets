@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- JetBrains AI quota lines from IDE logs. Port of providers/jetbrains.mjs.
 -- Only the timestamp and the quota parts are parsed; any licence or quota ids
 -- on the line stay inside the service VM and are never published.

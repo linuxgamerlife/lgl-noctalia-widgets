@@ -1,4 +1,8 @@
 --!nonstrict
+
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Setup / status panel for Weather & Time.
 --
 -- The panel is the only place that writes location.json. It searches

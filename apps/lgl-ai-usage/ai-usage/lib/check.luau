@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Check one account. Remote providers run one curl pipeline; local providers
 -- run one read-only shell command. Port of core/fetchUsage.mjs and check.mjs.
 

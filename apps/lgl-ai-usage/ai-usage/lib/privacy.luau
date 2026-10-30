@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Privacy helpers for account labels. A label that looks like an email address
 -- is masked before it reaches the published state or any rendered surface.
 

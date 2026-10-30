@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Accounts live in pluginDataDir/accounts.json. No secret ever goes here.
 -- Writes are atomic (write a sibling then rename) so a crash cannot leave a
 -- half-written account list.

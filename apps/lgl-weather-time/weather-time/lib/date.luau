@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- ISO date helpers that do not depend on the host locale or timezone.
 -- Used for forecast weekday labels and for dropping past forecast days.
 

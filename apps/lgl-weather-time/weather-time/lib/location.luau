@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Location record validation and privacy projection.
 --
 -- A location record is the only place coordinates live. `public()` strips them

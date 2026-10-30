@@ -1,0 +1,15 @@
+Third-party notices for LGL DualSense Battery
+=============================================
+
+ds4u
+----
+`assets/controller.svg` and `assets/controller-template.svg` are derived from
+the DualSense controller illustration in ds4u.
+
+    Copyright (c) 2026 deadYokai
+    Licensed under the MIT License (see LICENSE).
+
+Protocol and profile behaviour in `code/ds_battery_daemon.py` is informed by
+ds4u's input handling and IPC interface. No ds4u source code is copied.
+
+ds4u: https://git.yokai.digital/deadYokai/ds4u

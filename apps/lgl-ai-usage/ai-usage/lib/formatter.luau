@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Turn raw usage into the plain view model the card and panel render.
 -- Port of core/formatter.mjs, with noctalia.tr() for user-visible text.
 

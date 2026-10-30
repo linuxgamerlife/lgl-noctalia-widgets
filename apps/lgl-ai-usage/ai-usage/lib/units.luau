@@ -1,3 +1,7 @@
+-- SPDX-License-Identifier: GPL-3.0-or-later
+-- Copyright (C) 2026 Łukasz Sarna
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Numeric constants shared by every module. Lua 5.1 compatible (LuaJIT tests).
 
 local M = {}

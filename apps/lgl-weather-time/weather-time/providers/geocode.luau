@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Open-Meteo geocoding used only by the setup panel, and only after an
 -- explicit Search / Import action. No request is made while typing.
 

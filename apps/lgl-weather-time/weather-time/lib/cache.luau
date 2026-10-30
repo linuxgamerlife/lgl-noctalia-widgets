@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MIT
+-- Copyright (C) 2026 LinuxGamerLife
+
 -- Persistent, privacy-minimal storage in pluginDataDir().
 --
 -- weather.json has no coordinates. location.json is the only file with
