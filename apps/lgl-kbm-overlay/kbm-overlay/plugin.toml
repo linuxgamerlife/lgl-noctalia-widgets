@@ -1,0 +1,478 @@
+# Keyboard and mouse input desktop widget for Noctalia Shell / Noctalia KWE.
+#
+# The widget is a normal desktop widget: place, move and size it in the
+# desktop-widget editor. A headless evdev reader publishes pressed keys and
+# mouse buttons; card.luau draws a black/cyan keyboard and mouse SVG in the
+# style of OBS input-overlay. The device picker is a normal panel.
+
+id          = "linuxgamerlife/kbm-overlay"
+name        = "LGL KBM Overlay"
+version     = "0.2.0"
+plugin_api  = 30
+author      = "LinuxGamerLife"
+license     = "MIT"
+icon        = "keyboard"
+description = "Black and cyan gaming keyboard and mouse input overlay, drawn as a movable Noctalia desktop widget."
+tags        = ["gaming", "input", "overlay", "keyboard", "mouse", "desktop", "panel"]
+dependencies = ["python3"]
+
+# ── Service ───────────────────────────────────────────────────────────────
+
+[[service]]
+id    = "reader"
+entry = "service.luau"
+
+# ── Desktop widget ────────────────────────────────────────────────────────
+
+[[desktop_widget]]
+id    = "card"
+entry = "card.luau"
+
+  [[desktop_widget.setting]]
+  key             = "background"
+  type            = "bool"
+  label_key       = "settings.background.label"
+  description_key = "settings.background.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "background_color"
+  type            = "color"
+  label_key       = "settings.background_color.label"
+  description_key = "settings.background_color.description"
+  default         = "surface"
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_opacity"
+  type            = "double"
+  label_key       = "settings.background_opacity.label"
+  description_key = "settings.background_opacity.description"
+  default         = 0.8
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_radius"
+  type            = "int"
+  label_key       = "settings.background_radius.label"
+  description_key = "settings.background_radius.description"
+  default         = 14
+  min             = 0
+  max             = 48
+  step             = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_padding"
+  type            = "int"
+  label_key       = "settings.background_padding.label"
+  description_key = "settings.background_padding.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step             = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  # ── Main section toggles ─────────────────────────────────────────────
+  # Sub-settings are indented in their labels so the hierarchy is visible in
+  # the flat settings editor.
+
+  [[desktop_widget.setting]]
+  key             = "show_layout_section"
+  type            = "bool"
+  label_key       = "settings.show_layout_section.label"
+  description_key = "settings.show_layout_section.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_mouse_section"
+  type            = "bool"
+  label_key       = "settings.show_mouse_section.label"
+  description_key = "settings.show_mouse_section.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_appearance_section"
+  type            = "bool"
+  label_key       = "settings.show_appearance_section.label"
+  description_key = "settings.show_appearance_section.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "show_scaling_section"
+  type            = "bool"
+  label_key       = "settings.show_scaling_section.label"
+  description_key = "settings.show_scaling_section.description"
+  default         = true
+
+  # Content / layout
+  [[desktop_widget.setting]]
+  key             = "content_width"
+  type            = "int"
+  label_key       = "settings.content_width.label"
+  description_key = "settings.content_width.description"
+  default         = 620
+  min             = 420
+  max             = 1000
+  step            = 4
+  visible_when    = { key = "show_layout_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "keyboard_layout"
+  type            = "select"
+  label_key       = "settings.keyboard_layout.label"
+  description_key = "settings.keyboard_layout.description"
+  default         = "fps"
+  visible_when    = { key = "show_layout_section", values = ["true"] }
+  options = [
+    { value = "fps",    label_key = "settings.keyboard_layout.option.fps" },
+    { value = "wasd",   label_key = "settings.keyboard_layout.option.wasd" },
+    { value = "custom", label_key = "settings.keyboard_layout.option.custom" },
+  ]
+
+  [[desktop_widget.setting]]
+  key             = "custom_keys"
+  type            = "string_list"
+  label_key       = "settings.custom_keys.label"
+  description_key = "settings.custom_keys.description"
+  default         = ["~", "1", "2", "3", "4", "5", "TAB", "Q", "W", "E", "R", "T", "SHIFT", "SPACE", "CTRL"]
+  visible_when    = { key = "show_layout_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_keyboard"
+  type            = "bool"
+  label_key       = "settings.show_keyboard.label"
+  description_key = "settings.show_keyboard.description"
+  default         = true
+  visible_when    = { key = "show_layout_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_key_labels"
+  type            = "bool"
+  label_key       = "settings.show_key_labels.label"
+  description_key = "settings.show_key_labels.description"
+  default         = true
+  visible_when    = { key = "show_layout_section", values = ["true"] }
+
+  # Mouse
+  [[desktop_widget.setting]]
+  key             = "show_mouse"
+  type            = "bool"
+  label_key       = "settings.show_mouse.label"
+  description_key = "settings.show_mouse.description"
+  default         = true
+  visible_when    = { key = "show_mouse_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_mouse_labels"
+  type            = "bool"
+  label_key       = "settings.show_mouse_labels.label"
+  description_key = "settings.show_mouse_labels.description"
+  default         = false
+  visible_when    = { key = "show_mouse_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "mouse_show_wheel"
+  type            = "bool"
+  label_key       = "settings.mouse_show_wheel.label"
+  description_key = "settings.mouse_show_wheel.description"
+  default         = true
+  visible_when    = { key = "show_mouse_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "mouse_show_extra"
+  type            = "bool"
+  label_key       = "settings.mouse_show_extra.label"
+  description_key = "settings.mouse_show_extra.description"
+  default         = true
+  visible_when    = { key = "show_mouse_section", values = ["true"] }
+
+  # Styling
+  [[desktop_widget.setting]]
+  key             = "overlay_background"
+  type            = "bool"
+  label_key       = "settings.overlay_background.label"
+  description_key = "settings.overlay_background.description"
+  default         = true
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "overlay_background_color"
+  type            = "color"
+  label_key       = "settings.overlay_background_color.label"
+  description_key = "settings.overlay_background_color.description"
+  default         = "#05070a"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "overlay_background_opacity"
+  type            = "double"
+  label_key       = "settings.overlay_background_opacity.label"
+  description_key = "settings.overlay_background_opacity.description"
+  default         = 0.94
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "overlay_radius"
+  type            = "int"
+  label_key       = "settings.overlay_radius.label"
+  description_key = "settings.overlay_radius.description"
+  default         = 14
+  min             = 0
+  max             = 40
+  step            = 1
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "overlay_border_color"
+  type            = "color"
+  label_key       = "settings.overlay_border_color.label"
+  description_key = "settings.overlay_border_color.description"
+  default         = "#22e6ff"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "overlay_border_width"
+  type            = "double"
+  label_key       = "settings.overlay_border_width.label"
+  description_key = "settings.overlay_border_width.description"
+  default         = 2.0
+  min             = 0.0
+  max             = 6.0
+  step            = 0.1
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "key_idle_color"
+  type            = "color"
+  label_key       = "settings.key_idle_color.label"
+  description_key = "settings.key_idle_color.description"
+  default         = "#05070a"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "key_idle_opacity"
+  type            = "double"
+  label_key       = "settings.key_idle_opacity.label"
+  description_key = "settings.key_idle_opacity.description"
+  default         = 1.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "key_border_color"
+  type            = "color"
+  label_key       = "settings.key_border_color.label"
+  description_key = "settings.key_border_color.description"
+  default         = "#f4f8fb"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "key_border_width"
+  type            = "double"
+  label_key       = "settings.key_border_width.label"
+  description_key = "settings.key_border_width.description"
+  default         = 2.0
+  min             = 0.5
+  max             = 5.0
+  step            = 0.1
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "key_text_color"
+  type            = "color"
+  label_key       = "settings.key_text_color.label"
+  description_key = "settings.key_text_color.description"
+  default         = "#f4f8fb"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "accent_color"
+  type            = "color"
+  label_key       = "settings.accent_color.label"
+  description_key = "settings.accent_color.description"
+  default         = "#22e6ff"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "accent_text_color"
+  type            = "color"
+  label_key       = "settings.accent_text_color.label"
+  description_key = "settings.accent_text_color.description"
+  default         = "#031014"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "glow_color"
+  type            = "color"
+  label_key       = "settings.glow_color.label"
+  description_key = "settings.glow_color.description"
+  default         = "#22e6ff"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "glow_opacity"
+  type            = "double"
+  label_key       = "settings.glow_opacity.label"
+  description_key = "settings.glow_opacity.description"
+  default         = 0.35
+  min             = 0.0
+  max             = 1.0
+  step            = 0.02
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "effects_glow"
+  type            = "bool"
+  label_key       = "settings.effects_glow.label"
+  description_key = "settings.effects_glow.description"
+  default         = true
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "effects_ripple"
+  type            = "bool"
+  label_key       = "settings.effects_ripple.label"
+  description_key = "settings.effects_ripple.description"
+  default         = true
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "mouse_body_color"
+  type            = "color"
+  label_key       = "settings.mouse_body_color.label"
+  description_key = "settings.mouse_body_color.description"
+  default         = "#05070a"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "mouse_body_opacity"
+  type            = "double"
+  label_key       = "settings.mouse_body_opacity.label"
+  description_key = "settings.mouse_body_opacity.description"
+  default         = 1.0
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "mouse_border_color"
+  type            = "color"
+  label_key       = "settings.mouse_border_color.label"
+  description_key = "settings.mouse_border_color.description"
+  default         = "#f4f8fb"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "mouse_border_width"
+  type            = "double"
+  label_key       = "settings.mouse_border_width.label"
+  description_key = "settings.mouse_border_width.description"
+  default         = 2.5
+  min             = 0.5
+  max             = 6.0
+  step            = 0.1
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  # Scaling
+  [[desktop_widget.setting]]
+  key             = "key_size"
+  type            = "int"
+  label_key       = "settings.key_size.label"
+  description_key = "settings.key_size.description"
+  default         = 46
+  min             = 26
+  max             = 64
+  step             = 1
+  visible_when    = { key = "show_scaling_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "key_gap"
+  type            = "int"
+  label_key       = "settings.key_gap.label"
+  description_key = "settings.key_gap.description"
+  default         = 6
+  min             = 2
+  max             = 16
+  step             = 1
+  visible_when    = { key = "show_scaling_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "key_radius"
+  type            = "int"
+  label_key       = "settings.key_radius.label"
+  description_key = "settings.key_radius.description"
+  default         = 6
+  min             = 0
+  max             = 20
+  step             = 1
+  visible_when    = { key = "show_scaling_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "mouse_size"
+  type            = "int"
+  label_key       = "settings.mouse_size.label"
+  description_key = "settings.mouse_size.description"
+  default         = 300
+  min             = 160
+  max             = 420
+  step             = 4
+  visible_when    = { key = "show_scaling_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "label_scale"
+  type            = "double"
+  label_key       = "settings.label_scale.label"
+  description_key = "settings.label_scale.description"
+  default         = 1.0
+  min             = 0.6
+  max             = 1.8
+  step             = 0.05
+  visible_when    = { key = "show_scaling_section", values = ["true"] }
+
+# ── Bar widget: device picker shortcut ────────────────────────────────────
+
+[[widget]]
+id    = "bar"
+entry = "bar.luau"
+
+  [[widget.setting]]
+  key             = "glyph"
+  type            = "glyph"
+  label_key       = "settings.bar_glyph.label"
+  description_key = "settings.bar_glyph.description"
+  default         = "keyboard"
+
+  [[widget.setting]]
+  key             = "show_label"
+  type            = "bool"
+  label_key       = "settings.bar_show_label.label"
+  description_key = "settings.bar_show_label.description"
+  default         = false
+
+  [[widget.setting]]
+  key             = "label"
+  type            = "string"
+  label_key       = "settings.bar_label.label"
+  description_key = "settings.bar_label.description"
+  default         = "KBM"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+# ── Device picker panel ───────────────────────────────────────────────────
+
+[[panel]]
+id        = "devices"
+entry     = "devices.luau"
+width     = 520
+height    = 600
+placement = "floating"
+position  = "center"

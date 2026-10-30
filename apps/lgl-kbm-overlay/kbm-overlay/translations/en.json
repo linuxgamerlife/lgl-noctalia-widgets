@@ -1,0 +1,335 @@
+{
+  "meta": {
+    "name": "LGL KBM Overlay",
+    "short_name": "KBM Overlay"
+  },
+  "settings": {
+    "keyboard_layout": {
+      "label": "    Keyboard layout",
+      "description": "Which gaming key cluster to draw. Custom uses the key list below.",
+      "option": {
+        "wasd": "WASD compact",
+        "fps": "FPS keyboard",
+        "custom": "Custom key list"
+      }
+    },
+    "custom_keys": {
+      "label": "    Custom keys",
+      "description": "Keys shown in the custom layout, in reading order. Use names such as W, A, S, D, SPACE, SHIFT, CTRL, TAB or ESC."
+    },
+    "show_keyboard": {
+      "label": "  Show keyboard",
+      "description": "Draw the keyboard cluster in the overlay."
+    },
+    "show_mouse": {
+      "label": "  Show mouse",
+      "description": "Draw the mouse button pad in the overlay."
+    },
+    "show_key_labels": {
+      "label": "  Show key labels",
+      "description": "Draw the key name on each keycap."
+    },
+    "show_mouse_labels": {
+      "label": "  Show mouse labels",
+      "description": "Draw LMB, RMB, MMB and side-button labels on the mouse."
+    },
+    "scale": {
+      "label": "Scale",
+      "description": "Overall size of the overlay contents."
+    },
+    "key_size": {
+      "label": "    Key size",
+      "description": "Height of a single keycap in logical pixels."
+    },
+    "key_gap": {
+      "label": "    Key gap",
+      "description": "Space between keycaps in logical pixels."
+    },
+    "key_radius": {
+      "label": "    Key radius",
+      "description": "Corner radius of the keycaps."
+    },
+    "overlay_gap": {
+      "label": "Section gap",
+      "description": "Space between the keyboard cluster and the mouse pad."
+    },
+    "overlay_padding": {
+      "label": "Panel padding",
+      "description": "Inner padding of the overlay panel."
+    },
+    "overlay_radius": {
+      "label": "    Panel radius",
+      "description": "Corner radius of the overlay panel background."
+    },
+    "overlay_opacity": {
+      "label": "Overlay opacity",
+      "description": "Opacity of the whole overlay, including labels and effects."
+    },
+    "overlay_background": {
+      "label": "  Panel background",
+      "description": "Draw the black overlay panel behind the keyboard and mouse."
+    },
+    "overlay_background_color": {
+      "label": "    Panel colour",
+      "description": "Panel fill colour. Hex values match the reference; palette roles are also accepted."
+    },
+    "overlay_background_opacity": {
+      "label": "    Panel background opacity",
+      "description": "Opacity of the panel background."
+    },
+    "overlay_border_color": {
+      "label": "    Panel border colour",
+      "description": "Cyan frame colour around the overlay. Set the border width to 0 to hide it."
+    },
+    "overlay_border_width": {
+      "label": "    Panel border width",
+      "description": "Width of the panel border in logical pixels."
+    },
+    "key_idle_color": {
+      "label": "    Keycap fill",
+      "description": "Fill colour of an unpressed keycap."
+    },
+    "key_idle_opacity": {
+      "label": "    Idle key opacity",
+      "description": "Opacity of an unpressed keycap."
+    },
+    "key_border_color": {
+      "label": "    Keycap outline",
+      "description": "Outline colour of every keycap."
+    },
+    "key_border_width": {
+      "label": "    Key border width",
+      "description": "Width of keycap borders in logical pixels."
+    },
+    "key_text_color": {
+      "label": "    Key label colour",
+      "description": "Colour of the key labels when the key is not pressed."
+    },
+    "accent_color": {
+      "label": "    Pressed fill",
+      "description": "Neon fill for pressed keys, mouse buttons and the mouse wheel."
+    },
+    "accent_text_color": {
+      "label": "    Pressed label colour",
+      "description": "Label colour inside a pressed key or mouse button."
+    },
+    "glow_color": {
+      "label": "    Glow colour",
+      "description": "Palette role or hex colour for the press glow."
+    },
+    "glow_opacity": {
+      "label": "    Glow opacity",
+      "description": "Strength of the press glow."
+    },
+    "effects_glow": {
+      "label": "  Glow effect",
+      "description": "Show a soft glow around pressed keys and mouse buttons."
+    },
+    "effects_ripple": {
+      "label": "  Click ripple",
+      "description": "Fade the glow out briefly after a key or button is released."
+    },
+    "mouse_pad_width": {
+      "label": "Mouse pad width",
+      "description": "Width of the rectangular mouse pad in logical pixels."
+    },
+    "mouse_pad_height": {
+      "label": "Mouse pad height",
+      "description": "Height of the rectangular mouse pad in logical pixels."
+    },
+    "mouse_pad_color": {
+      "label": "Mouse pad colour",
+      "description": "Palette role or hex colour for the mouse pad."
+    },
+    "mouse_pad_opacity": {
+      "label": "Mouse pad opacity",
+      "description": "Opacity of the mouse pad background."
+    },
+    "mouse_border_color": {
+      "label": "    Mouse outline",
+      "description": "Outline colour of the mouse body and buttons."
+    },
+    "mouse_border_width": {
+      "label": "    Mouse border width",
+      "description": "Width of mouse and button outlines in logical pixels."
+    },
+    "mouse_show_wheel": {
+      "label": "  Show wheel",
+      "description": "Draw the scroll wheel and its middle-button click."
+    },
+    "mouse_show_extra": {
+      "label": "  Show side buttons",
+      "description": "Draw up to three side buttons reported by the selected mouse."
+    },
+    "keyboard_device": {
+      "label": "Keyboard device fallback",
+      "description": "Optional device name or event path used until a device is chosen in the device picker."
+    },
+    "mouse_device": {
+      "label": "Mouse device fallback",
+      "description": "Optional device name or event path used until a device is chosen in the device picker."
+    },
+    "background": {
+      "label": "Background",
+      "description": "Let Noctalia draw the desktop-card background."
+    },
+    "background_color": {
+      "label": "Background colour",
+      "description": "Palette role or hex colour for the card background."
+    },
+    "background_opacity": {
+      "label": "Background opacity",
+      "description": "Opacity of the card background."
+    },
+    "background_radius": {
+      "label": "Background radius",
+      "description": "Corner radius of the card background."
+    },
+    "background_padding": {
+      "label": "Background padding",
+      "description": "Inner padding of the card background."
+    },
+    "show_card_settings": {
+      "label": "Card content settings",
+      "description": "Show the title, status and settings-button options."
+    },
+    "card_title": {
+      "label": "Card title",
+      "description": "Title shown above the live preview."
+    },
+    "show_card_status": {
+      "label": "Show card status",
+      "description": "Show the input-reader and device status under the preview."
+    },
+    "show_card_settings_button": {
+      "label": "Show settings button",
+      "description": "Show a button that opens this plugin's settings."
+    },
+    "bar_glyph": {
+      "label": "Bar glyph",
+      "description": "Glyph shown in the bar widget."
+    },
+    "bar_show_label": {
+      "label": "Show bar label",
+      "description": "Show a short text label next to the glyph."
+    },
+    "bar_label": {
+      "label": "Bar label",
+      "description": "Text shown next to the bar glyph."
+    },
+    "bar_highlight_active": {
+      "label": "Highlight active input",
+      "description": "Tint the bar glyph when a key or mouse button is pressed."
+    },
+    "show_styling": {
+      "label": "Styling",
+      "description": "Show the colour and effect options."
+    },
+    "show_scaling": {
+      "label": "Scaling",
+      "description": "Show the size and label-scale options."
+    },
+    "content_width": {
+      "label": "    Widget width",
+      "description": "Width of the desktop widget in logical pixels. The image keeps its aspect ratio."
+    },
+    "mouse_size": {
+      "label": "    Mouse height",
+      "description": "Height of the mouse silhouette in the drawing."
+    },
+    "label_scale": {
+      "label": "    Label scale",
+      "description": "Scale key and mouse labels independently of the keycap size."
+    },
+    "show_layout_section": {
+      "label": "Layout",
+      "description": "Show keyboard layout and size settings."
+    },
+    "show_mouse_section": {
+      "label": "Mouse",
+      "description": "Show mouse button settings."
+    },
+    "show_appearance_section": {
+      "label": "Appearance",
+      "description": "Show panel, colour and effect settings."
+    },
+    "show_scaling_section": {
+      "label": "Scaling",
+      "description": "Show key, mouse and label size settings."
+    },
+    "mouse_body_color": {
+      "label": "    Mouse fill",
+      "description": "Fill colour for the mouse body, buttons and wheel."
+    },
+    "mouse_body_opacity": {
+      "label": "    Mouse body opacity",
+      "description": "Opacity of the mouse body and button fills. Set to 0 for an outline-only mouse."
+    }
+  },
+  "labels": {
+    "keyboard": "Keyboard",
+    "mouse": "Mouse",
+    "no_keyboard": "No keyboard",
+    "no_mouse": "No mouse",
+    "waiting": "Waiting for input",
+    "reading": "Reading input",
+    "active": "Active",
+    "inactive": "Idle",
+    "device": "Device",
+    "event_path": "Event path",
+    "buttons": "Buttons",
+    "selected": "Selected",
+    "auto": "Auto",
+    "all": "All",
+    "unknown": "Unknown",
+    "settings": "Settings",
+    "close": "Close",
+    "refresh": "Refresh",
+    "copy_command": "Copy command",
+    "copied": "Copied"
+  },
+  "status": {
+    "ok": "Input reader running",
+    "waiting": "Waiting for the input reader",
+    "no_devices": "No input devices found",
+    "permission": "Input permission denied",
+    "helper_missing": "Input helper not found",
+    "python_missing": "python3 is not available",
+    "stopped": "Input reader stopped",
+    "error": "Input reader error"
+  },
+  "panel": {
+    "title": "Keyboard & Mouse",
+    "devices_title": "Devices",
+    "visual_title": "Appearance",
+    "keyboard_title": "Keyboard",
+    "mouse_title": "Mouse",
+    "permission_title": "Input permission",
+    "permission_body": "Reading a keyboard or mouse requires a one-time udev rule for the selected device. The rule grants read access only to that device for the active user; no root daemon is used.",
+    "permission_command": "Run this after selecting a keyboard and mouse:",
+    "permission_ok": "Permission looks available for the selected devices.",
+    "permission_missing": "The selected device is selected but not readable yet. Apply the udev rule, then replug the device or log out and back in.",
+    "no_devices": "No keyboard or mouse devices were reported. Make sure the input reader is running and the udev rule is applied.",
+    "select_keyboard": "Use as keyboard",
+    "select_mouse": "Use as mouse",
+    "clear": "Use automatic selection",
+    "saved": "Device selection saved. The reader is restarting.",
+    "save_failed": "Could not save the device selection: {error}",
+    "open_settings": "Appearance settings",
+    "pending": "Select a keyboard and a mouse to create a narrow udev rule.",
+    "helper_status": "Reader status",
+    "device_count": "{count} device(s)",
+    "keyboard_count": "{count} keyboard(s)",
+    "mouse_count": "{count} mouse(s)",
+    "selected_keyboard": "Keyboard: {name}",
+    "selected_mouse": "Mouse: {name}",
+    "auto_selection": "Automatic selection"
+  },
+  "errors": {
+    "permission": "Permission denied while opening {device}. Apply the udev rule and replug the device.",
+    "no_devices": "No readable input devices. Check the udev rule or whether the device is connected.",
+    "python": "python3 is required to read input devices.",
+    "helper": "The bundled input helper is missing.",
+    "unknown": "The input reader reported an error."
+  }
+}

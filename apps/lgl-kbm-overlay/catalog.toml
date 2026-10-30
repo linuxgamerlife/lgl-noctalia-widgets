@@ -1,0 +1,16 @@
+# Index for using this directory as a Noctalia plugin source:
+#   noctalia msg plugins source add kbm-overlay path /path/to/lgl-noctalia-widgets/apps/lgl-kbm-overlay
+# The per-plugin plugin.toml stays authoritative.
+
+[[plugin]]
+id           = "linuxgamerlife/kbm-overlay"
+name         = "LGL KBM Overlay"
+version      = "0.2.0"
+author       = "LinuxGamerLife"
+license      = "MIT"
+icon         = "keyboard"
+description  = "Black and cyan gaming keyboard and mouse input overlay, drawn as a movable Noctalia desktop widget."
+deprecated   = false
+plugin_api   = 30
+tags         = ["gaming", "input", "overlay", "keyboard", "mouse", "desktop", "panel"]
+dependencies = ["python3"]
