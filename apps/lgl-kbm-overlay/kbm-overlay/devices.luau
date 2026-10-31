@@ -240,7 +240,7 @@ local function permission_section()
   return section(tr("panel.permission_title", "Input permission"), {
     ui.label({
       key = "permission-body",
-      text = tr("panel.permission_body", "Reading a keyboard or mouse requires a one-time udev rule for the selected device. The rule grants read access only to that device for the active user; no root daemon is used."),
+      text = tr("panel.permission_body", "Reading a keyboard or mouse requires a udev rule for the selected devices. Re-running the helper adds new devices and keeps earlier ones; no root daemon is used."),
       fontSize = 9,
       color = "on_surface_variant",
       maxLines = 5,
@@ -262,7 +262,7 @@ local function permission_section()
       }),
       ui.label({
         key = "permission-hint",
-        text = tr("panel.permission_body", "Reading a keyboard or mouse requires a one-time udev rule for the selected device."),
+        text = tr("panel.permission_body", "Re-running the helper adds new devices and keeps earlier ones."),
         fontSize = 8,
         color = "on_surface_variant",
         flexGrow = 1,

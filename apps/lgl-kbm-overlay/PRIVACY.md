@@ -36,11 +36,12 @@ setup is the bundled script:
 bash kbm-overlay/code/setup-input-permissions.sh
 ```
 
-It creates a narrow udev rule matching the selected keyboard and mouse
-vendor/product IDs and adds `TAG+="uaccess"`. That grants read access to the
-active seat user for those devices only. It does **not** add the user to the
-broad `input` group, which would expose every input device to every process
-running as that user.
+It creates a narrow udev rule matching the vendor/product IDs of the selected
+keyboard and mouse and adds `TAG+="uaccess"`. Running it again adds newly
+selected devices and keeps the ones already allowed, and `--reset` drops them.
+That grants read access to the active seat user for those devices only. It does
+**not** add the user to the broad `input` group, which would expose every input
+device to every process running as that user.
 
 If the udev rule is not possible on a system, adding the user to `input` also
 works, but it is a wider permission and is not the default.

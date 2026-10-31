@@ -133,7 +133,7 @@ grabs the device, never injects events and never logs input.
 ## Permissions and udev rules
 
 Installing the plugin **does not install a udev rule**. The rule is a deliberate
-one-time step because it grants read access to an input device.
+step because it grants read access to an input device.
 
 ### What the helper does
 
@@ -152,7 +152,8 @@ one-time step because it grants read access to an input device.
    bash apps/lgl-kbm-overlay/kbm-overlay/code/setup-input-permissions.sh
    ```
 
-5. The script validates the vendor/product IDs, writes
+5. The script validates the vendor/product IDs and merges the current
+   selection with any devices an earlier run allowed, writes
    `/etc/udev/rules.d/70-lgl-kbm-overlay.rules` as root-owned `0644`, then runs:
 
    ```bash
@@ -161,7 +162,9 @@ one-time step because it grants read access to an input device.
    ```
 
 6. Replug the selected devices, or log out and back in, if access is still
-   denied.
+   denied. When the installed rule is missing or does not cover the selected
+   device, the overlay names that device and its USB ID and points at the
+   helper instead of showing a bare permission error.
 
 Generated rule shape:
 
@@ -182,7 +185,10 @@ SUBSYSTEM=="input", KERNEL=="event*", ATTRS{id/vendor}=="1234", ATTRS{id/product
   write it to disk, and does not send it over the network. Use a dedicated
   gaming keyboard if you do not want a shared keyboard exposed.
 - Matching is by vendor/product, so two identical models receive the same rule.
-  If you replace the device, open the picker and run the helper again.
+  Re-running the helper after selecting another keyboard or mouse **adds** the
+  new IDs and keeps the earlier ones, so switching back to a previously allowed
+  device keeps working without another root step. Use `--reset` to regenerate
+  the rule from the current selection only, dropping devices you no longer use.
 - Uninstalling leaves the rule in place. Remove it with:
 
   ```bash
@@ -284,7 +290,8 @@ on the side.
   **Movement direction** or **Auto**.
 - Device names can change after replug; if the selection stops matching, open
   the picker and select the device again.
-- The reader needs a one-time udev rule per selected device.
+- The reader needs a udev rule covering every device you select; re-running the
+  helper adds to it.
 - The lower mouse body is outline-only; `Mouse fill` and `Mouse body opacity`
   control the body and button fills. Set opacity to `0` for a fully outline-only
   mouse.

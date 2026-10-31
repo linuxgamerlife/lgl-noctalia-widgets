@@ -21,6 +21,7 @@ import json
 import os
 import re
 import select
+import shlex
 import shutil
 import signal
 import struct
@@ -30,6 +31,12 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
+
+RULE_PATH = Path("/etc/udev/rules.d/70-lgl-kbm-overlay.rules")
+SETUP_SCRIPT = Path(__file__).resolve().with_name("setup-input-permissions.sh")
+RULE_MANAGED = re.compile(r'^SUBSYSTEM=="input".*TAG\+="uaccess"$')
+RULE_VENDOR = re.compile(r'ATTRS\{id/vendor\}=="([0-9a-fA-F]{4})"')
+RULE_PRODUCT = re.compile(r'ATTRS\{id/product\}=="([0-9a-fA-F]{4})"')
 
 EV_SYN = 0
 EV_KEY = 1
@@ -225,6 +232,63 @@ class Device:
             "buttons": self.buttons,
             "readable": self.readable,
         }
+
+def read_rule_pairs(path: Path = RULE_PATH) -> set[tuple[str, str]] | None:
+    """Return the vendor/product pairs allowed by the installed udev rule.
+
+    An empty set means no rule is installed or it has no managed entries. None
+    means the rule could not be inspected, so the caller should stay generic.
+    """
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except FileNotFoundError:
+        return set()
+    except OSError:
+        return None
+    pairs: set[tuple[str, str]] = set()
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not RULE_MANAGED.match(stripped):
+            continue
+        vendor = RULE_VENDOR.search(stripped)
+        product = RULE_PRODUCT.search(stripped)
+        if vendor and product:
+            pairs.add((vendor.group(1).lower(), product.group(1).lower()))
+    return pairs
+
+def permission_message(
+    device: Device,
+    rule_path: Path = RULE_PATH,
+    script: Path = SETUP_SCRIPT,
+) -> str:
+    """Explain a permission failure using the state of the installed rule.
+
+    The usual cause is a rule generated before the device was selected: it
+    allows an older keyboard or mouse, so the new device has no ACL entry.
+    """
+    pairs = read_rule_pairs(rule_path)
+    command = f"bash {shlex.quote(str(script))}"
+    if pairs is None:
+        return f"Permission denied while opening {device.name}. Apply the udev rule and replug the device."
+    ident = f"{device.vendor}:{device.product}" if device.vendor and device.product else ""
+    if ident and (device.vendor, device.product) in pairs:
+        return (
+            f"Permission denied while opening {device.name}. The udev rule covers "
+            f"{ident} but its ACL is not applied yet; replug the device or log out "
+            "and back in."
+        )
+    if not pairs:
+        return (
+            f"No LGL KBM Overlay udev rule is installed. Run {command}, then "
+            f"replug {device.name}."
+        )
+    if ident:
+        return (
+            f"The udev rule does not cover {device.name} ({ident}). Re-run "
+            f"{command} to add it without removing your other devices, then "
+            "replug it."
+        )
+    return f"Permission denied while opening {device.name}. Apply the udev rule and replug the device."
 
 def _sysfs_device(path: str) -> tuple[str, str, str]:
     event = Path(path).name
@@ -540,20 +604,12 @@ class Reader:
     def open_device(self, device: Device) -> None:
         if not device.readable:
             if device.error == "permission":
-                self.emit_error(
-                    "permission",
-                    f"Permission denied while opening {device.name}. Apply the udev rule and replug the device.",
-                    device,
-                )
+                self.emit_error("permission", permission_message(device), device)
             return
         try:
             fd = os.open(device.path, os.O_RDONLY | os.O_NONBLOCK)
         except PermissionError:
-            self.emit_error(
-                "permission",
-                f"Permission denied while opening {device.name}. Apply the udev rule and replug the device.",
-                device,
-            )
+            self.emit_error("permission", permission_message(device), device)
             return
         except OSError as error:
             self.emit_error("open", f"Could not open {device.name}: {error}", device)

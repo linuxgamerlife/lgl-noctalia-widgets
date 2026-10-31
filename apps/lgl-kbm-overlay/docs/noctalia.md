@@ -101,9 +101,17 @@ The helper:
 - has no device-name fallback, so a name cannot inject rule text;
 - generates `SUBSYSTEM=="input", KERNEL=="event*", ATTRS{id/vendor}=="…",
   ATTRS{id/product}=="…", TAG+="uaccess"`;
-- supports `--print` to review without root and `--remove` to delete the rule;
+- supports `--print` to review without root, `--reset` to drop devices allowed
+  by earlier runs and `--remove` to delete the rule;
+- merges the current selection with devices already allowed, so switching back
+  to an earlier keyboard or mouse does not need another root step;
 - installs `/etc/udev/rules.d/70-lgl-kbm-overlay.rules` as root-owned `0644`,
   reloads udev rules and triggers the input subsystem.
+
+When a selected device is not readable, the reader compares its USB ID with the
+installed rule and reports whether no rule exists, the rule covers another
+device, or the ACL is simply not applied yet. That turns a stale rule into an
+actionable message instead of a generic permission error.
 
 `TAG+="uaccess"` grants the active seat user read access to matching devices.
 Any process running as that user can read them. The reader itself is read-only:

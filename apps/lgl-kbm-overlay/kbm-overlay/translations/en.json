@@ -342,7 +342,7 @@
     "keyboard_title": "Keyboard",
     "mouse_title": "Mouse",
     "permission_title": "Input permission",
-    "permission_body": "Reading a keyboard or mouse requires a one-time udev rule for the selected device. The rule grants read access only to that device for the active user; no root daemon is used.",
+    "permission_body": "Reading a keyboard or mouse requires a udev rule for the selected devices. Re-running the helper adds new devices and keeps earlier ones; no root daemon is used.",
     "permission_command": "Run this after selecting a keyboard and mouse:",
     "permission_ok": "Permission looks available for the selected devices.",
     "permission_missing": "The selected device is selected but not readable yet. Apply the udev rule, then replug the device or log out and back in.",
