@@ -19,9 +19,12 @@ import argparse
 import fcntl
 import json
 import os
+import re
 import select
+import shutil
 import signal
 import struct
+import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
@@ -32,6 +35,8 @@ EV_SYN = 0
 EV_KEY = 1
 EV_REL = 2
 
+REL_X = 0
+REL_Y = 1
 REL_WHEEL = 8
 REL_HWHEEL = 6
 
@@ -99,6 +104,32 @@ MOUSE_BUTTON_ORDER = [
 
 KEYBOARD_PROBE = {30, 44, 57, 28}  # A, Z, Space, Enter
 MOUSE_PROBE = {BTN_LEFT, BTN_RIGHT}
+
+def parse_cursor_position(text: str) -> tuple[int, int] | None:
+    match = re.search(r"x:(-?\d+)\s+y:(-?\d+)", text or "")
+    if not match:
+        return None
+    try:
+        return int(match.group(1)), int(match.group(2))
+    except ValueError:
+        return None
+
+
+def read_cursor_position(command: str) -> tuple[int, int] | None:
+    try:
+        result = subprocess.run(
+            [command, "getmouselocation"],
+            capture_output=True,
+            text=True,
+            timeout=0.20,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if result.returncode != 0:
+        return None
+    return parse_cursor_position(result.stdout)
+
 
 def key_name(code: int) -> str:
     if code in KEY_CODES:
@@ -296,6 +327,13 @@ class InputState:
         self.wheel_down = 0
         self.wheel_left = 0
         self.wheel_right = 0
+        self.move_x = 0
+        self.move_y = 0
+        self.move_at = 0.0
+        self.move_seq = 0
+        self.cursor_x = None
+        self.cursor_y = None
+        self.cursor_at = 0.0
         self.seq = 0
         self.dirty = False
 
@@ -312,7 +350,15 @@ class InputState:
                     self.dirty = True
             # value 2 is autorepeat: the key is already held.
         elif ev_type == EV_REL:
-            if code == REL_WHEEL:
+            if code == REL_X:
+                self.move_x += value
+                self.move_at = time.time() * 1000.0
+                self.dirty = True
+            elif code == REL_Y:
+                self.move_y += value
+                self.move_at = time.time() * 1000.0
+                self.dirty = True
+            elif code == REL_WHEEL:
                 if value > 0:
                     self.wheel_up += value
                 elif value < 0:
@@ -328,6 +374,11 @@ class InputState:
     def snapshot(self, keyboard: list[Device], mouse: list[Device]) -> dict:
         self.seq += 1
         self.dirty = False
+        move_x, move_y = self.move_x, self.move_y
+        self.move_x = 0
+        self.move_y = 0
+        if move_x or move_y:
+            self.move_seq += 1
         keyboard_info = None
         if keyboard:
             keyboard_info = {
@@ -355,6 +406,13 @@ class InputState:
             "wheel_down": self.wheel_down,
             "wheel_left": self.wheel_left,
             "wheel_right": self.wheel_right,
+            "move_x": move_x,
+            "move_y": move_y,
+            "move_at": self.move_at,
+            "move_seq": self.move_seq,
+            "cursor_x": self.cursor_x,
+            "cursor_y": self.cursor_y,
+            "cursor_at": self.cursor_at,
             "keyboard": keyboard_info,
             "mouse": mouse_info,
             "seq": self.seq,
@@ -378,6 +436,26 @@ class Reader:
         self.last_status: tuple | None = None
         self.last_error: tuple | None = None
         self.last_devices_key: str | None = None
+        self.cursor_command = shutil.which("kdotool")
+        self.last_cursor_poll = 0.0
+        self.cursor_failed = False
+
+    def query_cursor(self) -> None:
+        if not self.cursor_command:
+            return
+        now = time.monotonic()
+        if now - self.last_cursor_poll < 0.08:
+            return
+        self.last_cursor_poll = now
+        position = read_cursor_position(self.cursor_command)
+        if position is None:
+            return
+        x, y = position
+        if x != self.state.cursor_x or y != self.state.cursor_y:
+            self.state.cursor_x = x
+            self.state.cursor_y = y
+            self.state.cursor_at = time.time() * 1000.0
+            self.state.dirty = True
 
     def emit(self, payload: dict) -> None:
         try:
@@ -515,8 +593,10 @@ class Reader:
 
     def run(self) -> None:
         self.scan(force=True)
+        self.query_cursor()
         while self.running:
             now = time.monotonic()
+            self.query_cursor()
             if now - self.last_scan >= 2.0:
                 self.scan()
             fds = list(self.fds)

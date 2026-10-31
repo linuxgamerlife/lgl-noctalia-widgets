@@ -125,6 +125,14 @@ function M.visual()
     mouse_body_opacity = number("mouse_body_opacity", 1.0, 0, 1),
     mouse_border_color = text("mouse_border_color", "#f4f8fb"),
     mouse_border_width = number("mouse_border_width", 2.5, 0.5, 6),
+    motion_direction = one_of(text("motion_direction", "auto"), { "auto", "screen", "movement" }, "auto"),
+    motion_arrow_size = number("motion_arrow_size", 3.0, 1.0, 8.0),
+    motion_arrow_scale = number("motion_arrow_scale", 1.0, 0.4, 1.0),
+    motion_arrow_color = text("motion_arrow_color", "#f4f8fb"),
+    motion_arrow_idle = number("motion_arrow_idle", 0.8, 0.2, 2.0),
+    motion_dot_size = number("motion_dot_size", 6.0, 2.0, 20.0),
+    motion_dot_scale = number("motion_dot_scale", 1.0, 0.5, 2.0),
+    motion_dot_color = text("motion_dot_color", "#f4f8fb"),
   }
   return visual
 end

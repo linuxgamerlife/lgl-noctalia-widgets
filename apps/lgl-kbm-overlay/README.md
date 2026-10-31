@@ -21,6 +21,8 @@ it in Noctalia's desktop-widget editor. It does not sit above every window.
 
 - Noctalia / Noctalia KWE with plugin API **30** (KWE 5.3.0).
 - `python3` for the bundled evdev reader.
+- `kdotool` for absolute cursor position on KWin (used for the screen-relative
+  arrow direction). Without it, the arrow falls back to the movement direction.
 - Read access to the selected keyboard and mouse. The app creates a narrow
   udev rule; see [Permissions and udev rules](#permissions-and-udev-rules).
 
@@ -240,9 +242,15 @@ The mouse is drawn as a mouse, with:
 - exactly two side buttons, forward on top and back below
 - optional body/button fill with a separate opacity
 - cyan active fill and a white outline, with an optional glow/ripple on press
+- a motion arrow whose direction is relative to the centre of the screen
+  containing the cursor: above the horizontal midline points up, right of the
+  vertical midline points right, and so on. Its length follows the distance from
+  that centre: near the centre it is short, near the screen edge it uses the
+  whole mouse body. It fades after the configured idle time.
+- a permanently visible centre anchor dot
 
-Mouse movement, cursor position, trails and the “lift off the mat” reset are
-not in this version.
+Cursor position, trails and the “lift off the mat” reset are not in this
+version.
 
 ---
 
@@ -256,7 +264,8 @@ features inside the section:
   keys.
 - **Mouse** — show mouse, mouse labels, scroll wheel, side buttons.
 - **Appearance** — panel background, glow, ripple, panel/key/mouse colours,
-  mouse body/button opacity, radius and border.
+  mouse body/button opacity, radius and border, plus arrow direction, motion-arrow
+  size, length scale, colour and idle time, and anchor-dot size, scale and colour.
 - **Scaling** — key size, key gap, key radius, mouse height, label scale.
 
 The usual Noctalia desktop-widget background controls stay above the sections.
@@ -269,7 +278,10 @@ on the side.
   mode and does not float above every window. If you later want a click-through
   overlay over a fullscreen game, that is a separate future feature and needs
   Noctalia plugin API 36 (`[[layer]]` entries).
-- **Mouse movement is deferred.** Clicks and wheel are supported now.
+- Arrow direction and length use `kdotool getmouselocation` on KWin. If
+  `kdotool` is unavailable, the arrow falls back to movement direction and
+  speed-based length. In pointer-locked games, set **Arrow direction** to
+  **Movement direction** or **Auto**.
 - Device names can change after replug; if the selection stops matching, open
   the picker and select the device again.
 - The reader needs a one-time udev rule per selected device.

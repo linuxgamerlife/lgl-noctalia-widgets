@@ -383,6 +383,90 @@ entry = "card.luau"
   step            = 0.1
   visible_when    = { key = "show_appearance_section", values = ["true"] }
 
+  [[desktop_widget.setting]]
+  key             = "motion_direction"
+  type            = "select"
+  label_key       = "settings.motion_direction.label"
+  description_key = "settings.motion_direction.description"
+  default         = "auto"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+  options = [
+    { value = "auto",     label_key = "settings.motion_direction.option.auto" },
+    { value = "screen",   label_key = "settings.motion_direction.option.screen" },
+    { value = "movement", label_key = "settings.motion_direction.option.movement" },
+  ]
+
+  [[desktop_widget.setting]]
+  key             = "motion_arrow_size"
+  type            = "double"
+  label_key       = "settings.motion_arrow_size.label"
+  description_key = "settings.motion_arrow_size.description"
+  default         = 3.0
+  min             = 1.0
+  max             = 8.0
+  step            = 0.1
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "motion_arrow_scale"
+  type            = "double"
+  label_key       = "settings.motion_arrow_scale.label"
+  description_key = "settings.motion_arrow_scale.description"
+  default         = 1.0
+  min             = 0.4
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "motion_arrow_color"
+  type            = "color"
+  label_key       = "settings.motion_arrow_color.label"
+  description_key = "settings.motion_arrow_color.description"
+  default         = "#f4f8fb"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "motion_arrow_idle"
+  type            = "double"
+  label_key       = "settings.motion_arrow_idle.label"
+  description_key = "settings.motion_arrow_idle.description"
+  default         = 0.8
+  min             = 0.2
+  max             = 2.0
+  step            = 0.05
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "motion_dot_size"
+  type            = "double"
+  label_key       = "settings.motion_dot_size.label"
+  description_key = "settings.motion_dot_size.description"
+  default         = 6.0
+  min             = 2.0
+  max             = 20.0
+  step            = 0.5
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "motion_dot_scale"
+  type            = "double"
+  label_key       = "settings.motion_dot_scale.label"
+  description_key = "settings.motion_dot_scale.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 2.0
+  step            = 0.05
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "motion_dot_color"
+  type            = "color"
+  label_key       = "settings.motion_dot_color.label"
+  description_key = "settings.motion_dot_color.description"
+  default         = "#f4f8fb"
+  visible_when    = { key = "show_appearance_section", values = ["true"] }
+
   # Scaling
   [[desktop_widget.setting]]
   key             = "key_size"

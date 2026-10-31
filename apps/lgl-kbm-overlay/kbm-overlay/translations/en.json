@@ -264,6 +264,43 @@
     "mouse_body_opacity": {
       "label": "    Mouse body opacity",
       "description": "Opacity of the mouse body and button fills. Set to 0 for an outline-only mouse."
+    },
+    "motion_arrow_size": {
+      "label": "    Arrow size",
+      "description": "Line width and arrowhead size of the motion arrow."
+    },
+    "motion_arrow_scale": {
+      "label": "    Arrow length scale",
+      "description": "Maximum arrow length inside the mouse body. 1.0 uses the full body length."
+    },
+    "motion_arrow_color": {
+      "label": "    Arrow colour",
+      "description": "Colour of the motion arrow. The glow still uses the accent colour."
+    },
+    "motion_dot_size": {
+      "label": "    Anchor dot size",
+      "description": "Base radius of the centre pivot dot."
+    },
+    "motion_dot_scale": {
+      "label": "    Anchor dot scale",
+      "description": "Multiplier for the centre pivot dot radius."
+    },
+    "motion_dot_color": {
+      "label": "    Anchor dot colour",
+      "description": "Fill colour of the centre pivot dot."
+    },
+    "motion_arrow_idle": {
+      "label": "    Arrow idle time",
+      "description": "How long the arrow holds its last direction and length after the mouse stops, before fading."
+    },
+    "motion_direction": {
+      "label": "    Arrow direction",
+      "description": "Auto uses screen-centre direction and falls back to mouse movement when the cursor is locked by a game.",
+      "option": {
+        "auto": "Auto (screen, fallback to movement)",
+        "screen": "Screen centre",
+        "movement": "Movement direction"
+      }
     }
   },
   "labels": {

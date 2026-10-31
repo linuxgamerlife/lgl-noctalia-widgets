@@ -141,9 +141,12 @@ The rule is left in place on uninstall. Remove it with `--remove`.
 
 A true click-through overlay above fullscreen games is a separate future
 feature. It needs plugin API 36 (`[[layer]]` with `click_through = true`) and is
-not part of this desktop-widget version. Mouse movement, cursor trails and the
-idle-center reset are also future work; the current daemon deliberately ignores
-`REL_X`/`REL_Y`.
+not part of this desktop-widget version. The daemon reads `REL_X`/`REL_Y` for
+arrow direction and length and polls `kdotool getmouselocation` on KWin for the
+absolute cursor position. Arrow direction is the vector from the containing
+output's centre to the cursor; length is the normalised distance from that
+centre. In pointer-locked games, use the `Movement direction` option or Auto.
+Trails and the idle-center reset are future work.
 
 ## Tests
 

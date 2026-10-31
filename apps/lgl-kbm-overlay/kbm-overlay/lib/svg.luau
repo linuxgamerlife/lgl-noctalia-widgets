@@ -173,6 +173,108 @@ local function top_button_svg(left, x, y, width, height, active, glow, cfg, colo
   return table.concat(parts)
 end
 
+local function motion_arrow_svg(cfg, state, now, colors, x, y, width, height, anim)
+  local mx = tonumber(state.move_x) or 0
+  local my = tonumber(state.move_y) or 0
+  local speed = math.sqrt(mx * mx + my * my)
+  local moved_at = tonumber(state.move_at) or 0
+  local fade = 1.0
+  local use_distance = false
+  local distance = 0
+  local arrow_fade = 1.0
+  local dx = 0
+  local dy = 0
+  local arrow = anim and anim.arrow or nil
+  if arrow ~= nil then
+    speed = tonumber(arrow.speed) or 0
+    if speed <= 0.5 then
+      return ""
+    end
+    dx = tonumber(arrow.dx) or 0
+    dy = tonumber(arrow.dy) or 0
+    local mag = math.sqrt(dx * dx + dy * dy)
+    if mag > 0.0001 then
+      dx = dx / mag
+      dy = dy / mag
+    end
+    use_distance = arrow.use_distance == true
+    distance = math.max(0, math.min(1, tonumber(arrow.distance) or 0))
+    arrow_fade = math.max(0, math.min(1, tonumber(arrow.fade) or 1))
+  else
+    if speed < 0.5 or moved_at <= 0 then
+      return ""
+    end
+    local age = (now - moved_at) / 1000.0
+    if age < 0 or age > 0.40 then
+      return ""
+    end
+    fade = 1.0 - age / 0.40
+    dx = mx / speed
+    dy = my / speed
+  end
+  if speed < 0.5 then
+    return ""
+  end
+  local cx = x + width / 2
+  local cy = y + height * 0.70
+  local body_limit = math.min(width * 0.48, height * 0.30)
+  local max_len = body_limit * cfg.motion_arrow_scale
+  local min_len = 28 * cfg.motion_arrow_scale
+  local length
+  if use_distance then
+    length = max_len * distance * arrow_fade
+  else
+    length = math.max(min_len, math.min(max_len, speed * 10.0)) * fade
+  end
+  if length < 6 then
+    return ""
+  end
+  local px = -dy
+  local py = dx
+  local head_scale = math.max(0.6, math.min(1.8, cfg.motion_arrow_size / 3.0))
+  local head = math.max(7, math.min(18, length * 0.28)) * head_scale
+  local half = head * 0.55
+  local tip_x = cx + dx * length
+  local tip_y = cy + dy * length
+  local base_x = tip_x - dx * head
+  local base_y = tip_y - dy * head
+  local tail_x = cx + dx * 4
+  local tail_y = cy + dy * 4
+  local line_width = math.max(0.8, cfg.motion_arrow_size)
+  local parts = {}
+  if cfg.effects_glow then
+    parts[#parts + 1] = string.format(
+      '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s" stroke-linecap="round" opacity="%s"/>',
+      num(tail_x), num(tail_y), num(base_x), num(base_y), colors.glow,
+      num(line_width * 3), num(cfg.glow_opacity * 0.75 * fade)
+    )
+    parts[#parts + 1] = string.format(
+      '<polygon points="%s,%s %s,%s %s,%s" fill="%s" opacity="%s"/>',
+      num(tip_x), num(tip_y),
+      num(base_x + px * half), num(base_y + py * half),
+      num(base_x - px * half), num(base_y - py * half),
+      colors.glow, num(cfg.glow_opacity * 0.75 * fade)
+    )
+  end
+  -- A dark underlay keeps the white arrow readable on light wallpapers.
+  parts[#parts + 1] = string.format(
+    '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s" stroke-linecap="round"/>',
+    num(tail_x), num(tail_y), num(base_x), num(base_y), colors.panel, num(line_width + 3)
+  )
+  parts[#parts + 1] = string.format(
+    '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s" stroke-linecap="round"/>',
+    num(tail_x), num(tail_y), num(base_x), num(base_y), colors.arrow, num(line_width)
+  )
+  parts[#parts + 1] = string.format(
+    '<polygon points="%s,%s %s,%s %s,%s" fill="%s" stroke="%s" stroke-width="%s" stroke-linejoin="round"/>',
+    num(tip_x), num(tip_y),
+    num(base_x + px * half), num(base_y + py * half),
+    num(base_x - px * half), num(base_y - py * half),
+    colors.arrow, colors.panel, num(1.5)
+  )
+  return table.concat(parts)
+end
+
 local function mouse_svg(cfg, state, now, anim, x, y, width, height, colors)
   local parts = {}
   local pressed = pressed_set(state)
@@ -234,6 +336,13 @@ local function mouse_svg(cfg, state, now, anim, x, y, width, height, colors)
   parts[#parts + 1] = string.format(
     '<path d="%s" fill="%s" fill-opacity="%s" stroke="%s" stroke-width="%s" stroke-linejoin="round"/>',
     body_d, colors.mouse_fill, num(cfg.mouse_body_opacity), colors.mouse_border, num(cfg.mouse_border_width)
+  )
+  parts[#parts + 1] = motion_arrow_svg(cfg, state, now, colors, x, y, width, height, anim)
+  local pivot = math.max(1, cfg.motion_dot_size * cfg.motion_dot_scale)
+  parts[#parts + 1] = string.format(
+    '<circle cx="%s" cy="%s" r="%s" fill="%s" stroke="%s" stroke-width="%s"/>',
+    num(x + width / 2), num(y + height * 0.70), num(pivot),
+    colors.dot, colors.accent, num(1.5)
   )
 
   local label_size = math.max(6, width * 0.065 * cfg.label_scale)
@@ -318,6 +427,8 @@ function M.build(cfg, state, now, anim)
     accent = resolve(cfg.accent_color, "#22e6ff"),
     accent_text = resolve(cfg.accent_text_color, "#031014"),
     glow = resolve(cfg.glow_color, "#22e6ff"),
+    arrow = resolve(cfg.motion_arrow_color, "#f4f8fb"),
+    dot = resolve(cfg.motion_dot_color, "#f4f8fb"),
     mouse_fill = resolve(cfg.mouse_body_color, "#05070a"),
     mouse_border = resolve(cfg.mouse_border_color, "#f4f8fb"),
   }

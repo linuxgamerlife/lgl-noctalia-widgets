@@ -9,7 +9,8 @@ replay input.
 - Only the keyboard and mouse selected in the plugin's Device picker.
 - Key press/release events and mouse button press/release events.
 - Mouse wheel direction and count.
-- Mouse movement is ignored in this version.
+- Mouse movement deltas are read to measure arrow speed.
+- Absolute cursor position is read via `kdotool getmouselocation` on KWin to decide the arrow direction relative to the screen centre. It is used only in memory for drawing and is not stored or transmitted.
 - Device names, paths, vendor IDs and product IDs, used for the picker and the
   udev rule.
 

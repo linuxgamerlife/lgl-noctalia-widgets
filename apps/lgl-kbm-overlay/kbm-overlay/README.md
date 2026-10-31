@@ -6,6 +6,7 @@ in the black / white / cyan input-overlay style.
 - FPS or WASD key cluster, or a custom key list.
 - Mouse silhouette with left/right buttons, wheel/middle button and exactly
   two side buttons.
+- Direction/speed arrow inside the mouse body, fading when movement stops.
 - Cyan press fill, white outlines, optional glow/ripple.
 - All visual settings live in the desktop widget's own settings.
 - Device picker that reads only the selected keyboard and mouse.
@@ -15,6 +16,8 @@ in the black / white / cyan input-overlay style.
 
 - Noctalia / Noctalia KWE with plugin API 30 (KWE 5.3.0).
 - `python3`.
+- `kdotool` for screen-relative arrow direction on KWin (optional; falls back to
+  movement direction).
 - Read access to the selected input devices, via the bundled udev helper.
   The helper validates vendor/product IDs and supports `--print` for review.
 
