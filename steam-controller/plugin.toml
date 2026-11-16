@@ -4,15 +4,15 @@
 # state; the desktop widget renders the card. plugin_api 17 is the first level
 # where services start when a plugin is enabled (not only at shell launch).
 
-id          = "jahrek/steam-controller"
+id          = "linuxgamerlife/steam-controller"
 name        = "Steam Controller Battery"
-version     = "2.4.0"
+version     = "3.0.0"
 plugin_api  = 17
-author      = "Jahrek"
+author      = "LinuxGamerLife"
 license     = "MIT"
 icon        = "device-gamepad-2"
-description = "Battery level, charging state, link quality and live input visualisation for the Steam Controller 2, with configurable colours, outline and battery fill opacity."
-tags        = ["gaming", "hardware", "battery", "desktop"]
+description = "Battery, charging, link quality and live input visualisation for the Steam Controller 2."
+tags        = ["gaming", "hardware", "desktop"]
 dependencies = ["python3"]
 
 # Shared by the service (notifications) and the desktop widget (low state).

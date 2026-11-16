@@ -8,15 +8,15 @@
 # uses for lib/. Services start when a plugin is enabled at 17; opening the
 # plugin's own settings needs 15.
 
-id          = "unsaidspeech/modern-sysmonitor-plus"
+id          = "linuxgamerlife/modern-sysmonitor-plus"
 name        = "Modern SysMonitor Plus"
-version     = "1.0.0"
+version     = "2.0.0"
 plugin_api  = 22
-author      = "UnsaidSpeech"
+author      = "LinuxGamerLife"
 license     = "GPL-3.0-or-later"
 icon        = "cpu"
-description = "CPU, GPU, RAM, VRAM, network and physical-disk monitoring with solid bars, live usage/network charts and theme-aware colours."
-tags        = ["system", "monitor", "hardware", "desktop"]
+description = "CPU, GPU, RAM, VRAM, network and disk monitoring with solid bars, live charts and theme-aware colours."
+tags        = ["system", "hardware", "desktop"]
 dependencies = ["pciutils", "vulkan-tools"]
 
 # Shared by the service (sampling) and the card (stale-state timeout).

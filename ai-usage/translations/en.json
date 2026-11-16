@@ -397,11 +397,11 @@
       "title": "xAI API",
       "key_help": "Management key, from the xAI Console."
     },
-    "opencodeGo": {
+    "opencode-go": {
       "title": "OpenCode Go",
       "key_help": "Go API key, from the OpenCode console."
     },
-    "opencodeZen": {
+    "opencode-zen": {
       "title": "OpenCode Zen",
       "key_help": "Service account key, from the OpenCode console."
     },
@@ -413,7 +413,7 @@
       "title": "Requesty",
       "key_help": "API key with manage permission, from the Requesty dashboard."
     },
-    "huggingFace": {
+    "hugging-face": {
       "title": "Hugging Face",
       "key_help": "Fine-grained access token with billing read permission, from Hugging Face settings."
     },

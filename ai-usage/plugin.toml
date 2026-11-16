@@ -6,15 +6,15 @@
 # keeps account ids and paths out of a shell. Module require (22) and services
 # starting on enable (17) are also required.
 
-id          = "lukk17/ai-usage"
+id          = "linuxgamerlife/ai-usage"
 name        = "AI Usage"
-version     = "1.0.0"
+version     = "2.0.0"
 plugin_api  = 24
-author      = "Łukasz Sarna"
+author      = "LinuxGamerLife"
 license     = "GPL-3.0-or-later"
 icon        = "chart-bar"
-description = "Limits, spend and balance for Claude, ChatGPT, OpenAI, Anthropic, xAI, OpenCode, MiniMax, Requesty, Hugging Face and JetBrains AI, with theme-aware colours and configurable card, divider and surface styling."
-tags        = ["ai", "usage", "limits", "spend", "desktop", "panel"]
+description = "Limits, spend and balances for Claude, ChatGPT, OpenAI, xAI, OpenCode and more, in a themed card and panel."
+tags        = ["ai", "desktop", "panel", "productivity"]
 dependencies = ["curl", "libsecret", "glib2"]
 
 # Shared by the service, the card and the panel. Edited under
@@ -433,7 +433,7 @@ entry = "bar.luau"
   ]
 
 # Cards, account management and the refresh-interval pointer. Opened by the
-# desktop card, the bar widget, or `noctalia msg panel-toggle lukk17/ai-usage:panel`.
+# desktop card, the bar widget, or `noctalia msg panel-toggle linuxgamerlife/ai-usage:panel`.
 [[panel]]
 id         = "panel"
 entry      = "panel.luau"

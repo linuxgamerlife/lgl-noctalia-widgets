@@ -7,13 +7,13 @@
 
 id          = "linuxgamerlife/weather-time"
 name        = "Weather & Time"
-version     = "0.1.0"
+version     = "0.2.0"
 plugin_api  = 24
 author      = "LinuxGamerLife"
 license     = "MIT"
 icon        = "weather-cloud-sun"
-description = "Location-aware clock, current conditions and forecast with optional full-bleed starfield, grass and rain/snow effects. Privacy-first: no automatic IP geolocation."
-tags        = ["weather", "clock", "time", "location", "desktop", "bar", "panel"]
+description = "Location-aware clock, current conditions and forecast with a full-bleed procedural weather scene."
+tags        = ["clock", "time", "desktop", "bar", "panel"]
 dependencies = []
 
 # ── Plugin-level settings ──────────────────────────────────────────────────

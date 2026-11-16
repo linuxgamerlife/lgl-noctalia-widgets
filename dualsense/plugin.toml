@@ -5,15 +5,15 @@
 # first level where services start when a plugin is enabled (not only at shell
 # launch).
 
-id           = "deadYokai/dualsense"
+id           = "linuxgamerlife/dualsense"
 name         = "DualSense Battery"
-version      = "1.1.0"
+version      = "2.0.0"
 plugin_api   = 17
-author       = "deadYokai"
+author       = "LinuxGamerLife"
 license      = "MIT"
 icon         = "device-gamepad-2"
-description  = "Battery level, charging state, lightbar sync, live input visualisation and ds4u profile controls for DualSense and DualSense Edge controllers."
-tags         = ["gaming", "hardware", "battery", "dualsense", "desktop"]
+description  = "Battery, charging, lightbar and live input visualisation for DualSense and DualSense Edge controllers."
+tags         = ["gaming", "hardware", "desktop"]
 dependencies = ["python3"]
 
 # Shared by the service (notifications) and the desktop widget (low state).

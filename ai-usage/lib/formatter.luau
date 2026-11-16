@@ -10,6 +10,7 @@ local units = require("./units.luau")
 local usage = require("./usage.luau")
 local curl = require("./curlcommand.luau")
 local privacy = require("./privacy.luau")
+local providerkind = require("./providerkind.luau")
 
 local M = {}
 
@@ -474,7 +475,7 @@ local function sectionView(entry, now)
     table.insert(mainRows, amountRow(item))
   end
   local title = entry.title
-  local translatedTitle = tr("provider." .. tostring(entry.providerId) .. ".title")
+  local translatedTitle = tr("provider." .. providerkind.translation_key(entry.providerId) .. ".title")
   if translatedTitle ~= nil then
     title = translatedTitle
   end

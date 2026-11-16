@@ -12,6 +12,7 @@ local check = require("./lib/check.luau")
 local curl = require("./lib/curlcommand.luau")
 local formatter = require("./lib/formatter.luau")
 local privacy = require("./lib/privacy.luau")
+local providerkind = require("./lib/providerkind.luau")
 local registry = require("./providers/init.luau")
 local secrets = require("./lib/secrets.luau")
 local store = require("./lib/store.luau")
@@ -41,7 +42,7 @@ local function tr(key, fallback, subst)
 end
 
 local function providerTitle(provider)
-  return tr("provider." .. provider.id .. ".title", provider.title)
+  return tr("provider." .. providerkind.translation_key(provider.id) .. ".title", provider.title)
 end
 
 local function showMessage(text, tone)
@@ -872,7 +873,7 @@ local function renderForm()
       }),
       provider.keyHelp ~= "" and ui.label({
         key = "form-key-help",
-        text = tr("provider." .. provider.id .. ".key_help", provider.keyHelp),
+        text = tr("provider." .. providerkind.translation_key(provider.id) .. ".key_help", provider.keyHelp),
         fontSize = 10,
         color = "on_surface_variant",
         maxLines = 3,

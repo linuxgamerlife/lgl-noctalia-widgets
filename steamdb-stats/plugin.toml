@@ -8,13 +8,13 @@
 
 id          = "linuxgamerlife/steamdb-stats"
 name        = "SteamDB Stats"
-version     = "0.1.0"
+version     = "0.2.0"
 plugin_api  = 24
 author      = "LinuxGamerLife"
 license     = "MIT"
 icon        = "brand-steam"
-description = "Detects the Steam game you are playing and shows live players, 24-hour peak, all-time peak and a 24-hour graph in a compact desktop card."
-tags        = ["steam", "gaming", "stats", "desktop"]
+description = "Detects the Steam game you are playing and shows live players, 24-hour peak, all-time peak and a 24-hour graph."
+tags        = ["gaming", "desktop"]
 dependencies = ["curl"]
 
 # ── Plugin-level polling ────────────────────────────────────────────────────

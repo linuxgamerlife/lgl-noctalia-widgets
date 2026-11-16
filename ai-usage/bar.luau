@@ -97,7 +97,7 @@ end
 
 function onClick()
   noctalia.state.set("ai_usage_open_add", false)
-  noctalia.togglePanel("lukk17/ai-usage:panel")
+  noctalia.togglePanel("linuxgamerlife/ai-usage:panel")
 end
 
 function onRightClick()

@@ -174,7 +174,7 @@ end
 
 local function openPanel(add)
   noctalia.state.set("ai_usage_open_add", add == true)
-  noctalia.togglePanel("lukk17/ai-usage:panel")
+  noctalia.togglePanel("linuxgamerlife/ai-usage:panel")
 end
 
 local function isStale()
