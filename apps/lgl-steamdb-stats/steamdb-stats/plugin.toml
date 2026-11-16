@@ -1,0 +1,385 @@
+# SteamDB Stats for Noctalia Shell.
+#
+# A headless poller reads Steam's own gameprocess_log.txt to detect the running
+# AppID, resolves the game name from the library manifests, then fetches the
+# public player numbers and 24-hour history. The desktop card renders the
+# SteamDB-style summary with the same surface and graph metrics as Modern
+# SysMonitor Plus.
+
+id          = "linuxgamerlife/steamdb-stats"
+name        = "SteamDB Stats"
+version     = "0.1.0"
+plugin_api  = 24
+author      = "LinuxGamerLife"
+license     = "MIT"
+icon        = "brand-steam"
+description = "Detects the Steam game you are playing and shows live players, 24-hour peak, all-time peak and a 24-hour graph in a compact desktop card."
+tags        = ["steam", "gaming", "stats", "desktop"]
+dependencies = ["curl"]
+
+# ── Plugin-level polling ────────────────────────────────────────────────────
+
+[[setting]]
+key             = "detect_interval"
+type            = "int"
+label_key       = "settings.detect_interval.label"
+description_key = "settings.detect_interval.description"
+default         = 3
+min             = 2
+max             = 15
+step            = 1
+
+[[setting]]
+key             = "current_refresh"
+type            = "int"
+label_key       = "settings.current_refresh.label"
+description_key = "settings.current_refresh.description"
+default         = 60
+min             = 30
+max             = 300
+step            = 10
+
+[[setting]]
+key             = "stats_refresh"
+type            = "int"
+label_key       = "settings.stats_refresh.label"
+description_key = "settings.stats_refresh.description"
+default         = 600
+min             = 300
+max             = 3600
+step            = 60
+
+[[service]]
+id    = "poller"
+entry = "service.luau"
+
+[[desktop_widget]]
+id    = "card"
+entry = "card.luau"
+
+  # Host panel surface. Noctalia also renders a Background section for every
+  # desktop widget; keeping these declarations here puts the panel toggle and
+  # opacity at the top of the Widget section as well.
+
+  [[desktop_widget.setting]]
+  key             = "background"
+  type            = "bool"
+  label_key       = "settings.background.label"
+  description_key = "settings.background.description"
+  default         = true
+
+  [[desktop_widget.setting]]
+  key             = "background_color"
+  type            = "color"
+  label_key       = "settings.background_color.label"
+  description_key = "settings.background_color.description"
+  default         = "surface"
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_opacity"
+  type            = "double"
+  label_key       = "settings.background_opacity.label"
+  description_key = "settings.background_opacity.description"
+  default         = 0.8
+  min             = 0.0
+  max             = 1.0
+  step            = 0.01
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_radius"
+  type            = "int"
+  label_key       = "settings.background_radius.label"
+  description_key = "settings.background_radius.description"
+  default         = 12
+  min             = 0
+  max             = 48
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "background_padding"
+  type            = "int"
+  label_key       = "settings.background_padding.label"
+  description_key = "settings.background_padding.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  visible_when    = { key = "background", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_card_settings"
+  type            = "bool"
+  label_key       = "settings.show_card_settings.label"
+  description_key = "settings.show_card_settings.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_styling"
+  type            = "bool"
+  label_key       = "settings.show_styling.label"
+  description_key = "settings.show_styling.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_scaling"
+  type            = "bool"
+  label_key       = "settings.show_scaling.label"
+  description_key = "settings.show_scaling.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "show_sections"
+  type            = "bool"
+  label_key       = "settings.show_sections.label"
+  description_key = "settings.show_sections.description"
+  default         = false
+
+  [[desktop_widget.setting]]
+  key             = "title"
+  type            = "string"
+  label_key       = "settings.title.label"
+  description_key = "settings.title.description"
+  default         = "SteamDB Stats"
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "content_width"
+  type            = "int"
+  label_key       = "settings.content_width.label"
+  description_key = "settings.content_width.description"
+  default         = 320
+  min             = 240
+  max             = 900
+  step            = 4
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_gap"
+  type            = "int"
+  label_key       = "settings.card_gap.label"
+  description_key = "settings.card_gap.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  advanced        = true
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_padding"
+  type            = "int"
+  label_key       = "settings.card_padding.label"
+  description_key = "settings.card_padding.description"
+  default         = 10
+  min             = 0
+  max             = 32
+  step            = 1
+  advanced        = true
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_radius"
+  type            = "int"
+  label_key       = "settings.card_radius.label"
+  description_key = "settings.card_radius.description"
+  default         = 8
+  min             = 0
+  max             = 32
+  step            = 1
+  advanced        = true
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_fill_color"
+  type            = "color"
+  label_key       = "settings.card_fill_color.label"
+  description_key = "settings.card_fill_color.description"
+  default         = "surface_variant"
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_fill_opacity"
+  type            = "double"
+  label_key       = "settings.card_fill_opacity.label"
+  description_key = "settings.card_fill_opacity.description"
+  default         = 0.35
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_border_color"
+  type            = "color"
+  label_key       = "settings.card_border_color.label"
+  description_key = "settings.card_border_color.description"
+  default         = "outline"
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "card_border_width"
+  type            = "double"
+  label_key       = "settings.card_border_width.label"
+  description_key = "settings.card_border_width.description"
+  default         = 1.0
+  min             = 0.0
+  max             = 4.0
+  step            = 0.1
+  advanced        = true
+  visible_when    = { key = "show_card_settings", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "hide_when_idle"
+  type            = "bool"
+  label_key       = "settings.hide_when_idle.label"
+  description_key = "settings.hide_when_idle.description"
+  default         = false
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_title"
+  type            = "bool"
+  label_key       = "settings.show_title.label"
+  description_key = "settings.show_title.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_settings_button"
+  type            = "bool"
+  label_key       = "settings.show_settings_button.label"
+  description_key = "settings.show_settings_button.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_cover"
+  type            = "bool"
+  label_key       = "settings.show_cover.label"
+  description_key = "settings.show_cover.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_current"
+  type            = "bool"
+  label_key       = "settings.show_current.label"
+  description_key = "settings.show_current.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_peak_24h"
+  type            = "bool"
+  label_key       = "settings.show_peak_24h.label"
+  description_key = "settings.show_peak_24h.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_peak_all_time"
+  type            = "bool"
+  label_key       = "settings.show_peak_all_time.label"
+  description_key = "settings.show_peak_all_time.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_graph"
+  type            = "bool"
+  label_key       = "settings.show_graph.label"
+  description_key = "settings.show_graph.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "show_attribution"
+  type            = "bool"
+  label_key       = "settings.show_attribution.label"
+  description_key = "settings.show_attribution.description"
+  default         = true
+  visible_when    = { key = "show_sections", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "accent_color"
+  type            = "color"
+  label_key       = "settings.accent_color.label"
+  description_key = "settings.accent_color.description"
+  default         = "primary"
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "text_color"
+  type            = "color"
+  label_key       = "settings.text_color.label"
+  description_key = "settings.text_color.description"
+  default         = "on_surface"
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "muted_text_color"
+  type            = "color"
+  label_key       = "settings.muted_text_color.label"
+  description_key = "settings.muted_text_color.description"
+  default         = "on_surface_variant"
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "graph_color"
+  type            = "color"
+  label_key       = "settings.graph_color.label"
+  description_key = "settings.graph_color.description"
+  default         = "primary"
+  visible_when    = { key = "show_styling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "graph_height"
+  type            = "int"
+  label_key       = "settings.graph_height.label"
+  description_key = "settings.graph_height.description"
+  default         = 32
+  min             = 16
+  max             = 80
+  step            = 2
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "graph_line_width"
+  type            = "double"
+  label_key       = "settings.graph_line_width.label"
+  description_key = "settings.graph_line_width.description"
+  default         = 1.5
+  min             = 0.5
+  max             = 4.0
+  step            = 0.1
+  advanced        = true
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "graph_fill_opacity"
+  type            = "double"
+  label_key       = "settings.graph_fill_opacity.label"
+  description_key = "settings.graph_fill_opacity.description"
+  default         = 0.15
+  min             = 0.0
+  max             = 1.0
+  step            = 0.05
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+  [[desktop_widget.setting]]
+  key             = "text_scale"
+  type            = "double"
+  label_key       = "settings.text_scale.label"
+  description_key = "settings.text_scale.description"
+  default         = 1.0
+  min             = 0.5
+  max             = 2.0
+  step            = 0.05
+  visible_when    = { key = "show_scaling", values = ["true"] }
+
+  # Host panel surface. DesktopWidget consumes these keys; the card reads them
+  # only to keep lint's declared-key contract and to add an inset when the panel
+  # is off. The card never draws a second outer surface.

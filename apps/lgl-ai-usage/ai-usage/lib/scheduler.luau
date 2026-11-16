@@ -10,9 +10,20 @@ local units = require("./units.luau")
 local M = {}
 
 M.MAX_BACKOFF_MS = units.HOUR_MS
+-- Provider outages, 5xx answers and network hiccups are usually temporary. Cap
+-- their retry delay so the card cannot keep showing a stale error for an hour
+-- after the service has recovered.
+M.MAX_TRANSIENT_BACKOFF_MS = 5 * units.MINUTE_MS
 
 local MAX_DOUBLINGS = 32
 local REASONS_WITHOUT_BACKOFF = { [http.REASON.NO_CONNECTION] = true }
+local TRANSIENT_REASONS = {
+  [http.REASON.TIMEOUT] = true,
+  [http.REASON.REQUEST_TIMEOUT] = true,
+  [http.REASON.CURL_ERROR] = true,
+  [http.REASON.INCOMPLETE] = true,
+  [http.REASON.SERVICE_ERROR] = true,
+}
 local REASONS_BEFORE_ANY_REQUEST = {
   [http.REASON.NO_KEY] = true,
   [http.REASON.KEY_FORMAT] = true,
@@ -37,7 +48,11 @@ end
 
 function M.nextAttemptAfterFailure(now, intervalMs, consecutiveFailures, error)
   local failures = REASONS_WITHOUT_BACKOFF[error.reason] and 1 or consecutiveFailures
-  local afterBackoff = now + M.backoffDelayMs(intervalMs, failures)
+  local delay = M.backoffDelayMs(intervalMs, failures)
+  if TRANSIENT_REASONS[error.reason] then
+    delay = math.min(delay, M.MAX_TRANSIENT_BACKOFF_MS)
+  end
+  local afterBackoff = now + delay
   if error.retryAt then
     return math.max(afterBackoff, error.retryAt)
   end

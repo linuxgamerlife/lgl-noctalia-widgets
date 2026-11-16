@@ -39,6 +39,7 @@ function M.create(deps)
   local lastAttemptByKey = {}
   local inFlight = 0
   local refreshMs = accounts.DEFAULT_REFRESH_SECONDS * units.SECOND_MS
+  local pendingForce = {}
 
   local function notify()
     deps.onChange()
@@ -78,6 +79,11 @@ function M.create(deps)
         table.insert(nextOrder, account.id)
       end
     end
+    for key in pairs(pendingForce) do
+      if nextEntries[key] == nil then
+        pendingForce[key] = nil
+      end
+    end
     entries = nextEntries
     order = nextOrder
     notify()
@@ -114,6 +120,15 @@ function M.create(deps)
           )
         end
         remember(entries[key])
+      end
+      -- A refresh may have arrived while this check was in flight, possibly
+      -- with a freshly saved key. Re-run instead of dropping the request.
+      if pendingForce[key] then
+        pendingForce[key] = nil
+        local latest = entries[key]
+        if latest and not latest.isLoading then
+          entries[key] = state.dueNow(latest, deps.now())
+        end
       end
       notify()
       pump()
@@ -160,7 +175,9 @@ function M.create(deps)
     local now = deps.now()
     for _, key in ipairs(order) do
       local entry = entries[key]
-      if entry and not entry.isLoading then
+      if entry and entry.isLoading then
+        pendingForce[key] = true
+      elseif entry then
         entries[key] = state.dueNow(entry, now)
       end
     end

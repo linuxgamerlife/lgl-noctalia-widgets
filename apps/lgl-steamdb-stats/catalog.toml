@@ -1,0 +1,16 @@
+# Index for using this directory as a Noctalia plugin source:
+#   noctalia msg plugins source add steamdb-stats path /path/to/lgl-noctalia-widgets/apps/lgl-steamdb-stats
+# The per-plugin plugin.toml stays authoritative.
+
+[[plugin]]
+id           = "linuxgamerlife/steamdb-stats"
+name         = "SteamDB Stats"
+version      = "0.1.0"
+author       = "LinuxGamerLife"
+license      = "MIT"
+icon         = "brand-steam"
+description  = "Detects the Steam game you are playing and shows live players, 24-hour peak, all-time peak and a 24-hour graph in a compact desktop card."
+deprecated   = false
+plugin_api   = 24
+tags         = ["steam", "gaming", "stats", "desktop"]
+dependencies = ["curl"]

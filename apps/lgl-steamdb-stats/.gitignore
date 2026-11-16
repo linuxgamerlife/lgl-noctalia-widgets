@@ -1,0 +1,7 @@
+*.zip
+*.bak
+.DS_Store
+plugin-data/
+tests/
+__pycache__/
+*.pyc

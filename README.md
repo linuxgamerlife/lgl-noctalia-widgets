@@ -4,7 +4,7 @@
 
 **KDE Plasma widgets, rebuilt and improved for Noctalia Shell and Noctalia KWE.**
 
-[![Apps](https://img.shields.io/badge/apps-6-purple)](#apps)
+[![Apps](https://img.shields.io/badge/apps-7-purple)](#apps)
 [![Noctalia](https://img.shields.io/badge/Noctalia-v5-blue)](https://github.com/noctalia-dev/noctalia-shell)
 [![Noctalia KWE](https://img.shields.io/badge/noctalia--kwe-v5.3.0-blue)](#install)
 [![Language](https://img.shields.io/badge/Luau-plugins-00A2FF)](#how-the-ports-work)
@@ -41,6 +41,7 @@ other Noctalia users can install it easily.
 | [**LGL KBM Overlay**](apps/lgl-kbm-overlay/) | Shows a customisable gaming keyboard and mouse input drawing as a movable desktop widget, with configurable layouts and effects[^kbm-overlay] | 30 | MIT |
 | [**LGL Modern SysMonitor Plus**](apps/lgl-modern-sysmonitor-plus/) | Monitors CPU, GPU, memory, disks, fans, temperatures, and network activity[^sysmonitor] | 22 | GPL-3.0-or-later |
 | [**LGL Steam Controller Battery**](apps/lgl-steam-controller/) | Shows Steam Controller 2 battery, charging, connection, wireless signal and live input state[^steam-controller] | 17 | MIT |
+| [**LGL SteamDB Stats**](apps/lgl-steamdb-stats/) | Detects the Steam game you are playing and shows live players, 24-hour peak, all-time peak and a 24-hour graph | 24 | MIT |
 | [**LGL Weather & Time**](apps/lgl-weather-time/) | Shows a location-aware clock, current conditions and forecast with a full-bleed procedural weather scene, plus privacy-first location handling[^weather-time] | 24 | MIT |
 
 Open an app's README for its requirements, settings, hardware notes, and full
@@ -138,6 +139,16 @@ git sparse-checkout set apps/lgl-steam-controller
 ./apps/lgl-steam-controller/install.sh      # Upstream Noctalia
 ```
 
+#### LGL SteamDB Stats
+
+```bash
+git sparse-checkout set apps/lgl-steamdb-stats
+
+./apps/lgl-steamdb-stats/install-kwe.sh  # Noctalia KWE
+# OR
+./apps/lgl-steamdb-stats/install.sh      # Upstream Noctalia
+```
+
 #### LGL Weather & Time
 
 ```bash
@@ -183,6 +194,7 @@ apps/
 ├── lgl-kbm-overlay/
 ├── lgl-modern-sysmonitor-plus/
 ├── lgl-steam-controller/
+├── lgl-steamdb-stats/
 └── lgl-weather-time/
 ```
 
@@ -216,10 +228,10 @@ its licence with an SPDX header. Machine-readable metadata lives in
 
 | Licence | Apps |
 |---|---|
-| MIT | DualSense Battery, KBM Overlay, Steam Controller Battery, Weather & Time |
+| MIT | DualSense Battery, KBM Overlay, Steam Controller Battery, SteamDB Stats, Weather & Time |
 | GPL-3.0-or-later | AI Usage, Modern SysMonitor Plus |
 
-The four MIT apps may be reused, modified and redistributed freely, including
+The five MIT apps may be reused, modified and redistributed freely, including
 in closed-source projects, provided the copyright and permission notices are
 kept. AI Usage is a port of
 [Lukk17/ai-usage-widget](https://github.com/Lukk17/ai-usage-widget), and Modern

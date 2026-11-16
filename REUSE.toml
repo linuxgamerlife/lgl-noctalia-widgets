@@ -43,6 +43,12 @@ SPDX-FileCopyrightText = ["2026 jahrekza", "2026 Jarek"]
 SPDX-License-Identifier = "MIT"
 
 [[annotations]]
+path = ["apps/lgl-steamdb-stats/**"]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 LinuxGamerLife"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
 path = ["apps/lgl-weather-time/**"]
 precedence = "closest"
 SPDX-FileCopyrightText = "2026 LinuxGamerLife"

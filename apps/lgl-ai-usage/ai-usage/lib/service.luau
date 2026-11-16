@@ -130,9 +130,43 @@ local function snapshotState()
   }
 end
 
+local lastCheckOutcome = {}
+
+local function outcomeText(entry)
+  if not entry.error then
+    return "ok"
+  end
+  local status = entry.error.params and entry.error.params.status
+  local text = tostring(entry.error.reason)
+  if status ~= nil then
+    text = text .. " HTTP " .. tostring(status)
+  end
+  return text
+end
+
+-- Log only transitions: one line when an account starts or stops failing.
+local function logOutcomes(entries)
+  local seen = {}
+  for _, entry in ipairs(entries) do
+    seen[entry.key] = true
+    local text = outcomeText(entry)
+    if lastCheckOutcome[entry.key] ~= text then
+      lastCheckOutcome[entry.key] = text
+      log("check " .. tostring(entry.providerId) .. ": " .. text)
+    end
+  end
+  for key in pairs(lastCheckOutcome) do
+    if not seen[key] then
+      lastCheckOutcome[key] = nil
+    end
+  end
+end
+
 local function publish()
   lastPublishedAt = os.time()
-  noctalia.state.set("ai_usage", snapshotState())
+  local snapshot = snapshotState()
+  logOutcomes(snapshot.accounts)
+  noctalia.state.set("ai_usage", snapshot)
 end
 
 local function loadAccounts()
@@ -144,7 +178,8 @@ local function reloadAccounts()
   local list = loadAccounts()
   monitor.configure(list, refreshSeconds * units.SECOND_MS)
   if refreshSeconds > 0 then
-    monitor.tick()
+    -- An account or key edit should not inherit the old failure backoff.
+    monitor.forceNow()
   end
   if not showModelStats then
     modelStats.models = {}
