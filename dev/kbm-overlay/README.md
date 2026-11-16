@@ -12,14 +12,14 @@ it in Noctalia's desktop-widget editor. It does not sit above every window.
 | | |
 |---|---|
 | Plugin ID | `linuxgamerlife/kbm-overlay` |
-| Plugin API | 30 |
+| Plugin API | 22 |
 | License | MIT — see [LICENSE](LICENSE) |
 
 ---
 
 ## Requirements
 
-- Noctalia / Noctalia KWE with plugin API **30** (KWE 5.3.0).
+- Noctalia / Noctalia KWE with plugin API **22** or newer.
 - `python3` for the bundled evdev reader.
 - `kdotool` for absolute cursor position on KWin (used for the screen-relative
   arrow direction). Without it, the arrow falls back to the movement direction.

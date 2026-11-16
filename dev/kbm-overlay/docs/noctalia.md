@@ -5,7 +5,8 @@ surface, entries, state flow, permissions and development commands.
 
 ## Plugin API and entries
 
-`plugin.toml` declares `plugin_api = 30` for Noctalia KWE 5.3.0.
+`plugin.toml` declares `plugin_api = 22` for module require, services starting
+on enable and `onExit` lifecycle support.
 
 | Entry | Kind | File | Role |
 | --- | --- | --- | --- |
@@ -20,7 +21,7 @@ API levels used:
 | --- | --- | --- |
 | 9 | UI closures | Device buttons |
 | 17 | Services start on enable | Reader starts when the plugin is enabled |
-| 30 | Panel/tooling baseline | Matches the KWE 5.3.0 fork |
+| 22 | Relative module require | `lib/` modules |
 
 There is **no `[[layer]]` entry and no overlay panel**. The visual is a normal
 desktop widget, so the user can place and move it in desktop edit mode. A

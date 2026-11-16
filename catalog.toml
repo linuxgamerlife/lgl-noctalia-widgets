@@ -33,7 +33,7 @@ author       = "LinuxGamerLife"
 license      = "MIT"
 icon         = "keyboard"
 description  = "Black and cyan gaming keyboard and mouse input overlay, drawn as a movable Noctalia desktop widget."
-plugin_api   = 30
+plugin_api   = 22
 tags         = ["gaming", "desktop", "panel"]
 dependencies = ["python3"]
 

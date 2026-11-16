@@ -16,7 +16,7 @@ feedback.
 
 ## Requirements
 
-- Noctalia Shell with plugin API 30 or newer (Noctalia KWE 5.3.0 or newer).
+- Noctalia Shell with plugin API 22 or newer.
 - `python3`.
 - Read access to the selected keyboard and mouse input devices. Use the bundled
   udev helper to grant access to the active desktop user.

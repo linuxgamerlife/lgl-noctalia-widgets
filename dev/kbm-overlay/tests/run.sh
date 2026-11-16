@@ -96,8 +96,8 @@ for key in ("id", "name", "version", "plugin_api", "license", "description"):
     if key not in plugin:
         fail(f"plugin.toml is missing {key}")
 
-if plugin.get("plugin_api") != 30:
-    fail("this version must target plugin_api 30 for Noctalia KWE 5.3.0")
+if plugin.get("plugin_api") != 22:
+    fail("this version must target plugin_api 22")
 
 entries: list[tuple[str, str]] = []
 entry_ids: set[str] = set()
