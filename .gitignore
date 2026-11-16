@@ -11,7 +11,7 @@ __pycache__/
 
 # Local test and generated output
 test-results/
-tests/
+/tests/
 plugin-data/
 *.bak
 *.bak.*
