@@ -81,29 +81,25 @@ Open-Meteo.
 
 | Path | What it is |
 | --- | --- |
-| `weather-time/` | Plugin payload: manifest, service, card, bar, panel, `lib/`, `providers/`, translations, thumbnail |
-| `docs/noctalia.md` | API levels, state flow, reload/debug notes |
-| `tests/` | LuaJIT tests with a mocked Noctalia host and Python manifest checks |
-| `install.sh` / `install-kwe.sh` | Install for upstream Noctalia / KineticWE's `noctalia-kwe` |
-| `uninstall.sh` / `uninstall-kwe.sh` | Remove the plugin, data and widget instances |
-| `remove-plugin-widgets.py` | Safe settings.toml cleanup helper |
-| `catalog.toml` | Plugin-source catalog entry |
+| `weather-time/` | Plugin payload: manifest, entries, translations, thumbnail |
+| `dev/weather-time/` | These developer notes and tests |
+| `tools/` | Catalog, validation and migration helpers |
+| `catalog.toml` | Root source catalog |
 
 ## Install
 
-From this directory:
+Add this repository as a Noctalia source, then enable the plugin:
 
-```bash
-# KineticWE's noctalia-kwe fork
-./install-kwe.sh
-
-# Upstream Noctalia
-./install.sh
+```sh
+noctalia msg plugins source add lgl git https://github.com/linuxgamerlife/lgl-noctalia-widgets
+noctalia msg plugins enable linuxgamerlife/weather-time
 ```
 
-Then open **Settings → Desktop → Toggle Editor**, add **Weather & Time**, and
-click the card to set a location. The setup panel also supports manual
-coordinates and an optional import of Noctalia's manual location.
+For KineticWE's `noctalia-kwe` fork, use the same commands with
+`noctalia-kwe`.
+
+If upgrading from the old `apps/` layout, run `./tools/migrate.py` first. See
+the repository `MIGRATION.md` for the upgrade notes.
 
 ## Settings summary
 

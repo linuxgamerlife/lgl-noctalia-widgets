@@ -221,7 +221,7 @@ required_files = (
     "kbm-overlay/thumbnail.webp",
     "kbm-overlay/code/kbm_daemon.py",
     "kbm-overlay/code/setup-input-permissions.sh",
-    "dev/cleanup.py",
+    "tools/migrate.py",
     "dev/kbm-overlay/docs/noctalia.md",
     "dev/kbm-overlay/tests/run.sh",
     "dev/kbm-overlay/tests/support/mock.luau",

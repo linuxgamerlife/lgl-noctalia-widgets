@@ -32,73 +32,18 @@ Noctalia v4 / Quickshell plugin APIs are not used.
 
 ## Install
 
-From the repository root:
+Add this repository as a Noctalia source, then enable the plugin:
 
-```bash
-# KineticWE's noctalia-kwe fork
-./apps/lgl-kbm-overlay/install-kwe.sh
-
-# Upstream Noctalia
-./apps/lgl-kbm-overlay/install.sh
+```sh
+noctalia msg plugins source add lgl git https://github.com/linuxgamerlife/lgl-noctalia-widgets
+noctalia msg plugins enable linuxgamerlife/kbm-overlay
 ```
 
-Both installers symlink the `kbm-overlay/` plugin into the shell's plugin
-directory and try to enable it. They honour `NOCTALIA_DATA_HOME` and
-`XDG_DATA_HOME`.
+For KineticWE's `noctalia-kwe` fork, use the same commands with
+`noctalia-kwe`.
 
-### Add the widget
-
-1. Open **Settings → Desktop → Desktop widgets** (or the desktop-widget edit
-   mode).
-2. Add **LGL KBM Overlay**.
-3. Move and size it like any other desktop widget.
-4. Open the device picker from the **KBM** bar widget, or run:
-
-   ```bash
-   noctalia-kwe msg panel-toggle linuxgamerlife/kbm-overlay:devices
-   ```
-
-5. Select the keyboard and mouse you want to follow.
-6. Apply the narrow udev rule:
-
-   ```bash
-   bash apps/lgl-kbm-overlay/kbm-overlay/code/setup-input-permissions.sh
-   ```
-
-   The script shows the rule before installing it. Use `--print` to review it
-   without root. Replug the devices (or log out and back in) if access is still
-   denied.
-
-
-### Toggle via IPC
-
-Show or hide the KBM widget without removing it from the desktop layout:
-
-```bash
-noctalia-kwe msg plugin linuxgamerlife/kbm-overlay:reader all toggle
-noctalia-kwe msg plugin linuxgamerlife/kbm-overlay:reader all hide
-noctalia-kwe msg plugin linuxgamerlife/kbm-overlay:reader all show
-```
-
-`hide` blanks the widget; it does not delete or unplace it. The state is
-process-lifetime, so it returns to visible after a Noctalia restart. The
-`all` target applies to every KBM widget instance.
-
-These commands hide **all desktop widgets**, not just KBM:
-
-```bash
-noctalia-kwe msg desktop-widgets-toggle
-noctalia-kwe msg desktop-widgets-hide
-noctalia-kwe msg desktop-widgets-show
-```
-
-To disable the plugin entirely:
-
-```bash
-noctalia-kwe msg plugins disable linuxgamerlife/kbm-overlay
-```
-
----
+If upgrading from the old `apps/` layout, run `./tools/migrate.py` first. See
+the repository `MIGRATION.md` for the upgrade notes.
 
 ## How it works
 
@@ -143,13 +88,13 @@ step because it grants read access to an input device.
 3. Review the generated rule without root:
 
    ```bash
-   bash apps/lgl-kbm-overlay/kbm-overlay/code/setup-input-permissions.sh --print
+   bash kbm-overlay/code/setup-input-permissions.sh --print
    ```
 
 4. Install it when it looks right:
 
    ```bash
-   bash apps/lgl-kbm-overlay/kbm-overlay/code/setup-input-permissions.sh
+   bash kbm-overlay/code/setup-input-permissions.sh
    ```
 
 5. The script validates the vendor/product IDs and merges the current
@@ -192,7 +137,7 @@ SUBSYSTEM=="input", KERNEL=="event*", ATTRS{id/vendor}=="1234", ATTRS{id/product
 - Uninstalling leaves the rule in place. Remove it with:
 
   ```bash
-  bash apps/lgl-kbm-overlay/kbm-overlay/code/setup-input-permissions.sh --remove
+  bash kbm-overlay/code/setup-input-permissions.sh --remove
   ```
 
 Invalid, missing or malformed USB IDs are rejected instead of being written into

@@ -204,7 +204,7 @@ required_files = (
     "weather-time/PRIVACY.md",
     "weather-time/LICENSE",
     "weather-time/thumbnail.webp",
-    "dev/cleanup.py",
+    "tools/migrate.py",
     "dev/weather-time/docs/noctalia.md",
     "dev/weather-time/tests/run.sh",
     "dev/weather-time/tests/support/mock.luau",

@@ -23,7 +23,7 @@ additional Noctalia-native theming and configuration.
 
 | Field | Value |
 | --- | --- |
-| Plugin ID | `jahrek/steam-controller` |
+| Plugin ID | `linuxgamerlife/steam-controller` |
 | Version | `2.4.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
@@ -52,52 +52,41 @@ live Noctalia theme; the controller art regenerates when the resolved palette
 colour changes. See the
 [full settings table](steam-controller/README.md#settings).
 
-## Project Layout
+## Project layout
 
 | Path | What it is |
 | --- | --- |
-| `steam-controller/` | The plugin: `plugin.toml`, `card.luau`, `battery.luau`, HID daemon, assets, translations |
-| `install-kwe.sh` | Install for KineticWE's `noctalia-kwe` fork |
-| `install.sh` | Install for upstream Noctalia |
-| `uninstall-kwe.sh` | Remove from `noctalia-kwe` |
-| `uninstall.sh` | Remove from upstream Noctalia |
-| `remove-plugin-widgets.py` | Safely removes this plugin's desktop-widget instances from `settings.toml` |
-| `catalog.toml` | Noctalia source catalog (the repo can be added as a plugin source) |
-| `tests/` | LuaJIT tests with a mocked Noctalia API |
+| `steam-controller/` | Plugin payload: manifest, entries, translations, thumbnail |
+| `dev/steam-controller/` | These developer notes and tests |
+| `tools/` | Catalog, validation and migration helpers |
+| `catalog.toml` | Root source catalog |
 
 ## Install
 
-From the app directory (`apps/lgl-steam-controller`):
+Add this repository as a Noctalia source, then enable the plugin:
 
-```bash
-# KineticWE's noctalia-kwe fork
-./install-kwe.sh
-
-# Upstream Noctalia
-./install.sh
+```sh
+noctalia msg plugins source add lgl git https://github.com/linuxgamerlife/lgl-noctalia-widgets
+noctalia msg plugins enable linuxgamerlife/steam-controller
 ```
 
-Then enable **Steam Controller Battery** in **Settings → Plugins** if the
-installer did not, and add it from **Settings → Desktop → Toggle Editor**.
+For KineticWE's `noctalia-kwe` fork, use the same commands with
+`noctalia-kwe`.
 
-`install-kwe.sh` links the plugin into
-`~/.local/share/noctalia-kwe/plugins`; `install.sh` uses
-`~/.local/share/noctalia/plugins`. Both honour `NOCTALIA_DATA_HOME` and
-`XDG_DATA_HOME`.
-
-Full requirements, settings, protocol notes, IPC and troubleshooting are in
-[`steam-controller/README.md`](steam-controller/README.md).
+If upgrading from the old `apps/` layout, run `./tools/migrate.py` first. See
+the repository `MIGRATION.md` for the upgrade notes.
 
 ## Uninstall
 
-```bash
-./uninstall-kwe.sh   # KWE
-./uninstall.sh       # upstream
+Disable or remove the plugin in **Settings → Plugins**, or disable it from
+the command line:
+
+```sh
+noctalia msg plugins disable linuxgamerlife/steam-controller
 ```
 
-The uninstall scripts disable the plugin, stop its service/daemon, remove its
-desktop-widget instances (with a timestamped settings backup), and clean its
-runtime and plugin data. Use `--yes` for non-interactive removal.
+Plugin data is kept unless you remove it manually. See the repository
+`MIGRATION.md` for data locations.
 
 ## Tests
 
@@ -119,9 +108,9 @@ Noctalia session is needed.
 If the widget does not work on a new machine, check these in order. The
 commands use `noctalia`; use `noctalia-kwe` instead on the KWE fork.
 
-1. **Right installer.** `./install-kwe.sh` is for `noctalia-kwe`,
-   `./install.sh` is for upstream Noctalia. They install into different
-   folders, so the wrong one means the plugin never appears.
+1. **Right source.** Add this repository as a source in the shell you are
+   using, then enable `linuxgamerlife/steam-controller`. KWE and upstream
+   Noctalia keep separate source and plugin data directories.
 2. **New enough shell.** The plugin needs plugin API 17 or newer
    (Noctalia v5).
 3. **Reload and enable the plugin**, then add the card in
@@ -129,7 +118,7 @@ commands use `noctalia`; use `noctalia-kwe` instead on the KWE fork.
 
    ```bash
    noctalia msg config-reload
-   noctalia msg plugins enable jahrek/steam-controller
+   noctalia msg plugins enable linuxgamerlife/steam-controller
    ```
 
 4. **The install link still points somewhere.** Both installers link to the

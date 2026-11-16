@@ -23,7 +23,7 @@ whose original design and code are by Joao Gabriel Medeiros.
 
 | Field | Value |
 | --- | --- |
-| Plugin ID | `unsaidspeech/modern-sysmonitor-plus` |
+| Plugin ID | `linuxgamerlife/modern-sysmonitor-plus` |
 | Version | `1.0.0` |
 | Entries | Service `poller`, desktop widget `card` |
 | Plugin API | 22 |
@@ -92,83 +92,41 @@ surface the user sees. The inner cards are translucent content surfaces, not a
 second outer panel. With **Host panel background** off, the card adds a 6 px
 content inset and draws no outer fill.
 
-## Project Layout
+## Project layout
 
 | Path | What it is |
 | --- | --- |
-| `modern-sysmonitor-plus/` | The plugin: `plugin.toml`, `service.luau`, `card.luau`, `lib/`, translations, thumbnail |
-| `install-kwe.sh` | Install for KineticWE's `noctalia-kwe` fork |
-| `install.sh` | Install for upstream Noctalia |
-| `uninstall-kwe.sh` | Remove from `noctalia-kwe` |
-| `uninstall.sh` | Remove from upstream Noctalia |
-| `remove-plugin-widgets.py` | Safely removes this plugin's desktop-widget instances from `settings.toml` |
-| `catalog.toml` | Noctalia source catalog (the repo can be added as a plugin source) |
-| `docs/noctalia.md` | API, state flow, install/reload and debugging notes |
-| `tests/` | LuaJIT tests with a mocked Noctalia API, plus manifest checks |
-
-Inside the plugin, `service.luau` is the composition entry; `lib/format.luau`,
-`lib/hwmon.luau`, `lib/gpu.luau`, `lib/disks.luau` and `lib/sampler.luau` hold
-one responsibility each. Only the service composes them; the card imports just
-the formatter.
+| `modern-sysmonitor-plus/` | Plugin payload: manifest, entries, translations, thumbnail |
+| `dev/modern-sysmonitor-plus/` | These developer notes and tests |
+| `tools/` | Catalog, validation and migration helpers |
+| `catalog.toml` | Root source catalog |
 
 ## Install
 
-From the app directory (`apps/lgl-modern-sysmonitor-plus`):
+Add this repository as a Noctalia source, then enable the plugin:
 
-```bash
-# KineticWE's noctalia-kwe fork
-./install-kwe.sh
-
-# Upstream Noctalia
-./install.sh
+```sh
+noctalia msg plugins source add lgl git https://github.com/linuxgamerlife/lgl-noctalia-widgets
+noctalia msg plugins enable linuxgamerlife/modern-sysmonitor-plus
 ```
 
-Then enable **Modern SysMonitor Plus** in **Settings → Plugins** if the
-installer did not, and add it from **Settings → Desktop → Toggle Editor**.
+For KineticWE's `noctalia-kwe` fork, use the same commands with
+`noctalia-kwe`.
 
-`install-kwe.sh` links the plugin into
-`~/.local/share/noctalia-kwe/plugins/modern-sysmonitor-plus`; `install.sh` uses
-`~/.local/share/noctalia/plugins/modern-sysmonitor-plus`. Both honour
-`NOCTALIA_DATA_HOME` and `XDG_DATA_HOME`.
-
-The desktop card is content-sized with no scrollbar. In the widget editor, set
-the tile to roughly **Content width + 2 × Panel padding**; with the defaults
-(320 px content, 10 px padding) that is about **340 px** wide. The height can be
-whatever the cards need.
-
-### Settings layout
-
-Noctalia v5.3.0 renders plugin widget settings in a single column and has no
-manifest field for columns, groups or sections. To keep that column usable, the
-host panel **background toggle, colour, opacity, radius and padding are the
-first rows** of the Widget section, followed by four collapsed groups, all
-default off:
-
-- **Show card settings** — card title, content width, gap, padding, radius, fill
-  and border.
-- **Show styling controls** — colours, temperature thresholds and disk warning.
-- **Show scaling controls** — text size, bar/divider dimensions, chart sizes and
-  scales.
-- **Show section toggles** — Show header/network/CPU/RAM/GPU/VRAM/disks/fan/
-  details.
-
-All stored values stay active while hidden. Noctalia also renders its own
-Background section at the bottom of the inspector; it edits the same host-panel
-keys as the first rows.
-
-If you need a different layout, that is a shell-side change to the widget
-inspector, not something a plugin manifest can request.
+If upgrading from the old `apps/` layout, run `./tools/migrate.py` first. See
+the repository `MIGRATION.md` for the upgrade notes.
 
 ## Uninstall
 
-```bash
-./uninstall-kwe.sh   # KWE
-./uninstall.sh       # upstream
+Disable or remove the plugin in **Settings → Plugins**, or disable it from
+the command line:
+
+```sh
+noctalia msg plugins disable linuxgamerlife/modern-sysmonitor-plus
 ```
 
-The uninstall scripts disable the plugin, remove its desktop-widget instances
-(with a timestamped `settings.toml` backup), and delete the plugin and its data
-directory. Use `--yes` for non-interactive removal.
+Plugin data is kept unless you remove it manually. See the repository
+`MIGRATION.md` for data locations.
 
 ## Tests
 

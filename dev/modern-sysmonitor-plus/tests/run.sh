@@ -220,7 +220,7 @@ for required in (
     "modern-sysmonitor-plus/README.md",
     "modern-sysmonitor-plus/LICENSE",
     "modern-sysmonitor-plus/thumbnail.webp",
-    "dev/cleanup.py",
+    "tools/migrate.py",
     "dev/modern-sysmonitor-plus/docs/noctalia.md",
     "dev/modern-sysmonitor-plus/tests/run.sh",
     "dev/modern-sysmonitor-plus/tests/support/mock.luau",

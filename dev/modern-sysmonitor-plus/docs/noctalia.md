@@ -55,7 +55,7 @@ are visible to the shell immediately.
 The plugin writes no persistent data. It has no accounts, secrets, generated
 art, locks or temporary files, so `noctalia.pluginDataDir()` is not used. The
 uninstallers still remove the would-be data directory
-`~/.local/state/<app>/plugins/data/unsaidspeech/modern-sysmonitor-plus` in case a
+`~/.local/state/<app>/plugins/data/linuxgamerlife/modern-sysmonitor-plus` in case a
 future version creates one.
 
 ## Reloading during development
@@ -73,8 +73,8 @@ future version creates one.
   the service gets a fresh settings snapshot:
 
   ```bash
-  noctalia-kwe msg plugins disable unsaidspeech/modern-sysmonitor-plus
-  noctalia-kwe msg plugins enable unsaidspeech/modern-sysmonitor-plus
+  noctalia-kwe msg plugins disable linuxgamerlife/modern-sysmonitor-plus
+  noctalia-kwe msg plugins enable linuxgamerlife/modern-sysmonitor-plus
   ```
 
 - **Desktop-widget settings controls** are built from the manifest when the
@@ -83,7 +83,7 @@ future version creates one.
 - **Do not edit `settings.toml` by hand to add a widget instance** unless you
   validate the TOML first. A missing comma in `widget_order` makes the shell
   reject the whole file and fall back to defaults. Prefer the editor, or a
-  backup + `tomllib` validated script like `remove-plugin-widgets.py`.
+  backup and validate the TOML before writing it.
 
 ## Settings
 
@@ -226,6 +226,5 @@ The mock covers:
 ## Related
 
 - [README](../README.md) — install, feature mapping, theming, limitations
-- [plugin README](../modern-sysmonitor-plus/README.md) — full settings and data sources
-- [catalog.toml](../catalog.toml) — source catalog metadata
-- [install-kwe.sh](../install-kwe.sh) / [install.sh](../install.sh) — installers
+- [technical reference](technical.md) — full settings and data sources
+- [catalog.toml](../../../catalog.toml) — source catalog metadata

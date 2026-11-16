@@ -15,14 +15,14 @@
 ## Overview
 
 LGL AI Usage is a Noctalia v5 port and adaptation of the
-[AI Usage KDE Plasma widget](https://github.com/lukk17/ai-usage-widget) by
+[AI Usage KDE Plasma widget](https://github.com/linuxgamerlife/ai-usage-widget) by
 Łukasz Sarna. It shows AI limits, spend, and balances for several services and
 accounts in one place, with additional Noctalia-native desktop, bar, and panel
 views.
 
 | Field | Value |
 | --- | --- |
-| Plugin ID | `lukk17/ai-usage` |
+| Plugin ID | `linuxgamerlife/ai-usage` |
 | Version | `1.0.0` |
 | Entries | Service `poller`, desktop widget `card`, bar widget `usage`, panel `panel` |
 | Plugin API | 24 |
@@ -52,76 +52,41 @@ directories.
 | — | Local OpenCode Go per-model stats (`opencode stats`) |
 | — | Optional account-section surface, dividers, bar height, text scaling and width controls |
 
-## Project Layout
+## Project layout
 
 | Path | What it is |
 | --- | --- |
-| `ai-usage/` | The plugin: `plugin.toml`, service, card, bar, panel, `lib/`, `providers/`, translations, thumbnail |
-| `install-kwe.sh` | Install for KineticWE's `noctalia-kwe` fork |
-| `install.sh` | Install for upstream Noctalia |
-| `uninstall-kwe.sh` | Remove from `noctalia-kwe` |
-| `uninstall.sh` | Remove from upstream Noctalia |
-| `remove-plugin-widgets.py` | Safely removes this plugin's desktop and bar widget instances from `settings.toml` |
-| `catalog.toml` | Noctalia source catalog (the repo can be added as a plugin source) |
-| `tests/` | LuaJIT tests with a mocked Noctalia API |
-
-Full provider details, every setting and the security model are in
-[`ai-usage/README.md`](ai-usage/README.md).
+| `ai-usage/` | Plugin payload: manifest, entries, translations, thumbnail |
+| `dev/ai-usage/` | These developer notes and tests |
+| `tools/` | Catalog, validation and migration helpers |
+| `catalog.toml` | Root source catalog |
 
 ## Install
 
-From the app directory (`apps/lgl-ai-usage`):
+Add this repository as a Noctalia source, then enable the plugin:
 
-```bash
-# KineticWE's noctalia-kwe fork
-./install-kwe.sh
-
-# Upstream Noctalia
-./install.sh
+```sh
+noctalia msg plugins source add lgl git https://github.com/linuxgamerlife/lgl-noctalia-widgets
+noctalia msg plugins enable linuxgamerlife/ai-usage
 ```
 
-Then enable **AI Usage** in **Settings → Plugins** if the installer did not, and
-add it from **Settings → Desktop → Toggle Editor** (card) or **Settings → Bar →
-Widgets** (bar capsule).
+For KineticWE's `noctalia-kwe` fork, use the same commands with
+`noctalia-kwe`.
 
-`install-kwe.sh` links the plugin into
-`~/.local/share/noctalia-kwe/plugins`; `install.sh` uses
-`~/.local/share/noctalia/plugins`. Both honour `NOCTALIA_DATA_HOME` and
-`XDG_DATA_HOME`.
-
-### Updating an already-enabled install
-
-A manifest with new settings needs a fresh entry-settings snapshot. Updating an
-already-enabled plugin with only `config-reload` leaves the old snapshot in
-place, so new controls appear missing. Run:
-
-```bash
-noctalia-kwe msg config-reload
-noctalia-kwe msg plugins disable lukk17/ai-usage
-noctalia-kwe msg plugins enable lukk17/ai-usage
-```
-
-Then close and reopen the desktop-widget editor. Existing widget instances are
-kept; obsolete settings such as the old `card_width`/`dense` keys are ignored.
-Set **Content width** to fit the tile after the reload.
-
-Open the panel directly:
-
-```bash
-noctalia-kwe msg panel-toggle lukk17/ai-usage:panel   # or: noctalia msg ...
-```
+If upgrading from the old `apps/` layout, run `./tools/migrate.py` first. See
+the repository `MIGRATION.md` for the upgrade notes.
 
 ## Uninstall
 
-```bash
-./uninstall-kwe.sh   # KWE
-./uninstall.sh       # upstream
+Disable or remove the plugin in **Settings → Plugins**, or disable it from
+the command line:
+
+```sh
+noctalia msg plugins disable linuxgamerlife/ai-usage
 ```
 
-The uninstall scripts disable the plugin, stop its service, remove its desktop
-and bar widget instances (with a timestamped `settings.toml` backup), and delete
-its plugin data. Keys in the Secret Service are left alone. Use `--yes` for
-non-interactive removal.
+Plugin data is kept unless you remove it manually. See the repository
+`MIGRATION.md` for data locations.
 
 ## Tests
 
@@ -157,7 +122,7 @@ Requires LuaJIT. The tests mock `noctalia.*`, `ui.*`, `desktopWidget.*`,
 
 ## Credits and License
 
-Based on the [AI Usage KDE Plasma widget](https://github.com/lukk17/ai-usage-widget)
+Based on the [AI Usage KDE Plasma widget](https://github.com/linuxgamerlife/ai-usage-widget)
 by Łukasz Sarna. LGL adapted and extended it for Noctalia and Noctalia KWE.
 
 GPL-3.0-or-later — see [LICENSE](LICENSE).

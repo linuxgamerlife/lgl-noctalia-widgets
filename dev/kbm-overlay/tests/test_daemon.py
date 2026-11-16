@@ -15,7 +15,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN_DIR = Path(__file__).resolve().parents[3] / "plugins" / "kbm-overlay"
+PLUGIN_DIR = Path(__file__).resolve().parents[3] / "kbm-overlay"
 sys.path.insert(0, str(PLUGIN_DIR / "code"))
 
 import kbm_daemon as daemon  # noqa: E402

@@ -66,28 +66,18 @@ Supported Steam layouts:
 
 ## Install
 
-Run either the KWE installer or the upstream installer, not both.
+Add this repository as a Noctalia source, then enable the plugin:
 
-```bash
-# Noctalia KWE
-./apps/lgl-steamdb-stats/install-kwe.sh
-
-# Upstream Noctalia
-./apps/lgl-steamdb-stats/install.sh
+```sh
+noctalia msg plugins source add lgl git https://github.com/linuxgamerlife/lgl-noctalia-widgets
+noctalia msg plugins enable linuxgamerlife/steamdb-stats
 ```
 
-Then open **Settings → Desktop → Toggle Editor** and add **SteamDB Stats**.
+For KineticWE's `noctalia-kwe` fork, use the same commands with
+`noctalia-kwe`.
 
-Uninstall with:
-
-```bash
-./apps/lgl-steamdb-stats/uninstall-kwe.sh
-# or
-./apps/lgl-steamdb-stats/uninstall.sh
-```
-
-The uninstallers remove this plugin's desktop widget instance but leave other
-widgets alone.
+If upgrading from the old `apps/` layout, run `./tools/migrate.py` first. See
+the repository `MIGRATION.md` for the upgrade notes.
 
 ## How it works
 
@@ -199,7 +189,7 @@ Not detected or not covered:
 
 ```bash
 # Validate the plugin manifest and entries
-noctalia-kwe plugins lint /path/to/lgl-noctalia-widgets/apps/lgl-steamdb-stats
+noctalia-kwe plugins lint /path/to/lgl-noctalia-widgets/steamdb-stats
 
 # See the last game-launch lines Steam wrote
 tail -n 20 ~/.local/share/Steam/logs/gameprocess_log.txt

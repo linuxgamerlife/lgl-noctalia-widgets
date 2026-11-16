@@ -16,7 +16,7 @@ battery fill can instead use a custom colour with adjustable opacity.
 
 | Field | Value |
 | --- | --- |
-| ID | `jahrek/steam-controller` |
+| ID | `linuxgamerlife/steam-controller` |
 | Version | `2.4.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
@@ -44,104 +44,18 @@ the vendor HID reports directly.
 
 ## Install
 
-From the app directory (`apps/lgl-steam-controller`):
+Add this repository as a Noctalia source, then enable the plugin:
 
-```bash
-# KineticWE's noctalia-kwe fork
-./install-kwe.sh
-
-# Upstream Noctalia
-./install.sh
+```sh
+noctalia msg plugins source add lgl git https://github.com/linuxgamerlife/lgl-noctalia-widgets
+noctalia msg plugins enable linuxgamerlife/steam-controller
 ```
 
-`install-kwe.sh` links into `~/.local/share/noctalia-kwe/plugins`.
-`install.sh` links into `~/.local/share/noctalia/plugins`. Both scripts honour
-`NOCTALIA_DATA_HOME` and `XDG_DATA_HOME`.
+For KineticWE's `noctalia-kwe` fork, use the same commands with
+`noctalia-kwe`.
 
-Manual install for upstream Noctalia:
-
-```bash
-mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/noctalia/plugins"
-ln -sfn "$PWD/steam-controller" \
-  "${XDG_DATA_HOME:-$HOME/.local/share}/noctalia/plugins/steam-controller"
-noctalia msg config-reload
-noctalia msg plugins enable jahrek/steam-controller
-```
-
-Manual install for `noctalia-kwe`:
-
-```bash
-mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/noctalia-kwe/plugins"
-ln -sfn "$PWD/steam-controller" \
-  "${XDG_DATA_HOME:-$HOME/.local/share}/noctalia-kwe/plugins/steam-controller"
-noctalia-kwe msg config-reload
-noctalia-kwe msg plugins enable jahrek/steam-controller
-```
-
-You can also add the app directory as a local source (it contains
-`catalog.toml`):
-
-```bash
-noctalia-kwe msg plugins source add steam-controller path /path/to/lgl-noctalia-widgets/apps/lgl-steam-controller
-```
-
-Then:
-
-1. Open **Settings → Plugins**, refresh the plugin list, and enable
-   **Steam Controller Battery** if it is not already enabled.
-2. Turn on the desktop widget editor (**Settings → Desktop → Toggle Editor**)
-   and add **Steam Controller Battery**.
-3. Place and size the card. The card scales with its box.
-
-The service starts automatically when the plugin is enabled. No autostart entry
-or separate systemd unit is needed.
-
-The editor writes widget instances to `settings.toml`; upstream Noctalia uses
-`~/.local/state/noctalia/settings.toml`, and `noctalia-kwe` uses
-`~/.local/state/noctalia-kwe/settings.toml`.
-
-### Declarative config
-
-The editor writes to `settings.toml`, but you can also declare the widget in
-`~/.config/noctalia/*.toml`:
-
-```toml
-[desktop_widgets]
-enabled = true
-
-[desktop_widgets.widget.steam_controller]
-type       = "jahrek/steam-controller:card"
-output     = "DP-1"          # your connector name
-cx         = 1400.0
-cy         = 200.0
-box_width  = 0.0             # 0 = auto-fit the card
-box_height = 0.0
-
-[desktop_widgets.widget.steam_controller.settings]
-illustration_color      = "#e8ebef"
-controller_body_color   = "#2c3035"
-controller_stroke_width = 3.4
-battery_color_mode      = "connection"   # connection | custom
-battery_fill_color      = "#fcfcfc"      # used when mode = custom
-battery_fill_opacity    = 1.0            # 0 = transparent, 1 = solid
-battery_low_color       = "#ed4c4c"
-text_color              = "on_surface"
-muted_text_color        = "on_surface_variant"
-show_battery_bar        = true
-show_percentage         = true
-show_status             = true
-show_live_inputs        = true
-input_highlight_color   = "primary"
-show_signal             = true
-signal_style            = "bars"         # bars | bars_dbm | dbm
-
-[plugin_settings."jahrek/steam-controller"]
-low_threshold = 20
-notify_low    = true
-```
-
-The plugin-level keys are shared by the service and the card; the other
-entries are per-widget presentation settings.
+If upgrading from the old `apps/` layout, run `./tools/migrate.py` first. See
+the repository `MIGRATION.md` for the upgrade notes.
 
 ## Settings
 
@@ -251,13 +165,13 @@ uses a different HID protocol.
 Rumble the controller (the Plasma widget's easter egg, without the sound):
 
 ```bash
-noctalia-kwe msg plugin jahrek/steam-controller:battery all buzz
+noctalia-kwe msg plugin linuxgamerlife/steam-controller:battery all buzz
 ```
 
 Restart the daemon:
 
 ```bash
-noctalia-kwe msg plugin jahrek/steam-controller:battery all restart
+noctalia-kwe msg plugin linuxgamerlife/steam-controller:battery all restart
 ```
 
 Use `noctalia msg ...` instead of `noctalia-kwe msg ...` on upstream Noctalia.
@@ -268,10 +182,10 @@ For a new machine, work through the
 [fresh-install checklist](../README.md#troubleshooting-a-fresh-install) first.
 
 - **Plugin never appears in Settings → Plugins / the desktop editor:** check the
-  data path. `noctalia-kwe` reads
+  source and data path. `noctalia-kwe` reads
   `~/.local/share/noctalia-kwe/plugins`, not
-  `~/.local/share/noctalia/plugins`. Run `./install-kwe.sh` for KWE
-  (or `./install.sh` for upstream), then
+  `~/.local/share/noctalia/plugins`. Add the repository as a source in the
+  correct shell, enable `linuxgamerlife/steam-controller`, then run
   `noctalia-kwe msg config-reload`.
 - **Plugin appears but the widget does not:** colour settings must be valid hex
   values or palette role tokens; Noctalia rejects empty colour strings. Battery
@@ -308,42 +222,15 @@ bars, the charging pulse, the stale state and the service→card integration.
 
 ## Uninstall
 
-Use the script that matches your shell:
+Disable or remove the plugin in **Settings → Plugins**, or disable it from
+the command line:
 
-```bash
-# KineticWE's noctalia-kwe fork
-./uninstall-kwe.sh
-
-# Upstream Noctalia
-./uninstall.sh
+```sh
+noctalia msg plugins disable linuxgamerlife/steam-controller
 ```
 
-Each script:
-
-- disables the plugin through the running shell, so its service and daemon stop
-- removes only this plugin's desktop-widget instances from `settings.toml`
-  (a timestamped backup is written first)
-- stops a leftover daemon if the shell was not running
-- removes the runtime state/lock files
-- removes the installed plugin link and the plugin's per-plugin data directory
-
-Pass `--yes` for a non-interactive removal. The scripts honour
-`NOCTALIA_DATA_HOME`, `NOCTALIA_STATE_HOME`, `XDG_DATA_HOME`,
-`XDG_STATE_HOME` and `XDG_RUNTIME_DIR`.
-
-If you prefer to remove things by hand:
-
-```bash
-APP_DIR=noctalia-kwe   # or: APP_DIR=noctalia
-noctalia-kwe msg plugins disable jahrek/steam-controller 2>/dev/null || true
-rm -rf "${XDG_DATA_HOME:-$HOME/.local/share}/$APP_DIR/plugins/steam-controller"
-rm -rf "${XDG_STATE_HOME:-$HOME/.local/state}/$APP_DIR/plugins/data/jahrek/steam-controller"
-rm -f "${XDG_RUNTIME_DIR:-/tmp}/noctalia-sc-battery.json" \
-      "${XDG_RUNTIME_DIR:-/tmp}/noctalia-sc-battery.lock"
-```
-
-Disabling the plugin in Noctalia is enough to stop the service; the scripts
-also clean the widget instances and leftover files.
+Plugin data is kept unless you remove it manually. See the repository
+`MIGRATION.md` for data locations.
 
 ## Credits and License
 

@@ -69,7 +69,7 @@ apply. Use the card refresh glyph, the panel **Refresh now**, right-click on the
 bar capsule, or:
 
 ```bash
-noctalia msg plugin lukk17/ai-usage:poller all refresh
+noctalia msg plugin linuxgamerlife/ai-usage:poller all refresh
 ```
 
 **Manual only** (`0`) stops the timer. The service still checks once at startup,
@@ -246,8 +246,8 @@ then reopen the desktop-widget editor:
 
 ```bash
 noctalia-kwe msg config-reload
-noctalia-kwe msg plugins disable lukk17/ai-usage
-noctalia-kwe msg plugins enable lukk17/ai-usage
+noctalia-kwe msg plugins disable linuxgamerlife/ai-usage
+noctalia-kwe msg plugins enable linuxgamerlife/ai-usage
 ```
 
 Existing widget instances are kept. The old `card_width` and `dense` keys are

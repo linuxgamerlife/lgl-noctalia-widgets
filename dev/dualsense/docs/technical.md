@@ -12,7 +12,7 @@ profile's `lightbar_brightness`. Charging pulses; low battery turns red.
 
 | Field | Value |
 | --- | --- |
-| ID | `deadYokai/dualsense` |
+| ID | `linuxgamerlife/dualsense` |
 | Version | `1.1.0` |
 | Entries | Service `battery`, desktop widget `card` |
 | Plugin API | 17 |
@@ -172,45 +172,18 @@ sudo gpasswd -d "$USER" input
 
 ## Install
 
-From the app directory (`apps/lgl-dualsense`):
+Add this repository as a Noctalia source, then enable the plugin:
 
-```bash
-# KineticWE's noctalia-kwe fork
-./install-kwe.sh
-
-# Upstream Noctalia
-./install.sh
+```sh
+noctalia msg plugins source add lgl git https://github.com/linuxgamerlife/lgl-noctalia-widgets
+noctalia msg plugins enable linuxgamerlife/dualsense
 ```
 
-Enable the plugin and verify the service is running. For KWE:
+For KineticWE's `noctalia-kwe` fork, use the same commands with
+`noctalia-kwe`.
 
-```bash
-noctalia-kwe msg plugins enable deadYokai/dualsense
-noctalia-kwe msg plugins list | grep deadYokai/dualsense
-```
-
-The result must include `enabled`. Next open **Settings → Desktop → Toggle
-Editor**, add **DualSense Battery**, position it, and leave the editor. Configure
-the card from its widget settings. Restart Noctalia once if the plugin was
-installed while the shell was already running and the entry does not appear.
-
-### Configure the widget
-
-You do **not** need to edit a TOML file.
-
-1. Open **Noctalia Settings → Desktop → Toggle Editor**.
-2. Add **DualSense Battery** if it is not already on the desktop.
-3. Select the widget in the editor and use its settings panel to change colours,
-   opacity, profile controls and visibility options.
-4. Leave the editor when positioning is complete.
-5. Open **Noctalia Settings → Plugins → DualSense Battery** for shared settings
-   such as the low-battery threshold and notification toggle.
-
-Noctalia saves these choices automatically. Its generated settings file is at
-`~/.local/state/noctalia-kwe/settings.toml` for KWE or
-`~/.local/state/noctalia/settings.toml` upstream. Those paths are useful for
-backups and troubleshooting; manual editing is not required and is discouraged
-while Noctalia is running because the shell may overwrite the file.
+If upgrading from the old `apps/` layout, run `./tools/migrate.py` first. See
+the repository `MIGRATION.md` for the upgrade notes.
 
 ## Settings
 
@@ -301,32 +274,32 @@ controller is connected and its state is fresh.
 
 ## IPC
 
-The service entry is `deadYokai/dualsense:battery` and, because services are
+The service entry is `linuxgamerlife/dualsense:battery` and, because services are
 not tied to a monitor, its target must be `all`. The CLI returning
 `ok: dispatched 1` confirms delivery to `onIpc`.
 
 Rumble the controller:
 
 ```bash
-noctalia-kwe msg plugin deadYokai/dualsense:battery all buzz
+noctalia-kwe msg plugin linuxgamerlife/dualsense:battery all buzz
 ```
 
 Cycle to the next `ds4u` profile:
 
 ```bash
-noctalia-kwe msg plugin deadYokai/dualsense:battery all cycle-profile
+noctalia-kwe msg plugin linuxgamerlife/dualsense:battery all cycle-profile
 ```
 
 Switch to a specific `ds4u` profile:
 
 ```bash
-noctalia-kwe msg plugin deadYokai/dualsense:battery all switch-profile Default
+noctalia-kwe msg plugin linuxgamerlife/dualsense:battery all switch-profile Default
 ```
 
 Restart the daemon:
 
 ```bash
-noctalia-kwe msg plugin deadYokai/dualsense:battery all restart
+noctalia-kwe msg plugin linuxgamerlife/dualsense:battery all restart
 ```
 
 For upstream Noctalia, replace `noctalia-kwe` with `noctalia`.
@@ -335,10 +308,10 @@ If a command does not act on the controller:
 
 ```bash
 # Must show the plugin as enabled.
-noctalia-kwe msg plugins list | grep deadYokai/dualsense
+noctalia-kwe msg plugins list | grep linuxgamerlife/dualsense
 
 # Must print: ok: dispatched 1
-noctalia-kwe msg plugin deadYokai/dualsense:battery all buzz
+noctalia-kwe msg plugin linuxgamerlife/dualsense:battery all buzz
 
 # Test the action independently of Noctalia (from this repository).
 python3 dualsense/code/ds_battery_daemon.py --buzz

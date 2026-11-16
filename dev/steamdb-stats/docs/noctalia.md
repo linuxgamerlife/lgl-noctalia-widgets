@@ -193,7 +193,7 @@ baseline does not provide. The KBM Overlay port documents the same constraint.
 
 ```bash
 # Manifest and entry lint
-noctalia-kwe plugins lint /path/to/lgl-noctalia-widgets/apps/lgl-steamdb-stats
+noctalia-kwe plugins lint /path/to/lgl-noctalia-widgets/steamdb-stats
 
 # Steam's own launch log
 tail -n 20 ~/.local/share/Steam/logs/gameprocess_log.txt
@@ -209,6 +209,5 @@ curl -s 'https://steamcharts.com/app/2943650/chart-data.json' | head -c 200
 ## Related
 
 - [App README](../README.md) — install, features, settings, troubleshooting
-- [Plugin README](../steamdb-stats/README.md) — technical reference
-- [catalog.toml](../catalog.toml) — source catalog metadata
-- [install-kwe.sh](../install-kwe.sh) / [install.sh](../install.sh)
+- [technical reference](technical.md) — technical reference
+- [catalog.toml](../../../catalog.toml) — source catalog metadata
