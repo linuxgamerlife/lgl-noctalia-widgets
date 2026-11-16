@@ -95,7 +95,7 @@ function M.valueRow(row, opts, key)
   return ui.row({
     key = key,
     gap = 8,
-    align = "top",
+    align = "start",
     justify = "space_between",
   }, {
     ui.label({
@@ -110,7 +110,7 @@ function M.valueRow(row, opts, key)
       fontSize = font_size(style, 13),
       fontWeight = "medium",
       color = color,
-      textAlign = "right",
+      textAlign = "end",
       maxLines = row.isProblem and 3 or 1,
     }),
   })

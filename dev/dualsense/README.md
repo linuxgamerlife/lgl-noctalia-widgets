@@ -6,7 +6,7 @@
 
 [![Version](https://img.shields.io/badge/version-1.1.0-purple)](dualsense/plugin.toml)
 [![Plugin API](https://img.shields.io/badge/Noctalia_API-17-blue)](dualsense/plugin.toml)
-[![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-yellow)](../../dualsense/LICENSE)
 
 </div>
 
@@ -62,7 +62,7 @@ same v5 plugin API and is supported by the install scripts.
 `ds4u` is optional: battery, charging and connection monitoring work through
 the bundled Python HID reader without it. Install ds4u for its graphical profile
 editor, remapping/trigger/gyro/haptic controls, animated effects and shared
-controller daemon. See [Why ds4u is optional](dualsense/README.md#why-ds4u-is-optional).
+controller daemon. See [Why ds4u is optional](docs/technical.md#why-ds4u-is-optional).
 
 ## Configuration
 
@@ -87,7 +87,7 @@ The desktop widget exposes:
 Colour settings accept hex values or palette role tokens. Role tokens follow the
 live Noctalia theme; the controller art regenerates when the resolved palette
 colour or `ds4u` lightbar colour changes. See the
-[full settings table](dualsense/README.md#settings).
+[full settings table](docs/technical.md#settings).
 
 ## Project layout
 
@@ -131,7 +131,7 @@ Plugin data is kept unless you remove it manually. See the repository
 - Python 3 (standard library only)
 - Permission for the widget or `ds4u --daemon` to access the DualSense
   `/dev/hidraw*` nodes. See the beginner-friendly
-  [udev setup and removal guide](dualsense/README.md#give-your-user-controller-access-udev).
+  [udev setup and removal guide](docs/technical.md#give-your-user-controller-access-udev).
 
 ## Credits and License
 
@@ -140,4 +140,4 @@ the card approach, and to deadYokai for the DualSense protocol and profile work
 in [ds4u](https://git.yokai.digital/deadYokai/ds4u). LGL adapted and integrated
 these ideas for Noctalia and Noctalia KWE.
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](../../dualsense/LICENSE).

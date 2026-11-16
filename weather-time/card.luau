@@ -360,7 +360,7 @@ local function weather_column(model, colors)
         fontSize = small_text_size(11),
         color = colors.muted,
         maxLines = 2,
-        textAlign = "right",
+        textAlign = "end",
       }))
     end
     if no_location then
@@ -384,7 +384,7 @@ local function weather_column(model, colors)
         key = "weather-temp",
         text = value,
         fontSize = text_size(layout_weather_temp()),
-        fontWeight = "regular",
+        fontWeight = "normal",
         color = colors.text,
         maxLines = 1,
       }),
@@ -397,7 +397,7 @@ local function weather_column(model, colors)
       fontSize = small_text_size(cfg.compact_layout and 10 or 12),
       color = colors.muted,
       maxLines = 1,
-      textAlign = "right",
+      textAlign = "end",
     }))
   end
   table.insert(children, ui.label({
@@ -406,7 +406,7 @@ local function weather_column(model, colors)
     fontSize = small_text_size(cfg.compact_layout and 9 or 11),
     color = colors.muted,
     maxLines = 1,
-    textAlign = "right",
+    textAlign = "end",
   }))
   return ui.column({
     key = "weather",
@@ -424,7 +424,7 @@ local function clock_column(model, colors)
       key = "clock",
       text = clock_text(tz),
       fontSize = layout_clock_px(),
-      fontWeight = "regular",
+      fontWeight = "normal",
       color = colors.text,
       maxLines = 1,
       maxWidth = math.max(120, math.floor(cfg.content_width * 0.55)),
@@ -707,7 +707,7 @@ local function header(colors)
       key = "header-title",
       text = cfg.title,
       fontSize = text_size(16),
-      fontWeight = "regular",
+      fontWeight = "normal",
       color = colors.text,
       flexGrow = 1,
       maxLines = 1,

@@ -238,4 +238,4 @@ Based on Jahrek's Steam Controller Plasma widget and adapted by LGL for
 Noctalia and Noctalia KWE. The controller illustration is drawn from scratch
 and is not Valve artwork.
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](../../../steam-controller/LICENSE).

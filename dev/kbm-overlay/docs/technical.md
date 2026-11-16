@@ -53,6 +53,6 @@ notes.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). Inspired by
+MIT — see [LICENSE](../../../kbm-overlay/LICENSE). Inspired by
 [univrsal/input-overlay](https://github.com/univrsal/input-overlay); this is an
 independent implementation with its own procedurally drawn artwork.

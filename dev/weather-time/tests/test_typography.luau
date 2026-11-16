@@ -76,11 +76,11 @@ local ctx = mock.new({
 mock.loadEntry("card.luau")
 
 local clock = mock.find(ctx.desktop_tree, "clock")
-assert(clock.props.fontWeight == "regular", "clock weight")
+assert(clock.props.fontWeight == "normal", "clock weight")
 assert(clock.props.fontSize == 64, "clock size should ignore small_text_scale")
 
 local temp = mock.find(ctx.desktop_tree, "weather-temp")
-assert(temp.props.fontWeight == "regular", "temperature weight matches clock")
+assert(temp.props.fontWeight == "normal", "temperature weight matches clock")
 assert(temp.props.fontSize == 38, "temperature size should ignore small_text_scale")
 
 local date = mock.find(ctx.desktop_tree, "date")

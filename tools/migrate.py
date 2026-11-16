@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -173,6 +174,21 @@ def remove_local_install(plugin: Plugin, app: str, dry_run: bool) -> None:
     move_to_backup(local, app, dry_run)
 
 
+def dedupe_enabled(text: str) -> str:
+    pattern = re.compile(r"(\benabled\s*=\s*\[)(.*?)(\])", re.DOTALL)
+
+    def replace(match: re.Match[str]) -> str:
+        values = re.findall(r'"([^"]*)"', match.group(2))
+        seen: list[str] = []
+        for value in values:
+            if value not in seen:
+                seen.append(value)
+        body = "".join(f'    "{value}",\n' for value in seen)
+        return f"{match.group(1)}\n{body}]"
+
+    return pattern.sub(replace, text)
+
+
 def rewrite_settings(plugin: Plugin, app: str, dry_run: bool) -> None:
     if not plugin.old_id or plugin.old_id == plugin.new_id:
         return
@@ -182,14 +198,26 @@ def rewrite_settings(plugin: Plugin, app: str, dry_run: bool) -> None:
     text = settings.read_text(encoding="utf-8")
     if plugin.old_id not in text:
         return
-    if plugin.new_id in text:
+
+    # A global replace cannot merge two plugin_settings tables. If the user
+    # already enabled the new id, leave that file for a manual merge.
+    old_tables = (
+        f'[plugin_settings."{plugin.old_id}"]',
+        f"[plugin_settings.'{plugin.old_id}']",
+    )
+    new_tables = (
+        f'[plugin_settings."{plugin.new_id}"]',
+        f"[plugin_settings.'{plugin.new_id}']",
+    )
+    if any(table in text for table in old_tables) and any(table in text for table in new_tables):
         print(
-            f"warning: {settings} contains both {plugin.old_id} and {plugin.new_id}; "
-            f"leaving settings unchanged",
+            f"warning: {settings} has both {plugin.old_id} and {plugin.new_id} "
+            f"plugin_settings tables; merge them by hand",
             file=sys.stderr,
         )
         return
-    updated = text.replace(plugin.old_id, plugin.new_id)
+
+    updated = dedupe_enabled(text.replace(plugin.old_id, plugin.new_id))
     try:
         tomllib.loads(updated)
     except tomllib.TOMLDecodeError as error:

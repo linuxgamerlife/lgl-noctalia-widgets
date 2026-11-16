@@ -6,7 +6,7 @@
 
 [![Version](https://img.shields.io/badge/version-1.0.0-purple)](ai-usage/plugin.toml)
 [![Plugin API](https://img.shields.io/badge/Noctalia_API-24-blue)](ai-usage/plugin.toml)
-[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-yellow)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-yellow)](../../ai-usage/LICENSE)
 
 </div>
 
@@ -125,4 +125,4 @@ Requires LuaJIT. The tests mock `noctalia.*`, `ui.*`, `desktopWidget.*`,
 Based on the [AI Usage KDE Plasma widget](https://github.com/linuxgamerlife/ai-usage-widget)
 by Łukasz Sarna. LGL adapted and extended it for Noctalia and Noctalia KWE.
 
-GPL-3.0-or-later — see [LICENSE](LICENSE).
+GPL-3.0-or-later — see [LICENSE](../../ai-usage/LICENSE).

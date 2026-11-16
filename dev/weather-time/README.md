@@ -7,7 +7,7 @@ with a full-bleed procedural weather scene.**
 
 [![Version](https://img.shields.io/badge/version-0.1.0-purple)](weather-time/plugin.toml)
 [![Plugin API](https://img.shields.io/badge/Noctalia_API-24-blue)](weather-time/plugin.toml)
-[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-yellow)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-yellow)](../../weather-time/LICENSE)
 
 </div>
 
@@ -16,8 +16,8 @@ with a full-bleed procedural weather scene.**
 ## Overview
 
 LGL Weather & Time is a Noctalia v5 plugin built in the same style as
-[LGL Modern SysMonitor Plus](../lgl-modern-sysmonitor-plus/) and
-[LGL AI Usage](../lgl-ai-usage/): a headless Luau service owns the data and a
+[LGL Modern SysMonitor Plus](../modern-sysmonitor-plus/) and
+[LGL AI Usage](../ai-usage/): a headless Luau service owns the data and a
 thin desktop card, bar widget and setup panel only render the published state.
 
 It combines:
@@ -56,7 +56,7 @@ The card's clock always works. Weather is optional until you set a location.
 - **Offline mode is respected** through `noctalia.http`; cached weather is
   labelled and dimmed instead of pretending to be live.
 
-Read [PRIVACY.md](PRIVACY.md) for the full data-flow table and retention rules.
+Read [PRIVACY.md](../../weather-time/PRIVACY.md) for the full data-flow table and retention rules.
 Weather data is provided by Open-Meteo under
 [CC BY 4.0](https://open-meteo.com/en/license); the card and documentation credit
 Open-Meteo.
@@ -148,13 +148,13 @@ Bar widget:
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). The widget code and procedural scenes are LGL's
+MIT — see [LICENSE](../../weather-time/LICENSE). The widget code and procedural scenes are LGL's
 own work. Weather data is provided by [Open-Meteo](https://open-meteo.com/)
 under [CC BY 4.0](https://open-meteo.com/en/license); that attribution must be
 kept wherever the data is displayed.
 
 ## Related
 
-- [PRIVACY.md](PRIVACY.md) — data flows, retention, third parties
-- [weather-time/README.md](weather-time/README.md) — technical reference
+- [PRIVACY.md](../../weather-time/PRIVACY.md) — data flows, retention, third parties
+- [weather-time/README.md](docs/technical.md) — technical reference
 - [docs/noctalia.md](docs/noctalia.md) — API, state and debugging

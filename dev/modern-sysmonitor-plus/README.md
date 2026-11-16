@@ -6,7 +6,7 @@
 
 [![Version](https://img.shields.io/badge/version-1.0.0-purple)](modern-sysmonitor-plus/plugin.toml)
 [![Plugin API](https://img.shields.io/badge/Noctalia_API-22-blue)](modern-sysmonitor-plus/plugin.toml)
-[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-yellow)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-yellow)](../../modern-sysmonitor-plus/LICENSE)
 
 </div>
 
@@ -55,7 +55,7 @@ app directories.
 | Header cog | `ui.button` → `noctalia.openSettings()` |
 | Fixed cyan/white/orange/red palette | Palette roles by default; every colour can be overridden with a hex value |
 | Scroll when the tile is short | Not reproduced; resize the desktop-widget tile instead (see Limitations) |
-| Show-card checkboxes, update interval, CPU fan number | Plugin and card settings, see [`modern-sysmonitor-plus/README.md`](modern-sysmonitor-plus/README.md#settings) |
+| Show-card checkboxes, update interval, CPU fan number | Plugin and card settings, see [`modern-sysmonitor-plus/README.md`](docs/technical.md#settings) |
 
 The card order is CPU, GPU, VRAM, RAM, disks, network — the network card sits
 at the bottom. The KDE widget only had a full desktop representation, so the
@@ -186,6 +186,6 @@ Based on Modern SysMonitor Plus by UnsaidSpeech and the original Modern
 SysMonitor by Joao Gabriel Medeiros. LGL adapted and extended the widget for
 Noctalia and Noctalia KWE.
 
-GPL-3.0-or-later — see [LICENSE](LICENSE).
+GPL-3.0-or-later — see [LICENSE](../../modern-sysmonitor-plus/LICENSE).
 
 Upgraded from GPL-2.0-or-later, which permits use under any later GPL version.

@@ -332,4 +332,4 @@ Thanks to Jahrek for the Steam Controller Plasma widget that inspired the card
 approach, and to deadYokai for the DualSense work in `ds4u`. LGL adapted and
 integrated these ideas for Noctalia and Noctalia KWE.
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](../../../dualsense/LICENSE).

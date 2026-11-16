@@ -210,6 +210,6 @@ integration.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). Weather data by
+MIT — see [LICENSE](../../../weather-time/LICENSE). Weather data by
 [Open-Meteo](https://open-meteo.com/) under
 [CC BY 4.0](https://open-meteo.com/en/license).

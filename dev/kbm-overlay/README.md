@@ -13,7 +13,7 @@ it in Noctalia's desktop-widget editor. It does not sit above every window.
 |---|---|
 | Plugin ID | `linuxgamerlife/kbm-overlay` |
 | Plugin API | 22 |
-| License | MIT — see [LICENSE](LICENSE) |
+| License | MIT — see [LICENSE](../../kbm-overlay/LICENSE) |
 
 ---
 
@@ -250,4 +250,4 @@ especially its black/white/cyan keyboard and mouse presets. This is an
 independent Noctalia implementation, not a port of the OBS plugin.
 
 Part of the [LGL Noctalia Widgets](../../README.md) collection. Licensed under
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](../../kbm-overlay/LICENSE).

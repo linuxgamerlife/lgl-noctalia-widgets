@@ -6,7 +6,7 @@
 
 [![Version](https://img.shields.io/badge/version-2.4.0-purple)](steam-controller/plugin.toml)
 [![Plugin API](https://img.shields.io/badge/Noctalia_API-17-blue)](steam-controller/plugin.toml)
-[![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-yellow)](../../steam-controller/LICENSE)
 
 </div>
 
@@ -50,7 +50,7 @@ The desktop widget exposes:
 Colour settings accept hex values or palette role tokens. Role tokens follow the
 live Noctalia theme; the controller art regenerates when the resolved palette
 colour changes. See the
-[full settings table](steam-controller/README.md#settings).
+[full settings table](docs/technical.md#settings).
 
 ## Project layout
 
@@ -144,7 +144,7 @@ commands use `noctalia`; use `noctalia-kwe` instead on the KWE fork.
    ```
 
    If it cannot open a hidraw node, add the udev rule from
-   [Requirements](steam-controller/README.md#requirements).
+   [Requirements](docs/technical.md#requirements).
 7. **The controller is detected.** The daemon only looks for Valve USB IDs
    `28de:1302` to `28de:1305`:
 
@@ -159,7 +159,7 @@ commands use `noctalia`; use `noctalia-kwe` instead on the KWE fork.
 
 If the daemon prints JSON but the card stays empty, the problem is plugin
 startup or discovery, not the controller. The
-[full troubleshooting list](steam-controller/README.md#troubleshooting) has
+[full troubleshooting list](docs/technical.md#troubleshooting) has
 more detail.
 
 ## Credits and License
@@ -169,4 +169,4 @@ Based on Jahrek's
 LGL adapted and extended it for Noctalia and Noctalia KWE. The controller
 illustration is drawn from scratch and is not Valve artwork.
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](../../steam-controller/LICENSE).

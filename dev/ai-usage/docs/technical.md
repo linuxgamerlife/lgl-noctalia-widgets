@@ -272,4 +272,4 @@ it can read this machine's OpenCode database; quota checks still work.
 Based on the GPL-3.0 AI Usage Plasma widget by Łukasz Sarna and adapted by LGL
 for Noctalia and Noctalia KWE.
 
-GPL-3.0-or-later — see [LICENSE](LICENSE).
+GPL-3.0-or-later — see [LICENSE](../../../ai-usage/LICENSE).

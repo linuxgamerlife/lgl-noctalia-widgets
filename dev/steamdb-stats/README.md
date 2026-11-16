@@ -6,7 +6,7 @@
 
 [![Version](https://img.shields.io/badge/version-0.1.0-purple)](steamdb-stats/plugin.toml)
 [![Plugin API](https://img.shields.io/badge/Noctalia_API-24-blue)](steamdb-stats/plugin.toml)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-green)](../../steamdb-stats/LICENSE)
 
 </div>
 
@@ -23,7 +23,7 @@ compact SteamDB-style summary on the desktop:
 - a 24-hour player graph
 
 The card uses the same inner surface, card width, padding and `ui.graph`
-metrics as [LGL Modern SysMonitor Plus](../lgl-modern-sysmonitor-plus/), so the
+metrics as [LGL Modern SysMonitor Plus](../modern-sysmonitor-plus/), so the
 two can sit in the same desktop column and line up.
 
 <p align="center">
@@ -220,6 +220,6 @@ friends list, playtime or account profile. The only files it writes are a small
   [Steam](https://steampowered.com/). This project is not affiliated with
   Valve, SteamDB or SteamCharts.
 - The card layout follows the SteamDB reference and the visual language of
-  [LGL Modern SysMonitor Plus](../lgl-modern-sysmonitor-plus/).
+  [LGL Modern SysMonitor Plus](../modern-sysmonitor-plus/).
 
-See [LICENSE](LICENSE) and [REUSE.toml](../../REUSE.toml).
+See [LICENSE](../../steamdb-stats/LICENSE) and [REUSE.toml](../../REUSE.toml).
