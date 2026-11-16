@@ -148,12 +148,15 @@ def manifest_id(path: Path) -> str | None:
 def belongs_to_plugin(local: Path, plugin: Plugin) -> tuple[bool, str]:
     if local.is_symlink():
         target = local.resolve(strict=False)
-        if not target.exists():
-            return True, "dangling symlink"
-        if "lgl-noctalia-widgets" in str(target) and "/apps/" in str(target):
-            return True, "old apps/ symlink"
-        if target.is_relative_to(REPO_ROOT):
+        target_text = str(target)
+        old_apps = "lgl-noctalia-widgets" in target_text and "/apps/lgl-" in target_text
+        if old_apps:
+            return True, "old apps/ symlink" if target.exists() else "dangling old apps/ symlink"
+        if target.exists() and target.is_relative_to(REPO_ROOT):
             return True, "this checkout"
+        # Do not claim a symlink into another project, even if that project
+        # happens to use the same plugin id.
+        return False, f"external symlink to {target_text}"
     found = manifest_id(local)
     if found in plugin.ids:
         return True, found
